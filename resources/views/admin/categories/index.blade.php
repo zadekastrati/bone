@@ -23,10 +23,10 @@
                 <tbody>
                     @forelse ($categories as $category)
                         <tr>
-                            <td class="font-medium text-slate-900">{{ $category->name }}</td>
-                            <td class="font-mono text-xs text-slate-600">{{ $category->slug }}</td>
-                            <td class="text-slate-600">{{ $category->products_count }}</td>
-                            <td class="text-slate-600">{{ $category->sort_order }}</td>
+                            <td class="font-medium text-ink-900">{{ $category->name }}</td>
+                            <td class="font-mono text-xs text-ink-600">{{ $category->slug }}</td>
+                            <td class="text-ink-600">{{ $category->products_count }}</td>
+                            <td class="text-ink-600">{{ $category->sort_order }}</td>
                             <td class="text-right">
                                 <a href="{{ route('admin.categories.edit', $category->id) }}" class="link-brand text-sm">Edit</a>
                                 <form method="POST" action="{{ route('admin.categories.destroy', $category->id) }}" class="ml-4 inline" onsubmit="return confirm('Delete this category?');">
@@ -38,7 +38,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="data-table-empty text-slate-500">No categories yet.</td>
+                            <td colspan="5" class="data-table-empty text-ink-500">No categories yet.</td>
                         </tr>
                     @endforelse
                 </tbody>

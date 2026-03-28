@@ -14,7 +14,7 @@
     <div class="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div class="space-y-4">
             @if ($product->images->isEmpty())
-                <div class="aspect-[4/5] overflow-hidden rounded-3xl bg-gradient-to-br from-ink-800 to-ink-950 shadow-float">
+                <div class="aspect-[4/5] overflow-hidden rounded-3xl bg-gradient-to-br from-pink-100 to-accent-200 shadow-float">
                     <div class="flex size-full items-center justify-center text-xs font-bold uppercase tracking-mega text-white/40">Photo soon</div>
                 </div>
             @else

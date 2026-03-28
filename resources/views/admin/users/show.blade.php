@@ -8,7 +8,7 @@
             <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                 <div class="min-w-0">
                     <h1 class="font-display text-2xl font-bold text-ink-950 sm:text-3xl">{{ $user->name }}</h1>
-                    <p class="mt-2 text-slate-600">{{ $user->email }}</p>
+                    <p class="mt-2 text-ink-600">{{ $user->email }}</p>
                     <p class="mt-4">
                         <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide {{ $user->role === 'admin' ? 'bg-accent-100 text-accent-900' : 'bg-ink-100 text-ink-800' }}">
                             {{ $user->role }}

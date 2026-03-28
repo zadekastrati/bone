@@ -7,13 +7,13 @@
         'Sign up for first-order perks & restock news',
     ];
 @endphp
-<div class="relative z-[60] border-b border-white/[0.07] bg-zinc-950 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/85 sm:text-[11px] sm:tracking-mega">
+<div class="relative z-[60] border-b border-pink-200/80 bg-gradient-to-r from-pink-100 via-[#fceef4] to-pink-100 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-700 sm:text-[11px] sm:tracking-mega">
     <div class="overflow-hidden py-2.5">
         <div class="flex w-max animate-marquee motion-reduce:animate-none">
             <ul class="flex items-center gap-x-10 px-5" aria-hidden="true">
                 @foreach ($items as $line)
                     <li class="flex shrink-0 items-center gap-2">
-                        <span class="size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>
+                        <span class="size-1.5 shrink-0 rounded-full bg-accent-400" aria-hidden="true"></span>
                         <span>{{ $line }}</span>
                     </li>
                 @endforeach
@@ -21,7 +21,7 @@
             <ul class="flex items-center gap-x-10 px-5" aria-hidden="true">
                 @foreach ($items as $line)
                     <li class="flex shrink-0 items-center gap-2">
-                        <span class="size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>
+                        <span class="size-1.5 shrink-0 rounded-full bg-accent-400" aria-hidden="true"></span>
                         <span>{{ $line }}</span>
                     </li>
                 @endforeach

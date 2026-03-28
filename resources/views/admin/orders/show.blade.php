@@ -5,8 +5,8 @@
 @section('content')
     <nav class="crumbs crumbs--admin" aria-label="Breadcrumb">
         <a href="{{ route('admin.orders.index') }}">Orders</a>
-        <span class="mx-1.5 text-slate-300">/</span>
-        <span class="text-slate-800">{{ $order->order_number }}</span>
+        <span class="mx-1.5 text-pink-300">/</span>
+        <span class="text-ink-800">{{ $order->order_number }}</span>
     </nav>
 
     <x-page-header :title="'Order '.$order->order_number" :subtitle="'Customer: '.$order->user->email" />
@@ -14,7 +14,7 @@
     <div class="mt-10 grid gap-10 lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-2">
             <div class="admin-panel p-6">
-                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-slate-900">Line items</h2>
+                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-900">Line items</h2>
                 <ul class="mt-4 divide-y divide-ink-100 text-sm">
                     @foreach ($order->items as $item)
                         <li class="flex flex-wrap items-center justify-between gap-3 py-4">
@@ -46,7 +46,7 @@
             </div>
 
             <div class="admin-panel p-6">
-                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-slate-900">Shipping address</h2>
+                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-900">Shipping address</h2>
                 <p class="mt-3 text-sm leading-relaxed text-ink-700">
                     {{ $order->shipping_first_name }} {{ $order->shipping_last_name }}<br>
                     {{ $order->shipping_street }}<br>

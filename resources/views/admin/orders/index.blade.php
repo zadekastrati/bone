@@ -43,23 +43,23 @@
                 <tbody>
                     @forelse ($orders as $order)
                         <tr>
-                            <td class="font-mono text-xs font-semibold text-slate-900">{{ $order->order_number }}</td>
+                            <td class="font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</td>
                             <td>
-                                <span class="font-medium text-slate-900">{{ $order->user->name }}</span>
-                                <span class="mt-0.5 block text-xs text-slate-500">{{ $order->user->email }}</span>
+                                <span class="font-medium text-ink-900">{{ $order->user->name }}</span>
+                                <span class="mt-0.5 block text-xs text-ink-500">{{ $order->user->email }}</span>
                             </td>
-                            <td class="text-slate-600">{{ $order->created_at->format('M j, Y H:i') }}</td>
+                            <td class="text-ink-600">{{ $order->created_at->format('M j, Y H:i') }}</td>
                             <td>
-                                <span class="inline-flex rounded-full border border-slate-200/90 bg-slate-50 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-800">{{ $order->status->label() }}</span>
+                                <span class="inline-flex rounded-full border border-pink-200/80 bg-pink-50/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-800">{{ $order->status->label() }}</span>
                             </td>
-                            <td class="font-semibold text-slate-900">{{ config('store.currency_symbol') }}{{ number_format((float) $order->total, 2) }}</td>
+                            <td class="font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $order->total, 2) }}</td>
                             <td class="text-right">
                                 <a href="{{ route('admin.orders.show', $order) }}" class="admin-action-link">Manage</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="data-table-empty text-slate-500">No orders found.</td>
+                            <td colspan="6" class="data-table-empty text-ink-500">No orders found.</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -19,13 +19,15 @@
     <div class="flex min-h-full flex-1 flex-col" x-data="{ mobileOpen: false }" @keydown.window.escape="mobileOpen = false">
         <x-store-promo-bar />
 
-        <header class="sticky top-0 z-50 border-b border-white/[0.06] bg-ink-950 text-white shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-ink-950/90">
+        <header class="sticky top-0 z-50 border-b border-pink-200/80 bg-pink-50/95 text-ink-900 shadow-[0_8px_30px_-12px_rgba(192,149,174,0.25)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-pink-50/90">
             <div class="page-shell flex h-14 items-center gap-3 sm:gap-4 lg:h-[4.25rem]">
-                <a href="{{ route('home') }}" class="font-display shrink-0 truncate text-lg font-bold uppercase tracking-mega text-white transition-opacity hover:opacity-90 lg:text-xl">
+                <a href="{{ route('home') }}" class="font-display shrink-0 truncate text-lg font-bold uppercase tracking-mega text-ink-900 transition-opacity hover:opacity-80 lg:text-xl">
                     {{ config('app.name') }}
                 </a>
 
-                <x-store-search-form variant="header" />
+                @unless (request()->routeIs('shop.index'))
+                    <x-store-search-form variant="header" />
+                @endunless
 
                 <nav class="hidden items-center gap-0.5 lg:flex lg:shrink-0" aria-label="Primary">
                     <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
@@ -33,7 +35,7 @@
                     <a href="{{ route('cart.index') }}" class="nav-link {{ request()->routeIs('cart.*') ? 'nav-link-active' : '' }}">
                         Cart
                         @if ($cartService->count() > 0)
-                            <span class="ml-1 rounded-full bg-accent-500 px-1.5 py-0.5 text-[10px] font-bold text-white">{{ $cartService->count() }}</span>
+                            <span class="ml-1 rounded-full bg-pink-400 px-1.5 py-0.5 text-[10px] font-bold text-rose-950">{{ $cartService->count() }}</span>
                         @endif
                     </a>
                     @auth
@@ -50,9 +52,9 @@
                         <a href="{{ route('register') }}" class="btn-on-dark hidden px-4 py-2.5 sm:inline-flex">Join</a>
                     @else
                         <div class="hidden items-center gap-3 lg:flex">
-                            <span class="{{ request()->routeIs('home') ? 'max-w-[14rem] text-white/90' : 'max-w-[9rem] text-white/65' }} truncate text-xs font-medium" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
+                            <span class="{{ request()->routeIs('home') ? 'max-w-[14rem] text-ink-800' : 'max-w-[9rem] text-ink-500' }} truncate text-xs font-medium" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
                             @unless (request()->routeIs('home'))
-                                <span class="rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-sm">{{ auth()->user()->role }}</span>
+                                <span class="rounded-full border border-pink-200/90 bg-white/80 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-600">{{ auth()->user()->role }}</span>
                             @endunless
                         </div>
                         <form method="POST" action="{{ route('logout') }}" class="hidden lg:inline">
@@ -89,10 +91,12 @@
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 -translate-y-2"
                 x-cloak
-                class="border-t border-white/10 bg-ink-950/98 backdrop-blur-xl lg:hidden"
+                class="border-t border-pink-200/80 bg-pink-50/98 backdrop-blur-xl lg:hidden"
             >
                 <nav class="page-shell flex flex-col gap-0.5 py-4" aria-label="Mobile">
-                    <x-store-search-form variant="drawer" />
+                    @unless (request()->routeIs('shop.index'))
+                        <x-store-search-form variant="drawer" />
+                    @endunless
                     <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
                     <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
                     <a href="{{ route('cart.index') }}" class="nav-link {{ request()->routeIs('cart.*') ? 'nav-link-active' : '' }}">Cart @if ($cartService->count() > 0) ({{ $cartService->count() }}) @endif</a>
@@ -104,7 +108,7 @@
                         @if (auth()->user()->isAdmin())
                             <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">Dashboard</a>
                         @endif
-                        <form method="POST" action="{{ route('logout') }}" class="mt-4 border-t border-white/10 pt-4">
+                        <form method="POST" action="{{ route('logout') }}" class="mt-4 border-t border-pink-200/80 pt-4">
                             @csrf
                             <button type="submit" class="btn-outline-light w-full justify-center">Log out</button>
                         </form>
@@ -160,43 +164,43 @@
             </div>
         @endif
 
-        <footer class="mt-auto border-t border-white/[0.08] bg-gradient-to-b from-ink-950 to-[#050506] text-white">
+        <footer class="mt-auto border-t border-pink-200/80 bg-gradient-to-b from-pink-100/90 via-pink-50 to-[#fffafc] text-ink-800">
             <div class="page-shell grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-20">
                 <div class="sm:col-span-2 lg:col-span-1">
-                    <p class="font-display text-lg font-bold uppercase tracking-mega">{{ config('app.name') }}</p>
-                    <p class="mt-4 max-w-sm text-sm leading-relaxed text-white/55 text-pretty">Performance gym wear designed for women who train hard. Cut, fabric, and finish built for the floor.</p>
+                    <p class="font-display text-lg font-bold uppercase tracking-mega text-ink-900">{{ config('app.name') }}</p>
+                    <p class="mt-4 max-w-sm text-sm leading-relaxed text-ink-600 text-pretty">Performance gym wear designed for women who train hard. Cut, fabric, and finish built for the floor.</p>
                 </div>
                 <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40">Shop</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">Shop</p>
                     <ul class="mt-5 space-y-3 text-sm">
-                        <li><a href="{{ route('shop.index') }}" class="text-white/65 transition-colors duration-200 hover:text-white">All women&apos;s</a></li>
-                        <li><a href="{{ route('shop.index') }}#leggings" class="text-white/65 transition-colors duration-200 hover:text-white">Leggings</a></li>
-                        <li><a href="{{ route('shop.index') }}#bras" class="text-white/65 transition-colors duration-200 hover:text-white">Sports bras</a></li>
-                        <li><a href="{{ route('shop.index') }}#layers" class="text-white/65 transition-colors duration-200 hover:text-white">Layers</a></li>
+                        <li><a href="{{ route('shop.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">All women&apos;s</a></li>
+                        <li><a href="{{ route('shop.index') }}#leggings" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Leggings</a></li>
+                        <li><a href="{{ route('shop.index') }}#bras" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Sports bras</a></li>
+                        <li><a href="{{ route('shop.index') }}#layers" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Layers</a></li>
                     </ul>
                 </div>
                 <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40">Help</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">Help</p>
                     <ul class="mt-5 space-y-3 text-sm">
-                        <li><a href="#" class="text-white/65 transition-colors duration-200 hover:text-white">Shipping</a></li>
-                        <li><a href="#" class="text-white/65 transition-colors duration-200 hover:text-white">Returns</a></li>
-                        <li><a href="#" class="text-white/65 transition-colors duration-200 hover:text-white">Size guide</a></li>
+                        <li><a href="#" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Shipping</a></li>
+                        <li><a href="#" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Returns</a></li>
+                        <li><a href="#" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Size guide</a></li>
                     </ul>
                 </div>
                 <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40">Account</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">Account</p>
                     <ul class="mt-5 space-y-3 text-sm">
                         @guest
-                            <li><a href="{{ route('login') }}" class="text-white/65 transition-colors duration-200 hover:text-white">Log in</a></li>
-                            <li><a href="{{ route('register') }}" class="text-white/65 transition-colors duration-200 hover:text-white">Create account</a></li>
+                            <li><a href="{{ route('login') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Log in</a></li>
+                            <li><a href="{{ route('register') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Create account</a></li>
                         @else
-                            <li><a href="{{ route('orders.index') }}" class="text-white/65 transition-colors duration-200 hover:text-white">Orders</a></li>
+                            <li><a href="{{ route('orders.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Orders</a></li>
                         @endguest
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-white/[0.06] py-7">
-                <div class="page-shell flex flex-col items-center justify-between gap-4 text-center text-[11px] leading-relaxed text-white/40 sm:flex-row sm:text-left">
+            <div class="border-t border-pink-200/70 py-7">
+                <div class="page-shell flex flex-col items-center justify-between gap-4 text-center text-[11px] leading-relaxed text-ink-500 sm:flex-row sm:text-left">
                     <p class="text-balance">&copy; {{ date('Y') }} {{ config('app.name') }}. Women&apos;s gym wear.</p>
                     <p class="max-w-md text-pretty">Independent storefront demo — not affiliated with any third-party brand.</p>
                 </div>

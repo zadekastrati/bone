@@ -32,10 +32,10 @@
                 <tbody>
                     @forelse ($users as $user)
                         <tr>
-                            <td class="font-medium text-slate-900">{{ $user->name }}</td>
-                            <td class="text-slate-600">{{ $user->email }}</td>
+                            <td class="font-medium text-ink-900">{{ $user->name }}</td>
+                            <td class="text-ink-600">{{ $user->email }}</td>
                             <td>
-                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $user->role === 'admin' ? 'border-rose-200/80 bg-rose-50 text-rose-900' : 'border-slate-200/80 bg-slate-100 text-slate-700' }}">
+                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $user->role === 'admin' ? 'border-accent-300/80 bg-accent-100/90 text-accent-900' : 'border-pink-200/80 bg-pink-100/80 text-ink-700' }}">
                                     {{ $user->role }}
                                 </span>
                             </td>
@@ -45,7 +45,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="data-table-empty text-slate-500">No users found.</td>
+                            <td colspan="4" class="data-table-empty text-ink-500">No users found.</td>
                         </tr>
                     @endforelse
                 </tbody>

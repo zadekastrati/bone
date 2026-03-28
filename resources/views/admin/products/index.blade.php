@@ -49,14 +49,14 @@
                     @forelse ($products as $product)
                         <tr>
                             <td>
-                                <span class="font-medium text-slate-900">{{ $product->name }}</span>
-                                <span class="mt-0.5 block font-mono text-xs text-slate-500">{{ $product->slug }}</span>
+                                <span class="font-medium text-ink-900">{{ $product->name }}</span>
+                                <span class="mt-0.5 block font-mono text-xs text-ink-500">{{ $product->slug }}</span>
                             </td>
-                            <td class="text-slate-600">{{ $product->category->name }}</td>
-                            <td class="font-semibold text-slate-900">{{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}</td>
-                            <td class="text-slate-600">{{ $product->variants_count }}</td>
+                            <td class="text-ink-600">{{ $product->category->name }}</td>
+                            <td class="font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}</td>
+                            <td class="text-ink-600">{{ $product->variants_count }}</td>
                             <td>
-                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $product->is_active ? 'border-emerald-200/80 bg-emerald-50 text-emerald-900' : 'border-slate-200/80 bg-slate-100 text-slate-700' }}">
+                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $product->is_active ? 'border-emerald-200/80 bg-emerald-50 text-emerald-900' : 'border-pink-200/80 bg-pink-100/80 text-ink-700' }}">
                                     {{ $product->is_active ? 'Yes' : 'No' }}
                                 </span>
                             </td>
@@ -71,7 +71,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="data-table-empty text-slate-500">No products match.</td>
+                            <td colspan="6" class="data-table-empty text-ink-500">No products match.</td>
                         </tr>
                     @endforelse
                 </tbody>
