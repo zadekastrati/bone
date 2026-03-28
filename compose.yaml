@@ -1,0 +1,12 @@
+# Local email testing: SMTP :1025, web UI :8025
+# Start: docker compose up -d
+# Stop:  docker compose down
+# Inbox: http://localhost:8025
+services:
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: bone-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: unless-stopped
