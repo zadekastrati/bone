@@ -29,17 +29,17 @@
         ></div>
 
         <aside
-            class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-pink-200/90 bg-gradient-to-b from-pink-100/95 via-pink-50 to-[#fffafc] text-ink-800 shadow-[4px_0_24px_-8px_rgba(192,149,174,0.25)] transition-transform duration-300 ease-out lg:static lg:translate-x-0"
+            class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col overflow-x-hidden border-r border-pink-200/90 bg-gradient-to-b from-pink-100/95 via-pink-50 to-[#fffafc] text-ink-800 shadow-[4px_0_24px_-8px_rgba(192,149,174,0.25)] transition-transform duration-300 ease-out lg:static lg:translate-x-0"
             :class="{ '!translate-x-0': sidebarOpen }"
         >
-            <div class="flex h-14 items-center gap-2 border-b border-pink-200/80 bg-pink-50/80 px-4 lg:h-16">
+            <div class="flex h-14 shrink-0 items-center gap-2 border-b border-pink-200/80 bg-pink-50/80 px-4 lg:h-16">
                 <a href="{{ route('home') }}" @click="sidebarOpen = false" class="font-display text-lg font-bold uppercase tracking-mega text-ink-900">
                     {{ config('app.name') }}
                 </a>
                 <span class="rounded-md bg-accent-200/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-800 ring-1 ring-pink-300/50">Admin</span>
             </div>
 
-            <div class="border-b border-pink-200/80 px-3 pb-3 pt-2">
+            <div class="shrink-0 border-b border-pink-200/80 px-3 pb-3 pt-2">
                 <a
                     href="{{ route('shop.index') }}"
                     @click="sidebarOpen = false"
@@ -50,7 +50,7 @@
                 </a>
             </div>
 
-            <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Admin">
+            <nav class="shrink-0 space-y-1 px-3 py-4 pb-6" aria-label="Admin">
                 <p class="px-3 pb-2 text-[10px] font-bold uppercase tracking-mega text-accent-700">Overview</p>
                 <a href="{{ route('admin.dashboard') }}" @click="sidebarOpen = false" class="admin-sidebar-link {{ request()->routeIs('admin.dashboard') ? 'admin-sidebar-link-active' : '' }}">
                     <svg class="size-5 shrink-0 opacity-80" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25a2.25 2.25 0 0 1-2.25 2.25h-2.25A2.25 2.25 0 0 1 13.5 8.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" /></svg>
