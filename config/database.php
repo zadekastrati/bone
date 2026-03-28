@@ -45,12 +45,12 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'url' => env('DATABASE_URL', env('MYSQL_URL')),
+            'host' => env('DB_HOST', env('MYSQLHOST', '127.0.0.1')),
+            'port' => env('DB_PORT', env('MYSQLPORT', '3306')),
+            'database' => env('DB_DATABASE', env('MYSQLDATABASE', 'forge')),
+            'username' => env('DB_USERNAME', env('MYSQLUSER', 'forge')),
+            'password' => env('DB_PASSWORD', env('MYSQLPASSWORD', '')),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
