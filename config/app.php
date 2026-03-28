@@ -60,6 +60,12 @@ return [
     'asset_url' => env('ASSET_URL'),
 
     /*
+    | When true, generated URLs use https (set in production when the site is TLS-only).
+    */
+
+    'force_https' => (bool) env('APP_FORCE_HTTPS', false),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------

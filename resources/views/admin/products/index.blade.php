@@ -1,9 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Products')
 
 @section('content')
     <x-page-header title="Products" subtitle="Manage catalog, variants, and stock. Customers always pick color and size at checkout.">
+        <a href="{{ route('admin.categories.index') }}" class="btn-secondary">Manage categories</a>
         <a href="{{ route('admin.products.create') }}" class="btn-primary">New product</a>
     </x-page-header>
 
@@ -31,35 +32,35 @@
         @endif
     </form>
 
-    <div class="mt-10 overflow-hidden rounded-3xl border border-ink-200/60 bg-white/95 shadow-soft ring-1 ring-ink-950/[0.03]">
+    <div class="table-shell--admin mt-10">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-ink-200 text-left text-sm">
-                <thead class="bg-ink-50/90">
+            <table class="data-table data-table--admin">
+                <thead>
                     <tr>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Product</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Category</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Price</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Variants</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Active</th>
-                        <th class="px-5 py-3.5"></th>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Variants</th>
+                        <th>Active</th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-ink-100">
+                <tbody>
                     @forelse ($products as $product)
                         <tr>
-                            <td class="px-5 py-3.5">
-                                <span class="font-medium text-ink-950">{{ $product->name }}</span>
-                                <span class="mt-0.5 block font-mono text-xs text-ink-500">{{ $product->slug }}</span>
+                            <td>
+                                <span class="font-medium text-slate-900">{{ $product->name }}</span>
+                                <span class="mt-0.5 block font-mono text-xs text-slate-500">{{ $product->slug }}</span>
                             </td>
-                            <td class="px-5 py-3.5 text-ink-600">{{ $product->category->name }}</td>
-                            <td class="px-5 py-3.5 font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}</td>
-                            <td class="px-5 py-3.5 text-ink-600">{{ $product->variants_count }}</td>
-                            <td class="px-5 py-3.5">
-                                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $product->is_active ? 'bg-emerald-100 text-emerald-900' : 'bg-ink-100 text-ink-700' }}">
+                            <td class="text-slate-600">{{ $product->category->name }}</td>
+                            <td class="font-semibold text-slate-900">{{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}</td>
+                            <td class="text-slate-600">{{ $product->variants_count }}</td>
+                            <td>
+                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $product->is_active ? 'border-emerald-200/80 bg-emerald-50 text-emerald-900' : 'border-slate-200/80 bg-slate-100 text-slate-700' }}">
                                     {{ $product->is_active ? 'Yes' : 'No' }}
                                 </span>
                             </td>
-                            <td class="px-5 py-3.5 text-right">
+                            <td class="text-right">
                                 <a href="{{ route('admin.products.edit', $product->id) }}" class="link-brand text-sm">Edit</a>
                                 <form method="POST" action="{{ route('admin.products.destroy', $product->id) }}" class="ml-4 inline" onsubmit="return confirm('Archive this product?');">
                                     @csrf
@@ -70,7 +71,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-12 text-center text-ink-600">No products match.</td>
+                            <td colspan="6" class="data-table-empty text-slate-500">No products match.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -78,7 +79,7 @@
         </div>
     </div>
 
-    <div class="mt-10 flex justify-center">
+    <div class="pagination-wrap pagination-wrap--admin">
         {{ $products->links() }}
     </div>
 @endsection

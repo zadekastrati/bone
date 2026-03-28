@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -10,12 +11,14 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\View;
 
 Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('shop.index')
-        : view('welcome');
+    return view('welcome');
 })->name('home');
 
 Route::prefix('shop')->name('shop.')->group(function (): void {
@@ -30,12 +33,35 @@ Route::patch('/cart/{variant}', [CartController::class, 'update'])->name('cart.u
 Route::delete('/cart/{variant}', [CartController::class, 'destroy'])->name('cart.destroy')->whereNumber('variant');
 
 Route::middleware('auth')->group(function (): void {
-    Route::get('/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/email/verify', function (): View {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request): RedirectResponse {
+        $request->fulfill();
+
+        return redirect()
+            ->intended(route('home'))
+            ->with('success', 'Your email address has been verified. You can place orders now.');
+    })->middleware('signed')->name('verification.verify');
+
+    Route::post('/email/verification-notification', function (Request $request): RedirectResponse {
+        $request->user()->sendEmailVerificationNotification();
+
+        return back()->with('status', 'verification-link-sent');
+    })->middleware('throttle:6,1')->name('verification.send');
+
+    Route::middleware('verified')->group(function (): void {
+        Route::get('/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
+        Route::post('/checkout', [CheckoutController::class, 'store'])
+            ->middleware('throttle:30,1')
+            ->name('checkout.store');
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    });
 
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function (): void {
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('users', AdminUserController::class);
         Route::resource('categories', AdminCategoryController::class)
             ->parameters(['categories' => 'id'])

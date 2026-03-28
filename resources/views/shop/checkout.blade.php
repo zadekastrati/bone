@@ -24,8 +24,8 @@
         <form method="POST" action="{{ route('checkout.store') }}" class="space-y-8 lg:col-span-3">
             @csrf
 
-            <fieldset class="space-y-4 rounded-3xl border border-ink-200/60 bg-white/95 p-6 shadow-soft">
-                <legend class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Shipping</legend>
+            <fieldset class="checkout-fieldset">
+                <legend class="checkout-fieldset__legend">Shipping</legend>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div>
                         <label for="shipping_first_name" class="form-label">First name</label>
@@ -103,10 +103,10 @@
                 </div>
             </fieldset>
 
-            <fieldset class="space-y-4 rounded-3xl border border-ink-200/60 bg-white/95 p-6 shadow-soft">
-                <legend class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Payment</legend>
+            <fieldset class="checkout-fieldset">
+                <legend class="checkout-fieldset__legend">Payment</legend>
                 @foreach (\App\Enums\PaymentMethod::cases() as $method)
-                    <label class="flex cursor-pointer items-start gap-3 rounded-2xl border border-ink-200/80 p-4 has-[:checked]:border-accent-500 has-[:checked]:ring-2 has-[:checked]:ring-accent-500/25">
+                    <label class="flex cursor-pointer items-start gap-4 rounded-2xl border border-ink-200/70 bg-white/90 p-5 shadow-sm transition hover:border-ink-300/90 has-[:checked]:border-accent-400 has-[:checked]:bg-accent-50/25 has-[:checked]:shadow-md has-[:checked]:ring-2 has-[:checked]:ring-accent-500/20">
                         <input type="radio" name="payment_method" value="{{ $method->value }}" class="mt-1" {{ old('payment_method', \App\Enums\PaymentMethod::BankTransfer->value) === $method->value ? 'checked' : '' }} required>
                         <span>
                             <span class="font-semibold text-ink-950">{{ $method->label() }}</span>
@@ -120,10 +120,13 @@
                 @endforeach
             </fieldset>
 
-            <div>
-                <label for="customer_notes" class="form-label">Order notes <span class="font-normal text-ink-400">(optional)</span></label>
-                <p class="text-xs text-ink-500">Anything about your order (not the address) — gifts, sizing, or special requests.</p>
-                <textarea name="customer_notes" id="customer_notes" rows="3" class="form-input mt-1.5 min-h-[6rem] resize-y py-3">{{ old('customer_notes') }}</textarea>
+            <div class="checkout-fieldset space-y-4">
+                <h2 class="checkout-fieldset__legend">Notes</h2>
+                <div>
+                    <label for="customer_notes" class="form-label">Order notes <span class="font-normal text-ink-400">(optional)</span></label>
+                    <p class="text-xs text-ink-500">Anything about your order (not the address) — gifts, sizing, or special requests.</p>
+                    <textarea name="customer_notes" id="customer_notes" rows="3" class="form-input mt-1.5 min-h-[6rem] resize-y py-3">{{ old('customer_notes') }}</textarea>
+                </div>
             </div>
 
             <div class="flex flex-wrap gap-3">
@@ -133,8 +136,8 @@
         </form>
 
         <aside class="lg:col-span-2">
-            <div class="sticky top-24 space-y-4 rounded-3xl border border-ink-200/60 bg-ink-50/80 p-6">
-                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Order summary</h2>
+            <div class="checkout-summary sticky top-24 space-y-5">
+                <h2 class="font-display text-xs font-bold uppercase tracking-[0.18em] text-ink-500">Order summary</h2>
                 <ul class="space-y-3 text-sm text-ink-700">
                     @foreach ($lines as $line)
                         @php

@@ -15,50 +15,45 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 @inject('cartService', \App\Services\CartService::class)
-<body class="flex min-h-full flex-col bg-page-mesh font-sans text-ink-950 antialiased">
+<body class="flex min-h-full flex-col bg-page-mesh font-sans text-base leading-relaxed text-ink-900 antialiased">
     <div class="flex min-h-full flex-1 flex-col" x-data="{ mobileOpen: false }" @keydown.window.escape="mobileOpen = false">
-        <p class="bg-ink-950 px-4 py-2.5 text-center text-[10px] font-bold uppercase leading-snug tracking-mega text-white/90 text-balance sm:text-xs">
-            Women&apos;s performance gym wear · engineered fit · free returns on first order
-        </p>
+        <x-store-promo-bar />
 
-        <header class="sticky top-0 z-50 border-b border-white/[0.06] bg-ink-950/75 text-white shadow-[0_8px_32px_-8px_rgba(0,0,0,0.45)] backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-ink-950/65">
-            <div class="page-shell flex h-14 items-center justify-between gap-4 lg:h-16">
-                <div class="flex min-w-0 items-center gap-6 lg:gap-10">
-                    <a href="{{ route('shop.index') }}" class="font-display truncate text-lg font-bold uppercase tracking-mega text-white transition-opacity hover:opacity-90 lg:text-xl">
-                        {{ config('app.name') }}
+        <header class="sticky top-0 z-50 border-b border-white/[0.06] bg-ink-950 text-white shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-ink-950/90">
+            <div class="page-shell flex h-14 items-center gap-3 sm:gap-4 lg:h-[4.25rem]">
+                <a href="{{ route('home') }}" class="font-display shrink-0 truncate text-lg font-bold uppercase tracking-mega text-white transition-opacity hover:opacity-90 lg:text-xl">
+                    {{ config('app.name') }}
+                </a>
+
+                <x-store-search-form variant="header" />
+
+                <nav class="hidden items-center gap-0.5 lg:flex lg:shrink-0" aria-label="Primary">
+                    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
+                    <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
+                    <a href="{{ route('cart.index') }}" class="nav-link {{ request()->routeIs('cart.*') ? 'nav-link-active' : '' }}">
+                        Cart
+                        @if ($cartService->count() > 0)
+                            <span class="ml-1 rounded-full bg-accent-500 px-1.5 py-0.5 text-[10px] font-bold text-white">{{ $cartService->count() }}</span>
+                        @endif
                     </a>
+                    @auth
+                        <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.*') ? 'nav-link-active' : '' }}">Orders</a>
+                        @if (auth()->user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">Dashboard</a>
+                        @endif
+                    @endauth
+                </nav>
 
-                    <nav class="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
-                        <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
-                        <a href="{{ route('cart.index') }}" class="nav-link {{ request()->routeIs('cart.*') ? 'nav-link-active' : '' }}">
-                            Cart
-                            @if ($cartService->count() > 0)
-                                <span class="ml-1 rounded-full bg-accent-500 px-1.5 py-0.5 text-[10px] font-bold text-white">{{ $cartService->count() }}</span>
-                            @endif
-                        </a>
-                        @guest
-                            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
-                        @endguest
-                        @auth
-                            <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.*') ? 'nav-link-active' : '' }}">Orders</a>
-                            @if (auth()->user()->isAdmin())
-                                <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'nav-link-active' : '' }}">Categories</a>
-                                <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.products.*') ? 'nav-link-active' : '' }}">Products</a>
-                                <a href="{{ route('admin.orders.index') }}" class="nav-link {{ request()->routeIs('admin.orders.*') ? 'nav-link-active' : '' }}">Store orders</a>
-                                <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'nav-link-active' : '' }}">Team</a>
-                            @endif
-                        @endauth
-                    </nav>
-                </div>
-
-                <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+                <div class="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
                     @guest
                         <a href="{{ route('login') }}" class="btn-ghost-inverse hidden px-3 py-2 sm:inline-flex">Log in</a>
                         <a href="{{ route('register') }}" class="btn-on-dark hidden px-4 py-2.5 sm:inline-flex">Join</a>
                     @else
                         <div class="hidden items-center gap-3 lg:flex">
-                            <span class="max-w-[9rem] truncate text-xs font-medium text-white/65" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
-                            <span class="rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-sm">{{ auth()->user()->role }}</span>
+                            <span class="{{ request()->routeIs('home') ? 'max-w-[14rem] text-white/90' : 'max-w-[9rem] text-white/65' }} truncate text-xs font-medium" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
+                            @unless (request()->routeIs('home'))
+                                <span class="rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-sm">{{ auth()->user()->role }}</span>
+                            @endunless
                         </div>
                         <form method="POST" action="{{ route('logout') }}" class="hidden lg:inline">
                             @csrf
@@ -94,22 +89,20 @@
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 -translate-y-2"
                 x-cloak
-                class="border-t border-white/10 bg-ink-950/95 backdrop-blur-xl lg:hidden"
+                class="border-t border-white/10 bg-ink-950/98 backdrop-blur-xl lg:hidden"
             >
                 <nav class="page-shell flex flex-col gap-0.5 py-4" aria-label="Mobile">
+                    <x-store-search-form variant="drawer" />
+                    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
                     <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
                     <a href="{{ route('cart.index') }}" class="nav-link {{ request()->routeIs('cart.*') ? 'nav-link-active' : '' }}">Cart @if ($cartService->count() > 0) ({{ $cartService->count() }}) @endif</a>
                     @guest
-                        <a href="{{ route('home') }}" class="nav-link">Home</a>
                         <a href="{{ route('login') }}" class="nav-link">Log in</a>
                         <a href="{{ route('register') }}" class="btn-on-dark mt-3 justify-center">Join</a>
                     @else
                         <a href="{{ route('orders.index') }}" class="nav-link">Orders</a>
                         @if (auth()->user()->isAdmin())
-                            <a href="{{ route('admin.categories.index') }}" class="nav-link">Categories</a>
-                            <a href="{{ route('admin.products.index') }}" class="nav-link">Products</a>
-                            <a href="{{ route('admin.orders.index') }}" class="nav-link">Store orders</a>
-                            <a href="{{ route('admin.users.index') }}" class="nav-link">Team</a>
+                            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">Dashboard</a>
                         @endif
                         <form method="POST" action="{{ route('logout') }}" class="mt-4 border-t border-white/10 pt-4">
                             @csrf
@@ -162,19 +155,19 @@
                 @yield('content')
             </div>
         @else
-            <div class="page-shell flex-1 pb-14 pt-1 lg:pb-20 lg:pt-2">
+            <div class="page-shell flex-1 pb-16 pt-2 lg:pb-24 lg:pt-4">
                 @yield('content')
             </div>
         @endif
 
-        <footer class="mt-auto border-t border-white/[0.07] bg-ink-950 text-white">
-            <div class="page-shell grid gap-12 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10 lg:py-16">
+        <footer class="mt-auto border-t border-white/[0.08] bg-gradient-to-b from-ink-950 to-[#050506] text-white">
+            <div class="page-shell grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-20">
                 <div class="sm:col-span-2 lg:col-span-1">
                     <p class="font-display text-lg font-bold uppercase tracking-mega">{{ config('app.name') }}</p>
                     <p class="mt-4 max-w-sm text-sm leading-relaxed text-white/55 text-pretty">Performance gym wear designed for women who train hard. Cut, fabric, and finish built for the floor.</p>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-mega text-white/35">Shop</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40">Shop</p>
                     <ul class="mt-5 space-y-3 text-sm">
                         <li><a href="{{ route('shop.index') }}" class="text-white/65 transition-colors duration-200 hover:text-white">All women&apos;s</a></li>
                         <li><a href="{{ route('shop.index') }}#leggings" class="text-white/65 transition-colors duration-200 hover:text-white">Leggings</a></li>
@@ -183,7 +176,7 @@
                     </ul>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-mega text-white/35">Help</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40">Help</p>
                     <ul class="mt-5 space-y-3 text-sm">
                         <li><a href="#" class="text-white/65 transition-colors duration-200 hover:text-white">Shipping</a></li>
                         <li><a href="#" class="text-white/65 transition-colors duration-200 hover:text-white">Returns</a></li>
@@ -191,7 +184,7 @@
                     </ul>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-mega text-white/35">Account</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40">Account</p>
                     <ul class="mt-5 space-y-3 text-sm">
                         @guest
                             <li><a href="{{ route('login') }}" class="text-white/65 transition-colors duration-200 hover:text-white">Log in</a></li>

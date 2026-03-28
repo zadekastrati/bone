@@ -1,10 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'New category')
 
 @section('content')
     <x-page-header title="New category" subtitle="Slug is used in URLs. Leave blank to generate from the name.">
-        <a href="{{ route('admin.categories.index') }}" class="btn-secondary">Back</a>
+        <a href="{{ route('admin.products.index') }}" class="btn-secondary">Back to products</a>
+        <a href="{{ route('admin.categories.index') }}" class="btn-secondary">Categories</a>
     </x-page-header>
 
     <form method="POST" action="{{ route('admin.categories.store') }}" class="mt-10 max-w-xl space-y-6">

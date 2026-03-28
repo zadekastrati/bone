@@ -1,10 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Edit category')
 
 @section('content')
     <x-page-header title="Edit category" :subtitle="$category->name">
-        <a href="{{ route('admin.categories.index') }}" class="btn-secondary">Back</a>
+        <a href="{{ route('admin.products.index') }}" class="btn-secondary">Back to products</a>
+        <a href="{{ route('admin.categories.index') }}" class="btn-secondary">Categories</a>
     </x-page-header>
 
     <form method="POST" action="{{ route('admin.categories.update', $category->id) }}" class="mt-10 max-w-xl space-y-6">

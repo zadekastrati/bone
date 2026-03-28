@@ -8,41 +8,53 @@
             <a href="{{ route('login') }}" class="btn-primary">Log in to checkout</a>
         @else
             @if ($lines->isNotEmpty())
-                <a href="{{ route('checkout.create') }}" class="btn-primary">Checkout</a>
+                @if (auth()->user()->hasVerifiedEmail())
+                    <a href="{{ route('checkout.create') }}" class="btn-primary">Checkout</a>
+                @else
+                    <a href="{{ route('verification.notice') }}" class="btn-primary">Verify email to checkout</a>
+                @endif
             @endif
         @endguest
     </x-page-header>
 
     @if ($lines->isEmpty())
-        <p class="mt-10 text-ink-600">Your cart is empty.</p>
-        <a href="{{ route('shop.index') }}" class="btn-secondary mt-6 inline-flex">Continue shopping</a>
+        <div class="surface-muted mt-10 flex flex-col items-center px-8 py-16 text-center sm:py-20">
+            <div class="flex size-16 items-center justify-center rounded-2xl border border-ink-200/60 bg-white shadow-soft">
+                <svg class="size-8 text-ink-400" fill="none" viewBox="0 0 24 24" stroke-width="1.25" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.25 10.5a3.75 3.75 0 1 1 7.5 0" />
+                </svg>
+            </div>
+            <p class="font-display mt-6 text-xl font-bold uppercase tracking-wide text-ink-950">Your bag is empty</p>
+            <p class="mt-2 max-w-sm text-sm text-ink-600 text-pretty">Add pieces from the shop — they&apos;ll show up here with size and colour.</p>
+            <a href="{{ route('shop.index') }}" class="btn-primary mt-8 inline-flex px-10">Continue shopping</a>
+        </div>
     @else
-        <div class="mt-10 overflow-hidden rounded-3xl border border-ink-200/60 bg-white/95 shadow-soft ring-1 ring-ink-950/[0.03]">
+        <div class="table-shell mt-10">
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-ink-200 text-left text-sm">
-                    <thead class="bg-ink-50/90">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <th class="px-5 py-3.5 font-semibold text-ink-700">Product</th>
-                            <th class="px-5 py-3.5 font-semibold text-ink-700">Variant</th>
-                            <th class="px-5 py-3.5 font-semibold text-ink-700">Price</th>
-                            <th class="px-5 py-3.5 font-semibold text-ink-700">Qty</th>
-                            <th class="px-5 py-3.5 font-semibold text-ink-700">Line</th>
-                            <th class="px-5 py-3.5"></th>
+                            <th>Product</th>
+                            <th>Variant</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Line</th>
+                            <th></th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-ink-100">
+                    <tbody>
                         @foreach ($lines as $line)
                             @php
                                 $v = $line['variant'];
                                 $p = $v->product;
                             @endphp
                             <tr>
-                                <td class="px-5 py-4">
+                                <td>
                                     <a href="{{ route('shop.product', [$p->category, $p]) }}" class="font-medium text-ink-950 hover:text-accent-700">{{ $p->name }}</a>
                                 </td>
-                                <td class="px-5 py-4 text-ink-600">{{ $v->color }} · {{ $v->size }}</td>
-                                <td class="px-5 py-4">{{ config('store.currency_symbol') }}{{ number_format((float) $p->price, 2) }}</td>
-                                <td class="px-5 py-4">
+                                <td class="text-ink-600">{{ $v->color }} · {{ $v->size }}</td>
+                                <td class="tabular-nums">{{ config('store.currency_symbol') }}{{ number_format((float) $p->price, 2) }}</td>
+                                <td>
                                     <form method="POST" action="{{ route('cart.update', $v->id) }}" class="flex items-center gap-2">
                                         @csrf
                                         @method('PATCH')
@@ -50,8 +62,8 @@
                                         <button type="submit" class="link-brand text-xs">Update</button>
                                     </form>
                                 </td>
-                                <td class="px-5 py-4 font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $line['line_total'], 2) }}</td>
-                                <td class="px-5 py-4 text-right">
+                                <td class="tabular-nums font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $line['line_total'], 2) }}</td>
+                                <td class="text-right">
                                     <form method="POST" action="{{ route('cart.destroy', $v->id) }}" onsubmit="return confirm('Remove this item?');">
                                         @csrf
                                         @method('DELETE')
@@ -65,10 +77,10 @@
             </div>
         </div>
 
-        <div class="mt-8 flex flex-col items-end gap-4">
+        <div class="surface-muted mt-10 flex max-w-md flex-col items-end gap-4 sm:ml-auto">
             <p class="text-lg font-semibold text-ink-950">
-                Subtotal:
-                <span class="text-accent-700">{{ config('store.currency_symbol') }}{{ number_format((float) $subtotal, 2) }}</span>
+                Subtotal
+                <span class="ml-2 text-accent-700">{{ config('store.currency_symbol') }}{{ number_format((float) $subtotal, 2) }}</span>
             </p>
             @guest
                 <p class="max-w-md text-right text-sm text-ink-600">Log in or register to enter shipping details and place your order.</p>
@@ -77,7 +89,12 @@
                     <a href="{{ route('register') }}" class="btn-secondary">Register</a>
                 </div>
             @else
-                <a href="{{ route('checkout.create') }}" class="btn-primary px-10 py-3">Proceed to checkout</a>
+                @if (auth()->user()->hasVerifiedEmail())
+                    <a href="{{ route('checkout.create') }}" class="btn-primary px-10 py-3">Proceed to checkout</a>
+                @else
+                    <p class="max-w-md text-right text-sm text-ink-600">Confirm your email address before you can place an order.</p>
+                    <a href="{{ route('verification.notice') }}" class="btn-primary px-10 py-3">Verify email</a>
+                @endif
             @endguest
         </div>
     @endif

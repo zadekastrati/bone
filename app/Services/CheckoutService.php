@@ -3,13 +3,15 @@
 namespace App\Services;
 
 use App\Enums\OrderStatus;
-use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Mail\OrderPlacedMail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutService
 {
@@ -29,7 +31,7 @@ class CheckoutService
      *     shipping_postal_code: ?string,
      *     shipping_country: string,
      *     shipping_delivery_notes: ?string,
-     *     payment_method: PaymentMethod,
+     *     payment_method: \App\Enums\PaymentMethod,
      *     customer_notes: ?string
      * }  $data
      */
@@ -40,19 +42,15 @@ class CheckoutService
             throw new \InvalidArgumentException('Your cart is empty.');
         }
 
-        return DB::transaction(function () use ($user, $data, $lines) {
+        $order = DB::transaction(function () use ($user, $data, $lines) {
             $subtotal = $this->cart->subtotal();
             $shipping = $this->shippingAmountForCountry($data['shipping_country']);
-
-            $paymentStatus = $data['payment_method'] === PaymentMethod::CashOnDelivery
-                ? PaymentStatus::Pending
-                : PaymentStatus::Pending;
 
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => OrderStatus::Pending,
                 'payment_method' => $data['payment_method'],
-                'payment_status' => $paymentStatus,
+                'payment_status' => PaymentStatus::Pending,
                 'shipping_first_name' => $data['shipping_first_name'],
                 'shipping_last_name' => $data['shipping_last_name'],
                 'shipping_phone' => $data['shipping_phone'],
@@ -69,12 +67,34 @@ class CheckoutService
                 'customer_notes' => $data['customer_notes'],
             ]);
 
+            $variantIds = $lines
+                ->map(fn (array $line): int => $line['variant']->id)
+                ->unique()
+                ->sort()
+                ->values()
+                ->all();
+
+            $lockedVariants = ProductVariant::query()
+                ->whereIn('id', $variantIds)
+                ->orderBy('id')
+                ->with('product')
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
             foreach ($lines as $line) {
-                /** @var ProductVariant $variant */
-                $variant = $line['variant'];
+                $variantId = $line['variant']->id;
+                $variant = $lockedVariants->get($variantId);
+                if ($variant === null) {
+                    throw new \RuntimeException('A product in your cart is no longer available.');
+                }
+
                 $qty = $line['quantity'];
 
-                $variant->refresh();
+                if (! $variant->product->is_active || $variant->product->trashed()) {
+                    throw new \RuntimeException('A product in your cart is no longer available.');
+                }
+
                 if (! $variant->isInStock($qty)) {
                     throw new \RuntimeException('Insufficient stock for '.$variant->product->name.' ('.$variant->color.' / '.$variant->size.').');
                 }
@@ -101,6 +121,18 @@ class CheckoutService
 
             return $order->load('items');
         });
+
+        try {
+            Mail::to($user->email)->send(new OrderPlacedMail($order));
+        } catch (\Throwable $e) {
+            Log::error('Order confirmation email failed', [
+                'order_id' => $order->id,
+                'user_id' => $user->id,
+                'exception' => $e->getMessage(),
+            ]);
+        }
+
+        return $order;
     }
 
     private function shippingAmountForCountry(string $countryCode): string

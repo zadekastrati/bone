@@ -1,20 +1,20 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Order '.$order->order_number)
 
 @section('content')
-    <nav class="text-xs font-medium text-ink-500">
-        <a href="{{ route('admin.orders.index') }}" class="hover:text-accent-600">Orders</a>
-        <span class="mx-1.5 text-ink-300">/</span>
-        <span class="text-ink-800">{{ $order->order_number }}</span>
+    <nav class="crumbs crumbs--admin" aria-label="Breadcrumb">
+        <a href="{{ route('admin.orders.index') }}">Orders</a>
+        <span class="mx-1.5 text-slate-300">/</span>
+        <span class="text-slate-800">{{ $order->order_number }}</span>
     </nav>
 
     <x-page-header :title="'Order '.$order->order_number" :subtitle="'Customer: '.$order->user->email" />
 
     <div class="mt-10 grid gap-10 lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-2">
-            <div class="rounded-3xl border border-ink-200/60 bg-white/95 p-6 shadow-soft">
-                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Line items</h2>
+            <div class="admin-panel p-6">
+                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-slate-900">Line items</h2>
                 <ul class="mt-4 divide-y divide-ink-100 text-sm">
                     @foreach ($order->items as $item)
                         <li class="flex flex-wrap items-center justify-between gap-3 py-4">
@@ -45,8 +45,8 @@
                 </div>
             </div>
 
-            <div class="rounded-3xl border border-ink-200/60 bg-white/95 p-6 shadow-soft">
-                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Shipping address</h2>
+            <div class="admin-panel p-6">
+                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-slate-900">Shipping address</h2>
                 <p class="mt-3 text-sm leading-relaxed text-ink-700">
                     {{ $order->shipping_first_name }} {{ $order->shipping_last_name }}<br>
                     {{ $order->shipping_street }}<br>
@@ -74,7 +74,7 @@
         </div>
 
         <aside>
-            <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="space-y-4 rounded-3xl border border-ink-200/60 bg-ink-50/90 p-6 shadow-soft">
+            <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="admin-form-surface space-y-4">
                 @csrf
                 @method('PATCH')
                 <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Admin</h2>

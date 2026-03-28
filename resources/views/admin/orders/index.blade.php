@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Store orders')
 
@@ -27,39 +27,39 @@
         @endif
     </form>
 
-    <div class="mt-10 overflow-hidden rounded-3xl border border-ink-200/60 bg-white/95 shadow-soft ring-1 ring-ink-950/[0.03]">
+    <div class="table-shell--admin mt-10">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-ink-200 text-left text-sm">
-                <thead class="bg-ink-50/90">
+            <table class="data-table data-table--admin">
+                <thead>
                     <tr>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Order</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Customer</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Date</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Status</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Total</th>
-                        <th class="px-5 py-3.5"></th>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-ink-100">
+                <tbody>
                     @forelse ($orders as $order)
                         <tr>
-                            <td class="px-5 py-3.5 font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</td>
-                            <td class="px-5 py-3.5">
-                                <span class="font-medium text-ink-950">{{ $order->user->name }}</span>
-                                <span class="mt-0.5 block text-xs text-ink-500">{{ $order->user->email }}</span>
+                            <td class="font-mono text-xs font-semibold text-slate-900">{{ $order->order_number }}</td>
+                            <td>
+                                <span class="font-medium text-slate-900">{{ $order->user->name }}</span>
+                                <span class="mt-0.5 block text-xs text-slate-500">{{ $order->user->email }}</span>
                             </td>
-                            <td class="px-5 py-3.5 text-ink-600">{{ $order->created_at->format('M j, Y H:i') }}</td>
-                            <td class="px-5 py-3.5">
-                                <span class="inline-flex rounded-full bg-ink-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-ink-800">{{ $order->status->label() }}</span>
+                            <td class="text-slate-600">{{ $order->created_at->format('M j, Y H:i') }}</td>
+                            <td>
+                                <span class="inline-flex rounded-full border border-slate-200/90 bg-slate-50 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-800">{{ $order->status->label() }}</span>
                             </td>
-                            <td class="px-5 py-3.5 font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $order->total, 2) }}</td>
-                            <td class="px-5 py-3.5 text-right">
-                                <a href="{{ route('admin.orders.show', $order) }}" class="link-brand text-sm">Manage</a>
+                            <td class="font-semibold text-slate-900">{{ config('store.currency_symbol') }}{{ number_format((float) $order->total, 2) }}</td>
+                            <td class="text-right">
+                                <a href="{{ route('admin.orders.show', $order) }}" class="admin-action-link">Manage</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-12 text-center text-ink-600">No orders found.</td>
+                            <td colspan="6" class="data-table-empty text-slate-500">No orders found.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -67,7 +67,7 @@
         </div>
     </div>
 
-    <div class="mt-10 flex justify-center">
+    <div class="pagination-wrap pagination-wrap--admin">
         {{ $orders->links() }}
     </div>
 @endsection

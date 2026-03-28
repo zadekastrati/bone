@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'New product')
 
@@ -71,37 +71,37 @@
                 <legend class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Variants</legend>
                 <button type="button" class="btn-secondary text-sm" @click="addRow()">Add row</button>
             </div>
-            <div class="mt-6 overflow-x-auto">
-                <table class="min-w-full text-left text-sm">
+            <div class="mt-6 overflow-x-auto rounded-lg border border-slate-200/80">
+                <table class="data-table data-table--admin data-table--compact min-w-full">
                     <thead>
-                        <tr class="border-b border-ink-200 text-xs font-bold uppercase tracking-mega text-ink-500">
-                            <th class="py-2 pr-3">Color</th>
-                            <th class="py-2 pr-3">Hex</th>
-                            <th class="py-2 pr-3">Size</th>
-                            <th class="py-2 pr-3">SKU</th>
-                            <th class="py-2 pr-3">Stock</th>
-                            <th class="py-2"></th>
+                        <tr>
+                            <th>Color</th>
+                            <th>Hex</th>
+                            <th>Size</th>
+                            <th>SKU</th>
+                            <th>Stock</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <template x-for="(row, i) in rows" :key="'r-' + i">
-                            <tr class="border-b border-ink-100 align-top">
-                                <td class="py-2 pr-3">
+                            <tr class="align-top">
+                                <td>
                                     <input type="text" :name="'variants[' + i + '][color]'" x-model="row.color" class="form-input py-1.5 text-sm" required>
                                 </td>
-                                <td class="py-2 pr-3">
+                                <td>
                                     <input type="text" :name="'variants[' + i + '][color_hex]'" x-model="row.color_hex" class="form-input py-1.5 text-sm" placeholder="#000000">
                                 </td>
-                                <td class="py-2 pr-3">
+                                <td>
                                     <input type="text" :name="'variants[' + i + '][size]'" x-model="row.size" class="form-input py-1.5 text-sm" required>
                                 </td>
-                                <td class="py-2 pr-3">
+                                <td>
                                     <input type="text" :name="'variants[' + i + '][sku]'" x-model="row.sku" class="form-input py-1.5 text-sm">
                                 </td>
-                                <td class="py-2 pr-3">
+                                <td>
                                     <input type="number" :name="'variants[' + i + '][stock_quantity]'" x-model="row.stock_quantity" min="0" class="form-input py-1.5 text-sm" required>
                                 </td>
-                                <td class="py-2 text-right">
+                                <td class="text-right">
                                     <button type="button" class="text-xs font-semibold text-red-600 hover:text-red-800" @click="removeRow(i)" x-show="rows.length > 1">Remove</button>
                                 </td>
                             </tr>

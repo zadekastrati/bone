@@ -3,8 +3,8 @@
 @section('title', 'Order '.$order->order_number)
 
 @section('content')
-    <nav class="text-xs font-medium text-ink-500">
-        <a href="{{ route('orders.index') }}" class="hover:text-accent-600">Orders</a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="{{ route('orders.index') }}">Orders</a>
         <span class="mx-1.5 text-ink-300">/</span>
         <span class="text-ink-800">{{ $order->order_number }}</span>
     </nav>
@@ -13,7 +13,7 @@
 
     <div class="mt-10 grid gap-10 lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-2">
-            <div class="rounded-3xl border border-ink-200/60 bg-white/95 p-6 shadow-soft">
+            <div class="panel">
                 <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Items</h2>
                 <ul class="mt-4 divide-y divide-ink-100 text-sm">
                     @foreach ($order->items as $item)
@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <div class="rounded-3xl border border-ink-200/60 bg-white/95 p-6 shadow-soft">
+            <div class="panel">
                 <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Ship to</h2>
                 <p class="mt-3 text-sm leading-relaxed text-ink-700">
                     {{ $order->shipping_first_name }} {{ $order->shipping_last_name }}<br>
@@ -74,7 +74,7 @@
         </div>
 
         <aside class="space-y-6">
-            <div class="rounded-3xl border border-ink-200/60 bg-ink-50/90 p-6">
+            <div class="border border-ink-200/50 bg-ink-50/60 p-6 shadow-soft sm:rounded-2xl">
                 <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Status</h2>
                 <dl class="mt-4 space-y-3 text-sm">
                     <div>
@@ -95,7 +95,7 @@
             </div>
 
             @if ($order->payment_method === \App\Enums\PaymentMethod::BankTransfer)
-                <div class="rounded-3xl border border-accent-200/60 bg-accent-50/90 p-6">
+                <div class="rounded-2xl border border-accent-200/60 bg-accent-50/90 p-6 shadow-soft">
                     <h2 class="font-display text-sm font-bold uppercase tracking-wide text-accent-950">Bank transfer</h2>
                     <p class="mt-3 text-sm leading-relaxed text-accent-950/90">{{ config('store.bank.instructions') }}</p>
                     <dl class="mt-4 space-y-2 text-sm text-accent-950">

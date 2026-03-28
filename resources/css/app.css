@@ -5,12 +5,30 @@
 @layer base {
     html {
         scroll-behavior: smooth;
+        -webkit-tap-highlight-color: rgb(244 63 94 / 0.12);
     }
 
     @media (prefers-reduced-motion: reduce) {
         html {
             scroll-behavior: auto;
         }
+    }
+
+    /*
+     | Removes the ~300ms “double-tap to zoom” delay on mobile Safari/Chrome so
+     | links and buttons respond on the first tap.
+     */
+    a[href],
+    button,
+    input,
+    select,
+    textarea,
+    label {
+        touch-action: manipulation;
+    }
+
+    ::selection {
+        @apply bg-accent-100 text-ink-950;
     }
 }
 
@@ -20,11 +38,11 @@
     }
 
     .heading-page {
-        @apply font-display text-2xl font-semibold uppercase tracking-wide text-ink-950 text-balance sm:text-3xl;
+        @apply font-display text-3xl font-bold uppercase tracking-tight text-ink-950 text-balance sm:text-4xl sm:tracking-wide;
     }
 
     .text-muted {
-        @apply text-sm leading-relaxed text-ink-600 text-pretty;
+        @apply text-base leading-relaxed text-ink-600 text-pretty sm:text-[15px] sm:leading-relaxed;
     }
 
     .btn {
@@ -68,15 +86,15 @@
     }
 
     .form-input {
-        @apply mt-1.5 block w-full rounded-xl border border-ink-200/90 bg-white px-4 py-3 text-ink-950 shadow-sm transition-all duration-200 placeholder:text-ink-400 focus:border-accent-500/80 focus:outline-none focus:ring-4 focus:ring-accent-500/15;
+        @apply mt-1.5 block w-full rounded-2xl border border-ink-200/90 bg-white px-4 py-3.5 text-ink-950 shadow-sm transition-all duration-200 placeholder:text-ink-400 focus:border-accent-400/90 focus:outline-none focus:ring-4 focus:ring-accent-500/15;
     }
 
     .form-textarea {
-        @apply mt-1.5 block w-full min-h-[10rem] resize-y rounded-xl border border-ink-200/90 bg-white px-4 py-3 text-ink-950 shadow-sm transition-all duration-200 placeholder:text-ink-400 focus:border-accent-500/80 focus:outline-none focus:ring-4 focus:ring-accent-500/15;
+        @apply mt-1.5 block w-full min-h-[10rem] resize-y rounded-2xl border border-ink-200/90 bg-white px-4 py-3.5 text-ink-950 shadow-sm transition-all duration-200 placeholder:text-ink-400 focus:border-accent-400/90 focus:outline-none focus:ring-4 focus:ring-accent-500/15;
     }
 
     .form-select {
-        @apply mt-1.5 block w-full rounded-xl border border-ink-200/90 bg-white px-4 py-3 text-ink-950 shadow-sm transition-all duration-200 focus:border-accent-500/80 focus:outline-none focus:ring-4 focus:ring-accent-500/15;
+        @apply mt-1.5 block w-full rounded-2xl border border-ink-200/90 bg-white px-4 py-3.5 text-ink-950 shadow-sm transition-all duration-200 focus:border-accent-400/90 focus:outline-none focus:ring-4 focus:ring-accent-500/15;
     }
 
     .form-file {
@@ -88,7 +106,310 @@
     }
 
     .panel {
-        @apply rounded-2xl border border-ink-200/60 bg-white/90 p-6 shadow-soft ring-1 ring-ink-950/[0.04] backdrop-blur-sm sm:p-8;
+        @apply rounded-2xl border border-ink-200/60 bg-white p-6 shadow-soft sm:p-8;
+    }
+
+    /* Storefront cards — one clean pattern (no stacked ring + heavy shadow) */
+    .store-card {
+        @apply overflow-hidden rounded-2xl border border-ink-200/50 bg-white shadow-soft transition duration-300 ease-out;
+    }
+
+    .store-card-interactive {
+        @apply store-card hover:border-accent-200/60 hover:shadow-soft-lg motion-reduce:transition-none;
+    }
+
+    .surface-card {
+        @apply rounded-2xl border border-ink-200/60 bg-white p-6 shadow-soft sm:p-8;
+    }
+
+    .surface-muted {
+        @apply rounded-2xl border border-ink-200/50 bg-ink-50/80 p-6 sm:p-8;
+    }
+
+    /* Data tables — storefront (readable, not spreadsheet-heavy) */
+    .table-shell {
+        @apply overflow-hidden rounded-3xl border border-ink-200/40 bg-white shadow-elevated ring-1 ring-ink-950/[0.03];
+    }
+
+    .table-shell--admin {
+        @apply rounded-xl border-slate-200/90 bg-white shadow-[0_1px_2px_rgb(15_23_42/0.05),0_16px_40px_-12px_rgb(15_23_42/0.12)] ring-1 ring-slate-950/[0.04];
+    }
+
+    .data-table {
+        @apply min-w-full border-collapse text-left text-[15px] text-ink-800;
+    }
+
+    .data-table thead {
+        @apply bg-ink-100/35;
+    }
+
+    .data-table thead tr {
+        @apply border-b border-ink-200/60;
+    }
+
+    .data-table th {
+        @apply px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-ink-500 first:pl-6 last:pr-6 sm:px-5;
+    }
+
+    .data-table tbody tr {
+        @apply border-b border-ink-100/80 transition-colors duration-150 hover:bg-white;
+    }
+
+    .data-table tbody tr:last-child {
+        @apply border-b-0;
+    }
+
+    .data-table td {
+        @apply px-4 py-4 align-middle first:pl-6 last:pr-6 sm:px-5;
+    }
+
+    .data-table td.data-table-empty {
+        @apply py-16 text-center text-sm text-ink-500;
+    }
+
+    .data-table--admin td.data-table-empty {
+        @apply text-slate-500;
+    }
+
+    .data-table--admin thead {
+        @apply bg-gradient-to-b from-slate-50 to-slate-100/95;
+    }
+
+    .data-table--admin thead tr {
+        @apply border-slate-200/90;
+    }
+
+    .data-table--admin th {
+        @apply text-slate-500;
+    }
+
+    .data-table--admin tbody tr {
+        @apply border-slate-100 hover:bg-slate-50/95;
+    }
+
+    .data-table--admin td {
+        @apply text-slate-700;
+    }
+
+    .admin-action-link {
+        @apply text-sm font-semibold text-rose-600 transition-colors hover:text-rose-500;
+    }
+
+    .data-table--compact th {
+        @apply py-2.5 text-[10px] tracking-[0.1em];
+    }
+
+    .data-table--compact td {
+        @apply py-2.5;
+    }
+
+    .pagination-wrap {
+        @apply mt-12 flex w-full justify-center px-0 sm:px-2;
+    }
+
+    /* —— Custom pagination (resources/views/vendor/pagination/tailwind.blade.php) —— */
+    .pagination-nav {
+        @apply w-full max-w-xl;
+    }
+
+    /* Surfaces align with .table-shell (shop) and .table-shell--admin */
+    .pagination-nav__surface {
+        @apply relative overflow-hidden rounded-2xl border border-ink-200/50 bg-white px-4 py-5 shadow-soft sm:px-6;
+    }
+
+    .pagination-wrap--admin .pagination-nav__surface {
+        @apply rounded-xl border-slate-200/90 shadow-[0_1px_2px_rgb(15_23_42/0.05),0_16px_40px_-12px_rgb(15_23_42/0.12)] ring-1 ring-slate-950/[0.04];
+    }
+
+    .pagination-nav__surface--simple {
+        @apply px-4 py-4 sm:px-5;
+    }
+
+    .pagination-nav__track {
+        @apply mb-5 h-1.5 w-full overflow-hidden rounded-full bg-ink-100/90;
+    }
+
+    .pagination-wrap--admin .pagination-nav__track {
+        @apply bg-slate-100;
+    }
+
+    .pagination-nav__progress {
+        @apply h-full rounded-full bg-gradient-to-r from-accent-500 via-accent-500 to-accent-600 shadow-sm transition-[width] duration-500 ease-out motion-reduce:transition-none;
+    }
+
+    .pagination-wrap--admin .pagination-nav__progress {
+        @apply from-rose-500 via-rose-500 to-rose-600;
+    }
+
+    .pagination-nav__layout {
+        @apply flex flex-col gap-4;
+    }
+
+    .pagination-nav__meta {
+        @apply text-center font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-ink-500 sm:text-left;
+    }
+
+    .pagination-wrap--admin .pagination-nav__meta {
+        @apply text-slate-500;
+    }
+
+    .pagination-nav__meta-strong {
+        @apply text-ink-950 tabular-nums;
+    }
+
+    .pagination-wrap--admin .pagination-nav__meta-strong {
+        @apply text-slate-900;
+    }
+
+    .pagination-nav__meta-dash {
+        @apply mx-1 text-ink-400;
+    }
+
+    .pagination-nav__meta-of {
+        @apply mx-1.5 text-ink-400;
+    }
+
+    .pagination-nav__meta-label {
+        @apply ml-2 font-sans text-[10px] font-normal normal-case tracking-normal text-ink-400;
+    }
+
+    .pagination-wrap--admin .pagination-nav__meta-label {
+        @apply text-slate-400;
+    }
+
+    .pagination-nav__page-indicator {
+        @apply flex shrink-0 items-baseline gap-1 rounded-xl border border-ink-200/50 bg-ink-50/50 px-3 py-2 font-display text-sm font-bold uppercase tracking-mega text-ink-950;
+    }
+
+    .pagination-wrap--admin .pagination-nav__page-indicator {
+        @apply border-slate-200/90 bg-slate-50 text-slate-900;
+    }
+
+    .pagination-nav__page-indicator-sep {
+        @apply text-ink-300;
+    }
+
+    .pagination-wrap--admin .pagination-nav__page-indicator-sep {
+        @apply text-slate-300;
+    }
+
+    .pagination-nav__page-indicator-total {
+        @apply text-ink-500;
+    }
+
+    .pagination-wrap--admin .pagination-nav__page-indicator-total {
+        @apply text-slate-500;
+    }
+
+    .pagination-nav__mob-btn {
+        @apply inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border border-ink-200/50 bg-white px-3 py-2.5 text-[10px] font-bold uppercase tracking-mega text-ink-800 shadow-soft transition hover:border-accent-400/50 hover:bg-accent-50/40 hover:text-ink-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/35;
+    }
+
+    .pagination-wrap--admin .pagination-nav__mob-btn {
+        @apply border-slate-200/90 text-slate-800 shadow-[0_1px_2px_rgb(15_23_42/0.04)] hover:border-rose-300/80 hover:bg-rose-50/80 hover:text-slate-950 focus-visible:ring-rose-500/30;
+    }
+
+    .pagination-nav__mob-btn--disabled {
+        @apply cursor-not-allowed border-ink-100 bg-ink-50/50 text-ink-400 opacity-70 hover:border-ink-100 hover:bg-ink-50/50 hover:text-ink-400;
+    }
+
+    .pagination-wrap--admin .pagination-nav__mob-btn--disabled {
+        @apply border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-100 hover:bg-slate-50 hover:text-slate-400;
+    }
+
+    .pagination-nav__chev {
+        @apply size-4 shrink-0 opacity-80;
+    }
+
+    .pagination-nav__rail {
+        @apply rounded-2xl border border-ink-200/50 bg-ink-50/40 p-1 shadow-inner;
+    }
+
+    .pagination-wrap--admin .pagination-nav__rail {
+        @apply border-slate-200/90 bg-gradient-to-b from-slate-50 to-slate-100/90;
+    }
+
+    .pagination-nav__icon-btn {
+        @apply inline-flex size-10 items-center justify-center rounded-xl text-ink-500 transition hover:bg-white hover:text-ink-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/25;
+    }
+
+    .pagination-wrap--admin .pagination-nav__icon-btn {
+        @apply text-slate-600 hover:bg-white hover:text-slate-950 focus-visible:ring-rose-500/25;
+    }
+
+    .pagination-nav__icon-btn--disabled {
+        @apply cursor-not-allowed text-ink-300 hover:bg-transparent hover:text-ink-300;
+    }
+
+    .pagination-wrap--admin .pagination-nav__icon-btn--disabled {
+        @apply text-slate-300 hover:bg-transparent hover:text-slate-300;
+    }
+
+    .pagination-nav__pill {
+        @apply inline-flex min-w-[2.5rem] items-center justify-center rounded-lg px-2 py-2 text-xs font-bold tabular-nums text-ink-600 transition hover:bg-white hover:text-ink-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/20 sm:min-w-[2.75rem] sm:px-3;
+    }
+
+    .pagination-wrap--admin .pagination-nav__pill {
+        @apply text-slate-600 hover:bg-white hover:text-slate-950 focus-visible:ring-rose-500/25;
+    }
+
+    /* Matches storefront primary actions (ink-950 on light UI) */
+    .pagination-nav__pill--active {
+        @apply cursor-default bg-ink-950 text-white shadow-soft ring-1 ring-ink-950/15 hover:bg-ink-950 hover:text-white;
+    }
+
+    /* Matches admin rose actions (.admin-action-link, sidebar active tint) */
+    .pagination-wrap--admin .pagination-nav__pill--active {
+        @apply bg-rose-600 text-white shadow-sm ring-1 ring-rose-600/25 hover:bg-rose-600 hover:text-white;
+    }
+
+    .pagination-nav__ellipsis {
+        @apply inline-flex min-w-[2rem] items-center justify-center px-1 py-2 text-sm font-bold text-ink-300;
+    }
+
+    .pagination-wrap--admin .pagination-nav__ellipsis {
+        @apply text-slate-300;
+    }
+
+    .pagination-nav__simple-btn {
+        @apply inline-flex w-full items-center justify-center gap-2 rounded-xl border border-ink-200/50 bg-white px-5 py-3 text-xs font-bold uppercase tracking-mega text-ink-800 shadow-soft transition hover:border-accent-400/45 hover:bg-accent-50/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/30 sm:w-auto;
+    }
+
+    .pagination-wrap--admin .pagination-nav__simple-btn {
+        @apply border-slate-200/90 text-slate-800 shadow-[0_1px_2px_rgb(15_23_42/0.04)] hover:border-rose-300/70 hover:bg-rose-50/70 focus-visible:ring-rose-500/30;
+    }
+
+    .pagination-nav__simple-btn--disabled {
+        @apply cursor-not-allowed border-ink-100 bg-ink-50 text-ink-400 opacity-75 hover:border-ink-100 hover:bg-ink-50 hover:text-ink-400;
+    }
+
+    .pagination-wrap--admin .pagination-nav__simple-btn--disabled {
+        @apply border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-100 hover:bg-slate-50 hover:text-slate-400;
+    }
+
+    .crumbs {
+        @apply mb-6 text-xs font-medium tracking-wide text-ink-500;
+    }
+
+    .crumbs a {
+        @apply text-ink-500 transition-colors hover:text-accent-600;
+    }
+
+    /* Use Tailwind hover: here — raw `a:hover` bypasses future.hoverOnlyWhenSupported and breaks touch taps */
+    .crumbs--admin {
+        @apply text-slate-500;
+    }
+
+    .crumbs--admin a {
+        @apply text-slate-500 transition-colors hover:text-rose-600;
+    }
+
+    .section-title {
+        @apply font-display text-2xl font-bold uppercase tracking-tight text-ink-950 sm:text-3xl sm:tracking-wide;
+    }
+
+    .ui-eyebrow {
+        @apply text-[10px] font-bold uppercase tracking-[0.22em] text-accent-600;
     }
 
     .panel-muted {
@@ -96,7 +417,7 @@
     }
 
     .search-bar {
-        @apply flex flex-col gap-3 rounded-2xl border border-ink-200/60 bg-white/95 p-4 shadow-soft ring-1 ring-ink-950/[0.03] backdrop-blur-sm sm:flex-row sm:items-end sm:p-5;
+        @apply flex flex-col gap-3 rounded-2xl border border-ink-200/50 bg-white p-4 shadow-soft sm:flex-row sm:items-end sm:p-5;
     }
 
     .nav-link {
@@ -116,7 +437,7 @@
     }
 
     .card-list {
-        @apply overflow-hidden rounded-2xl border border-ink-200/50 bg-white/95 shadow-soft ring-1 ring-ink-950/[0.03] backdrop-blur-sm transition-all duration-300 ease-out-expo motion-reduce:transition-none hover:border-accent-300/30 hover:shadow-float motion-safe:hover:-translate-y-0.5;
+        @apply store-card-interactive;
     }
 
     .link-brand {
@@ -126,4 +447,21 @@
     .link-inverse {
         @apply font-semibold text-white/90 underline-offset-4 transition-colors duration-200 hover:text-white hover:underline;
     }
+
+    .admin-sidebar-link {
+        @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-slate-800/90 hover:text-white;
+    }
+
+    .admin-sidebar-link-active {
+        @apply bg-rose-500/15 text-white ring-1 ring-rose-500/35;
+    }
+
+    .admin-panel {
+        @apply overflow-hidden rounded-xl border border-slate-200/70 bg-white shadow-sm;
+    }
+
+    .admin-form-surface {
+        @apply rounded-xl border border-slate-200/80 bg-gradient-to-br from-slate-50/95 to-white p-6 shadow-sm ring-1 ring-slate-950/[0.04];
+    }
+
 }

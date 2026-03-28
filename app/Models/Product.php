@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -41,6 +42,28 @@ class Product extends Model
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class);
+    }
+
+    /**
+     * Search active products by name, description, or category name (case-sensitive depends on DB collation).
+     */
+    public function scopeSearch(Builder $query, string $term): Builder
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return $query->whereRaw('1 = 0');
+        }
+
+        $escaped = addcslashes($term, '%_\\');
+        $like = '%'.$escaped.'%';
+
+        return $query->where(function (Builder $q) use ($like): void {
+            $q->where('name', 'like', $like)
+                ->orWhere('description', 'like', $like)
+                ->orWhereHas('category', function (Builder $c) use ($like): void {
+                    $c->where('name', 'like', $like);
+                });
+        });
     }
 
     public function getRouteKeyName(): string

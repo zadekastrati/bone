@@ -104,6 +104,7 @@ class RegisterController extends Controller
             'email' => $email,
             'password' => $password,
             'role' => 'user',
+            'email_verified_at' => now(),
         ]);
 
         $request->session()->forget('register_pending');
@@ -112,7 +113,7 @@ class RegisterController extends Controller
         $request->session()->regenerate();
 
         return redirect()
-            ->route('shop.index')
+            ->route('home')
             ->with('success', 'Account created successfully.');
     }
 

@@ -3,22 +3,22 @@
 @section('title', $product->name)
 
 @section('content')
-    <nav class="text-xs font-medium text-ink-500">
-        <a href="{{ route('shop.index') }}" class="hover:text-accent-600">Shop</a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="{{ route('shop.index') }}">Shop</a>
         <span class="mx-1.5 text-ink-300">/</span>
-        <a href="{{ route('shop.category', $category) }}" class="hover:text-accent-600">{{ $category->name }}</a>
+        <a href="{{ route('shop.category', $category) }}">{{ $category->name }}</a>
         <span class="mx-1.5 text-ink-300">/</span>
         <span class="text-ink-800">{{ $product->name }}</span>
     </nav>
 
-    <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-14">
+    <div class="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div class="space-y-4">
             @if ($product->images->isEmpty())
                 <div class="aspect-[4/5] overflow-hidden rounded-3xl bg-gradient-to-br from-ink-800 to-ink-950 shadow-float">
                     <div class="flex size-full items-center justify-center text-xs font-bold uppercase tracking-mega text-white/40">Photo soon</div>
                 </div>
             @else
-                <div class="overflow-hidden rounded-3xl border border-ink-200/60 bg-ink-100 shadow-soft">
+                <div class="store-card overflow-hidden bg-ink-100 shadow-elevated">
                     <img src="{{ \Illuminate\Support\Facades\Storage::url($product->images->first()->path) }}" alt="" class="aspect-[4/5] w-full object-cover">
                 </div>
                 @if ($product->images->count() > 1)
@@ -32,8 +32,8 @@
         </div>
 
         <div>
-            <p class="text-xs font-bold uppercase tracking-mega text-accent-600">{{ $category->name }}</p>
-            <h1 class="font-display mt-3 text-3xl font-bold uppercase tracking-tight text-ink-950 sm:text-4xl">{{ $product->name }}</h1>
+            <p class="ui-eyebrow">{{ $category->name }}</p>
+            <h1 class="font-display mt-3 text-3xl font-bold uppercase tracking-tight text-ink-950 sm:text-4xl sm:tracking-wide">{{ $product->name }}</h1>
             <p class="mt-4 text-2xl font-semibold text-ink-900">
                 {{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}
                 <span class="text-sm font-medium text-ink-500">{{ config('store.currency') }}</span>

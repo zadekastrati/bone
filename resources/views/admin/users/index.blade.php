@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Users')
 
@@ -18,34 +18,34 @@
         @endif
     </form>
 
-    <div class="mt-10 overflow-hidden rounded-3xl border border-ink-200/60 bg-white/95 shadow-soft ring-1 ring-ink-950/[0.03] backdrop-blur-sm">
+    <div class="table-shell--admin mt-10">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-ink-200 text-left text-sm">
-                <thead class="bg-ink-50/90">
+            <table class="data-table data-table--admin">
+                <thead>
                     <tr>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Name</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Email</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700">Role</th>
-                        <th class="px-5 py-3.5 font-semibold text-ink-700"></th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-ink-100">
+                <tbody>
                     @forelse ($users as $user)
-                        <tr class="transition hover:bg-accent-50/40">
-                            <td class="px-5 py-3.5 font-medium text-ink-950">{{ $user->name }}</td>
-                            <td class="px-5 py-3.5 text-ink-600">{{ $user->email }}</td>
-                            <td class="px-5 py-3.5">
-                                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide {{ $user->role === 'admin' ? 'bg-accent-100 text-accent-900' : 'bg-ink-100 text-ink-800' }}">
+                        <tr>
+                            <td class="font-medium text-slate-900">{{ $user->name }}</td>
+                            <td class="text-slate-600">{{ $user->email }}</td>
+                            <td>
+                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $user->role === 'admin' ? 'border-rose-200/80 bg-rose-50 text-rose-900' : 'border-slate-200/80 bg-slate-100 text-slate-700' }}">
                                     {{ $user->role }}
                                 </span>
                             </td>
-                            <td class="px-5 py-3.5 text-right">
-                                <a href="{{ route('admin.users.show', $user) }}" class="link-brand text-sm">View</a>
+                            <td class="text-right">
+                                <a href="{{ route('admin.users.show', $user) }}" class="admin-action-link">View</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-5 py-12 text-center text-ink-600">No users found.</td>
+                            <td colspan="4" class="data-table-empty text-slate-500">No users found.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <div class="mt-10 flex justify-center">
+    <div class="pagination-wrap pagination-wrap--admin">
         {{ $users->links() }}
     </div>
 @endsection

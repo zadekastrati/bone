@@ -35,8 +35,12 @@ class LoginController extends Controller
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
 
+        $home = $user->isAdmin()
+            ? route('admin.dashboard')
+            : route('home');
+
         return redirect()
-            ->intended(route('shop.index'))
+            ->intended($home)
             ->with('success', 'Welcome back.');
     }
 
@@ -47,6 +51,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('shop.index')->with('success', 'You have been logged out.');
+        return redirect()->route('home')->with('success', 'You have been logged out.');
     }
 }
