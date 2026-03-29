@@ -30,11 +30,11 @@
     </x-page-header>
 
     {{-- Shop toolbar: search + context (full-width on small screens) --}}
-    <div class="mb-12 flex flex-col gap-4 rounded-2xl border border-pink-200/70 bg-white/90 p-4 shadow-soft ring-1 ring-pink-900/[0.03] sm:flex-row sm:items-center sm:gap-6 sm:p-5">
+    <div class="mb-12 flex flex-col gap-4 rounded-2xl border border-zinc-200/70 bg-white/90 p-4 shadow-soft ring-1 ring-zinc-900/[0.03] sm:flex-row sm:items-center sm:gap-6 sm:p-5">
         <div class="min-w-0 flex-1 sm:max-w-xl">
             <x-store-search-form variant="shop" />
         </div>
-        <div class="flex shrink-0 flex-wrap items-center gap-3 border-t border-pink-100 pt-4 sm:border-t-0 sm:pt-0">
+        <div class="flex shrink-0 flex-wrap items-center gap-3 border-t border-zinc-100 pt-4 sm:border-t-0 sm:pt-0">
             @if (! $isSearch)
                 <p class="text-sm text-ink-600">
                     <span class="font-semibold tabular-nums text-ink-900">{{ $categories->count() }}</span>
@@ -59,7 +59,7 @@
             <section class="scroll-mt-28" aria-labelledby="search-results-heading">
                 <h2 id="search-results-heading" class="sr-only">Matching products</h2>
                 @if ($searchResults->isEmpty())
-                    <div class="rounded-3xl border border-pink-200/70 bg-gradient-to-b from-pink-50/95 to-white px-6 py-14 text-center shadow-soft ring-1 ring-pink-900/[0.04]">
+                    <div class="rounded-3xl border border-zinc-200/70 bg-gradient-to-b from-zinc-50/95 to-white px-6 py-14 text-center shadow-soft ring-1 ring-zinc-900/[0.04]">
                         <p class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">No matches</p>
                         <p class="mt-2 text-sm text-ink-600 text-pretty">Try a shorter term or browse categories below.</p>
                         <a href="{{ route('shop.index') }}" class="btn-primary mt-8 inline-flex">View all products</a>
@@ -81,7 +81,7 @@
 
         @if (! $isSearch && $featured->isNotEmpty())
             <section id="new" class="scroll-mt-28" aria-labelledby="new-arrivals-heading">
-                <header class="flex flex-col gap-4 border-b border-pink-200/60 pb-8 sm:flex-row sm:items-end sm:justify-between">
+                <header class="flex flex-col gap-4 border-b border-zinc-200/60 pb-8 sm:flex-row sm:items-end sm:justify-between">
                     <div class="min-w-0">
                         <p class="ui-eyebrow">Just dropped</p>
                         <h2 id="new-arrivals-heading" class="section-title mt-1">New arrivals</h2>
@@ -100,10 +100,10 @@
 
         <section
             id="categories"
-            class="@if ($isSearch || (! $isSearch && $featured->isNotEmpty())) scroll-mt-28 border-t border-pink-200/60 pt-14 lg:pt-16 @endif"
+            class="@if ($isSearch || (! $isSearch && $featured->isNotEmpty())) scroll-mt-28 border-t border-zinc-200/60 pt-14 lg:pt-16 @endif"
             aria-labelledby="categories-heading"
         >
-            <header class="flex flex-col gap-4 border-b border-pink-200/60 pb-8 sm:flex-row sm:items-end sm:justify-between">
+            <header class="flex flex-col gap-4 border-b border-zinc-200/60 pb-8 sm:flex-row sm:items-end sm:justify-between">
                 <div class="min-w-0">
                     <p class="ui-eyebrow">Browse</p>
                     <h2 id="categories-heading" class="section-title mt-1">Shop by category</h2>

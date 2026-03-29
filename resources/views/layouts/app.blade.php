@@ -19,7 +19,7 @@
     <div class="flex min-h-full flex-1 flex-col" x-data="{ mobileOpen: false }" @keydown.window.escape="mobileOpen = false">
         <x-store-promo-bar />
 
-        <header class="sticky top-0 z-50 border-b border-pink-200/80 bg-pink-50/95 text-ink-900 shadow-[0_8px_30px_-12px_rgba(192,149,174,0.25)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-pink-50/90">
+        <header class="sticky top-0 z-50 border-b border-zinc-200/80 bg-zinc-50/95 text-ink-900 shadow-[0_8px_30px_-12px_rgba(82,82,91,0.2)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-zinc-50/90">
             <div class="page-shell flex h-14 items-center gap-3 sm:gap-4 lg:h-[4.25rem]">
                 <a href="{{ route('home') }}" class="font-display shrink-0 truncate text-lg font-bold uppercase tracking-mega text-ink-900 transition-opacity hover:opacity-80 lg:text-xl">
                     {{ config('app.name') }}
@@ -35,7 +35,7 @@
                     <a href="{{ route('cart.index') }}" class="nav-link {{ request()->routeIs('cart.*') ? 'nav-link-active' : '' }}">
                         Cart
                         @if ($cartService->count() > 0)
-                            <span class="ml-1 rounded-full bg-pink-400 px-1.5 py-0.5 text-[10px] font-bold text-rose-950">{{ $cartService->count() }}</span>
+                            <span class="ml-1 rounded-full bg-zinc-400 px-1.5 py-0.5 text-[10px] font-bold text-zinc-950">{{ $cartService->count() }}</span>
                         @endif
                     </a>
                     @auth
@@ -54,7 +54,7 @@
                         <div class="hidden items-center gap-3 lg:flex">
                             <span class="{{ request()->routeIs('home') ? 'max-w-[14rem] text-ink-800' : 'max-w-[9rem] text-ink-500' }} truncate text-xs font-medium" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
                             @unless (request()->routeIs('home'))
-                                <span class="rounded-full border border-pink-200/90 bg-white/80 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-600">{{ auth()->user()->role }}</span>
+                                <span class="rounded-full border border-zinc-200/90 bg-white/80 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-600">{{ auth()->user()->role }}</span>
                             @endunless
                         </div>
                         <form method="POST" action="{{ route('logout') }}" class="hidden lg:inline">
@@ -91,7 +91,7 @@
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 -translate-y-2"
                 x-cloak
-                class="border-t border-pink-200/80 bg-pink-50/98 backdrop-blur-xl lg:hidden"
+                class="border-t border-zinc-200/80 bg-zinc-50/98 backdrop-blur-xl lg:hidden"
             >
                 <nav class="page-shell flex flex-col gap-0.5 py-4" aria-label="Mobile">
                     @unless (request()->routeIs('shop.index'))
@@ -108,7 +108,7 @@
                         @if (auth()->user()->isAdmin())
                             <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">Dashboard</a>
                         @endif
-                        <form method="POST" action="{{ route('logout') }}" class="mt-4 border-t border-pink-200/80 pt-4">
+                        <form method="POST" action="{{ route('logout') }}" class="mt-4 border-t border-zinc-200/80 pt-4">
                             @csrf
                             <button type="submit" class="btn-outline-light w-full justify-center">Log out</button>
                         </form>
@@ -164,7 +164,7 @@
             </div>
         @endif
 
-        <footer class="mt-auto border-t border-pink-200/80 bg-gradient-to-b from-pink-100/90 via-pink-50 to-[#fffafc] text-ink-800">
+        <footer class="mt-auto border-t border-zinc-200/80 bg-gradient-to-b from-zinc-100/90 via-zinc-50 to-zinc-50 text-ink-800">
             <div class="page-shell grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-20">
                 <div class="sm:col-span-2 lg:col-span-1">
                     <p class="font-display text-lg font-bold uppercase tracking-mega text-ink-900">{{ config('app.name') }}</p>
@@ -199,7 +199,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-pink-200/70 py-7">
+            <div class="border-t border-zinc-200/70 py-7">
                 <div class="page-shell flex flex-col items-center justify-between gap-4 text-center text-[11px] leading-relaxed text-ink-500 sm:flex-row sm:text-left">
                     <p class="text-balance">&copy; {{ date('Y') }} {{ config('app.name') }}. Women&apos;s gym wear.</p>
                     <p class="max-w-md text-pretty">Independent storefront demo — not affiliated with any third-party brand.</p>

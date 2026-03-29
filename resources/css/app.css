@@ -5,7 +5,7 @@
 @layer base {
     html {
         scroll-behavior: smooth;
-        -webkit-tap-highlight-color: rgb(239 192 212 / 0.35);
+        -webkit-tap-highlight-color: rgb(113 113 122 / 0.25);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -50,15 +50,15 @@
     }
 
     .btn-primary {
-        @apply btn border border-accent-400/50 bg-accent-300 text-ink-900 shadow-soft focus-visible:ring-offset-2 focus-visible:ring-offset-pink-50;
+        @apply btn border border-accent-400/50 bg-accent-300 text-ink-900 shadow-soft focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
     }
 
     .btn-on-dark {
-        @apply btn border border-pink-200/90 bg-white text-ink-800 shadow-soft focus-visible:ring-offset-2 focus-visible:ring-offset-pink-50;
+        @apply btn border border-zinc-200/90 bg-white text-ink-800 shadow-soft focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
     }
 
     .btn-secondary {
-        @apply btn border border-pink-200/90 bg-white/90 text-ink-800 shadow-soft backdrop-blur-sm focus-visible:ring-offset-2 focus-visible:ring-offset-pink-50;
+        @apply btn border border-zinc-200/90 bg-white/90 text-ink-800 shadow-soft backdrop-blur-sm focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
     }
 
     .btn-ghost {
@@ -66,7 +66,7 @@
     }
 
     .btn-ghost-inverse {
-        @apply btn rounded-xl border border-transparent bg-transparent text-ink-600 focus-visible:ring-offset-2 focus-visible:ring-offset-pink-50;
+        @apply btn rounded-xl border border-transparent bg-transparent text-ink-600 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
     }
 
     .btn-danger {
@@ -78,7 +78,7 @@
     }
 
     .btn-outline-light {
-        @apply btn rounded-xl border border-ink-300/70 bg-white/85 text-ink-800 shadow-sm backdrop-blur-sm focus-visible:ring-offset-2 focus-visible:ring-offset-pink-50;
+        @apply btn rounded-xl border border-ink-300/70 bg-white/85 text-ink-800 shadow-sm backdrop-blur-sm focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
     }
 
     /*
@@ -92,11 +92,11 @@
         }
 
         .btn-on-dark:hover {
-            @apply bg-pink-50 shadow-soft-lg;
+            @apply bg-zinc-50 shadow-soft-lg;
         }
 
         .btn-secondary:hover {
-            @apply border-accent-300/80 bg-pink-50/90 shadow-soft-lg;
+            @apply border-accent-300/80 bg-zinc-50/90 shadow-soft-lg;
         }
 
         .btn-ghost:hover {
@@ -104,7 +104,7 @@
         }
 
         .btn-ghost-inverse:hover {
-            @apply bg-pink-100/90 text-ink-900;
+            @apply bg-zinc-100/90 text-ink-900;
         }
 
         .btn-danger:hover {
@@ -156,7 +156,7 @@
 
     /* Storefront cards — one clean pattern (no stacked ring + heavy shadow) */
     .store-card {
-        @apply overflow-hidden rounded-2xl border border-pink-100/80 bg-white shadow-soft transition duration-300 ease-out;
+        @apply overflow-hidden rounded-2xl border border-zinc-100/80 bg-white shadow-soft transition duration-300 ease-out;
     }
 
     .store-card-interactive {
@@ -165,7 +165,7 @@
 
     @media (hover: hover) {
         .store-card-interactive:hover {
-            @apply border-pink-200/80 shadow-soft-lg;
+            @apply border-zinc-200/80 shadow-soft-lg;
         }
     }
 
@@ -174,7 +174,7 @@
     }
 
     .surface-muted {
-        @apply rounded-2xl border border-pink-200/50 bg-pink-50/70 p-6 sm:p-8;
+        @apply rounded-2xl border border-zinc-200/50 bg-zinc-50/70 p-6 sm:p-8;
     }
 
     /* Data tables — storefront (readable, not spreadsheet-heavy) */
@@ -183,7 +183,7 @@
     }
 
     .table-shell--admin {
-        @apply rounded-xl border-pink-200/90 bg-white shadow-[0_1px_2px_rgb(192_149_174/0.08),0_16px_40px_-12px_rgb(192_149_174/0.12)] ring-1 ring-pink-900/[0.05];
+        @apply rounded-xl border-zinc-200/90 bg-white shadow-[0_1px_2px_rgb(113_113_122/0.08),0_16px_40px_-12px_rgb(113_113_122/0.12)] ring-1 ring-zinc-900/[0.05];
     }
 
     .data-table {
@@ -229,11 +229,11 @@
     }
 
     .data-table--admin thead {
-        @apply bg-gradient-to-b from-pink-50/95 to-pink-100/80;
+        @apply bg-gradient-to-b from-zinc-50/95 to-zinc-100/80;
     }
 
     .data-table--admin thead tr {
-        @apply border-pink-200/90;
+        @apply border-zinc-200/90;
     }
 
     .data-table--admin th {
@@ -241,12 +241,12 @@
     }
 
     .data-table--admin tbody tr {
-        @apply border-pink-100/90;
+        @apply border-zinc-100/90;
     }
 
     @media (hover: hover) {
         .data-table--admin tbody tr:hover {
-            @apply bg-pink-50/80;
+            @apply bg-zinc-50/80;
         }
     }
 
@@ -282,11 +282,11 @@
     }
 
     .pagination-row {
-        @apply flex flex-col gap-4 border-t border-pink-200/70 pt-6 sm:flex-row sm:items-center sm:justify-between;
+        @apply flex flex-col gap-4 border-t border-zinc-200/70 pt-6 sm:flex-row sm:items-center sm:justify-between;
     }
 
     .pagination-wrap--admin .pagination-row {
-        @apply border-pink-200/80;
+        @apply border-zinc-200/80;
     }
 
     /* Simple paginator: prev/next only — keep top rule from .pagination-row */
@@ -319,7 +319,7 @@
     }
 
     .pagination-wrap--admin .pagination-nav__icon-btn--disabled {
-        @apply text-pink-300;
+        @apply text-zinc-300;
     }
 
     .pagination-nav__pill {
@@ -343,7 +343,7 @@
     }
 
     .pagination-wrap--admin .pagination-nav__ellipsis {
-        @apply text-pink-300;
+        @apply text-zinc-300;
     }
 
     .pagination-nav__simple-btn {
@@ -351,7 +351,7 @@
     }
 
     .pagination-wrap--admin .pagination-nav__simple-btn {
-        @apply border-pink-200/90 text-ink-800 shadow-[0_1px_2px_rgb(192_149_174/0.06)] focus-visible:ring-accent-500/30;
+        @apply border-zinc-200/90 text-ink-800 shadow-[0_1px_2px_rgb(113_113_122/0.06)] focus-visible:ring-accent-500/30;
     }
 
     .pagination-nav__simple-btn--disabled {
@@ -359,7 +359,7 @@
     }
 
     .pagination-wrap--admin .pagination-nav__simple-btn--disabled {
-        @apply border-pink-100 bg-pink-50/80 text-ink-400;
+        @apply border-zinc-100 bg-zinc-50/80 text-ink-400;
     }
 
     @media (hover: hover) {
@@ -376,7 +376,7 @@
         }
 
         .pagination-wrap--admin .pagination-nav__icon-btn--disabled:hover {
-            @apply bg-transparent text-pink-300;
+            @apply bg-transparent text-zinc-300;
         }
 
         .pagination-nav__pill:hover {
@@ -392,7 +392,7 @@
         }
 
         .pagination-wrap--admin .pagination-nav__simple-btn:hover {
-            @apply border-accent-300/70 bg-pink-50/80;
+            @apply border-accent-300/70 bg-zinc-50/80;
         }
 
         .pagination-nav__simple-btn--disabled:hover {
@@ -400,7 +400,7 @@
         }
 
         .pagination-wrap--admin .pagination-nav__simple-btn--disabled:hover {
-            @apply border-pink-100 bg-pink-50/80 text-ink-400;
+            @apply border-zinc-100 bg-zinc-50/80 text-ink-400;
         }
     }
 
@@ -451,7 +451,7 @@
     }
 
     .nav-link-active {
-        @apply bg-pink-200/80 text-ink-900 ring-1 ring-pink-300/50;
+        @apply bg-zinc-200/80 text-ink-900 ring-1 ring-zinc-300/50;
     }
 
     .nav-link-muted {
@@ -460,7 +460,7 @@
 
     @media (hover: hover) {
         .nav-link:hover {
-            @apply bg-pink-100/90 text-ink-900;
+            @apply bg-zinc-100/90 text-ink-900;
         }
 
         .nav-link-muted:hover {
@@ -498,20 +498,92 @@
         }
 
         .admin-sidebar-link:hover {
-            @apply bg-pink-100/90 text-ink-900;
+            @apply bg-zinc-100/90 text-ink-900;
         }
     }
 
     .admin-sidebar-link-active {
-        @apply bg-pink-200/80 text-ink-900 ring-1 ring-pink-300/60;
+        @apply bg-zinc-200/80 text-ink-900 ring-1 ring-zinc-300/60;
     }
 
     .admin-panel {
-        @apply overflow-hidden rounded-xl border border-pink-200/80 bg-white shadow-sm ring-1 ring-pink-900/[0.04];
+        @apply overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-sm ring-1 ring-zinc-900/[0.04];
     }
 
     .admin-form-surface {
-        @apply rounded-xl border border-pink-200/80 bg-gradient-to-br from-pink-50/95 to-white p-6 shadow-sm ring-1 ring-pink-900/[0.04];
+        @apply rounded-xl border border-zinc-200/80 bg-gradient-to-br from-zinc-50/95 to-white p-6 shadow-sm ring-1 ring-zinc-900/[0.04];
+    }
+
+    /**
+     * Admin shell: two columns on lg+ (sidebar never overlaps main).
+     * Mobile: sidebar is a fixed drawer; .is-open slides it in.
+     */
+    .admin-layout {
+        @apply min-h-screen flex flex-row;
+    }
+
+    @media (min-width: 1024px) {
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 16rem minmax(0, 1fr);
+            grid-template-rows: minmax(0, 1fr);
+            height: 100vh;
+            min-height: 0;
+            overflow: hidden;
+        }
+    }
+
+    .admin-layout__sidebar {
+        @apply flex w-64 flex-col overflow-x-hidden border-r border-zinc-200/90 bg-gradient-to-b from-zinc-100/95 via-zinc-50 to-zinc-50 text-ink-800 shadow-[4px_0_24px_-8px_rgba(82,82,91,0.2)] transition-transform duration-300 ease-out;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 50;
+        height: 100vh;
+        transform: translateX(-100%);
+    }
+
+    @media (max-width: 1023px) {
+        .admin-layout__sidebar.is-open {
+            transform: translateX(0);
+        }
+
+        .admin-layout__sidebar {
+            @apply overflow-y-auto;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .admin-layout__sidebar {
+            position: relative;
+            top: auto;
+            right: auto;
+            bottom: auto;
+            left: auto;
+            z-index: 20;
+            grid-column: 1;
+            grid-row: 1;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            min-width: 0;
+            transform: none !important;
+            @apply overflow-y-hidden self-stretch;
+        }
+    }
+
+    .admin-layout__main {
+        @apply flex min-h-0 min-w-0 flex-1 flex-col;
+    }
+
+    @media (min-width: 1024px) {
+        .admin-layout__main {
+            grid-column: 2;
+            grid-row: 1;
+            min-width: 0;
+            overflow-y: auto;
+        }
     }
 
 }

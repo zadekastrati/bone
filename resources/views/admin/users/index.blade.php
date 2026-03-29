@@ -35,7 +35,7 @@
                             <td class="font-medium text-ink-900">{{ $user->name }}</td>
                             <td class="text-ink-600">{{ $user->email }}</td>
                             <td>
-                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $user->role === 'admin' ? 'border-accent-300/80 bg-accent-100/90 text-accent-900' : 'border-pink-200/80 bg-pink-100/80 text-ink-700' }}">
+                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $user->role === 'admin' ? 'border-accent-300/80 bg-accent-100/90 text-accent-900' : 'border-zinc-200/80 bg-zinc-100/80 text-ink-700' }}">
                                     {{ $user->role }}
                                 </span>
                             </td>

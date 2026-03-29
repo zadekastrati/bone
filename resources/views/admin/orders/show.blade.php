@@ -5,7 +5,7 @@
 @section('content')
     <nav class="crumbs crumbs--admin" aria-label="Breadcrumb">
         <a href="{{ route('admin.orders.index') }}">Orders</a>
-        <span class="mx-1.5 text-pink-300">/</span>
+        <span class="mx-1.5 text-zinc-300">/</span>
         <span class="text-ink-800">{{ $order->order_number }}</span>
     </nav>
 

@@ -22,7 +22,7 @@
             @endforeach
         </ul>
     @else
-        <p class="mt-10 rounded-2xl border border-pink-200/70 bg-pink-50/50 px-6 py-12 text-center text-ink-600">No products in this category yet.</p>
+        <p class="mt-10 rounded-2xl border border-zinc-200/70 bg-zinc-50/50 px-6 py-12 text-center text-ink-600">No products in this category yet.</p>
     @endif
 
     @if ($products->isNotEmpty())

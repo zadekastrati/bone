@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="mb-10 border-b border-pink-200/80 pb-8">
+    <div class="mb-10 border-b border-zinc-200/80 pb-8">
         <h1 class="font-display text-2xl font-semibold uppercase tracking-wide text-ink-900 sm:text-3xl">Overview</h1>
         <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink-600">Sales, catalog, and quick access to recent orders.</p>
     </div>
@@ -30,7 +30,7 @@
     </div>
 
     <div class="admin-panel mt-8 w-full min-w-0">
-        <div class="border-b border-pink-100/90 px-5 py-4 sm:px-6">
+        <div class="border-b border-zinc-100/90 px-5 py-4 sm:px-6">
             <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-900">Recent orders</h2>
             <p class="mt-1 text-xs text-ink-500">Latest activity across the store</p>
         </div>
@@ -54,7 +54,7 @@
                                 <span class="mt-0.5 block text-xs text-ink-500">{{ $order->user->email }}</span>
                             </td>
                             <td>
-                                <span class="inline-flex rounded-full border border-pink-200/80 bg-pink-50/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-800">{{ $order->status->label() }}</span>
+                                <span class="inline-flex rounded-full border border-zinc-200/80 bg-zinc-50/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-800">{{ $order->status->label() }}</span>
                             </td>
                             <td class="font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $order->total, 2) }}</td>
                             <td class="text-right">
@@ -73,6 +73,6 @@
 
     <div class="mt-8 flex w-full min-w-0 flex-wrap items-center gap-3">
         <a href="{{ route('admin.products.create') }}" class="inline-flex shrink-0 items-center justify-center rounded-xl bg-accent-600 px-5 py-2.5 text-xs font-bold uppercase tracking-mega text-white shadow-sm transition hover:bg-accent-700">New product</a>
-        <a href="{{ route('admin.categories.index') }}" class="inline-flex shrink-0 items-center justify-center rounded-xl border border-pink-200/80 bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-mega text-ink-800 shadow-sm transition hover:border-pink-300">Manage categories</a>
+        <a href="{{ route('admin.categories.index') }}" class="inline-flex shrink-0 items-center justify-center rounded-xl border border-zinc-200/80 bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-mega text-ink-800 shadow-sm transition hover:border-zinc-300">Manage categories</a>
     </div>
 @endsection

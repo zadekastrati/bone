@@ -3,7 +3,7 @@
     'subtitle' => null,
 ])
 
-<div {{ $attributes->merge(['class' => 'mb-10 flex flex-col gap-6 border-b border-pink-200/60 pb-8 sm:mb-12 sm:flex-row sm:items-end sm:justify-between sm:gap-8 sm:pb-10']) }}>
+<div {{ $attributes->merge(['class' => 'mb-10 flex flex-col gap-6 border-b border-zinc-200/60 pb-8 sm:mb-12 sm:flex-row sm:items-end sm:justify-between sm:gap-8 sm:pb-10']) }}>
     <div class="min-w-0">
         <h1 class="heading-page">{{ $title }}</h1>
         @if ($subtitle)

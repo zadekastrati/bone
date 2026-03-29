@@ -56,7 +56,7 @@
                             <td class="font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}</td>
                             <td class="text-ink-600">{{ $product->variants_count }}</td>
                             <td>
-                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $product->is_active ? 'border-emerald-200/80 bg-emerald-50 text-emerald-900' : 'border-pink-200/80 bg-pink-100/80 text-ink-700' }}">
+                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $product->is_active ? 'border-emerald-200/80 bg-emerald-50 text-emerald-900' : 'border-zinc-200/80 bg-zinc-100/80 text-ink-700' }}">
                                     {{ $product->is_active ? 'Yes' : 'No' }}
                                 </span>
                             </td>

@@ -7,7 +7,7 @@
         'Sign up for first-order perks & restock news',
     ];
 @endphp
-<div class="relative z-[60] border-b border-pink-200/80 bg-gradient-to-r from-pink-100 via-[#fceef4] to-pink-100 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-700 sm:text-[11px] sm:tracking-mega">
+<div class="relative z-[60] border-b border-zinc-200/80 bg-gradient-to-r from-zinc-100 via-zinc-100 to-zinc-100 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-700 sm:text-[11px] sm:tracking-mega">
     <div class="overflow-hidden py-2.5">
         <div class="flex w-max animate-marquee motion-reduce:animate-none">
             <ul class="flex items-center gap-x-10 px-5" aria-hidden="true">

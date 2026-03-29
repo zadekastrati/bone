@@ -71,7 +71,7 @@
                 <legend class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Variants</legend>
                 <button type="button" class="btn-secondary text-sm" @click="addRow()">Add row</button>
             </div>
-            <div class="mt-6 overflow-x-auto rounded-lg border border-pink-200/80">
+            <div class="mt-6 overflow-x-auto rounded-lg border border-zinc-200/80">
                 <table class="data-table data-table--admin data-table--compact min-w-full">
                     <thead>
                         <tr>

@@ -14,36 +14,36 @@
     <link href="https://fonts.bunny.net/css?family=oswald:500,600,700|outfit:400,500,600,700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-full bg-[#fffafc] font-sans text-base leading-relaxed text-ink-900 antialiased">
+<body class="min-h-full bg-zinc-50 font-sans text-base leading-relaxed text-ink-900 antialiased lg:h-full lg:overflow-hidden">
     <div
-        class="flex min-h-screen"
+        class="admin-layout"
         x-data="{ sidebarOpen: false }"
         @keydown.window.escape="sidebarOpen = false"
     >
         <div
             x-show="sidebarOpen"
             x-transition.opacity
-            class="fixed inset-0 z-40 bg-pink-950/25 backdrop-blur-sm lg:hidden"
+            class="fixed inset-0 z-40 bg-zinc-950/25 backdrop-blur-sm lg:hidden"
             @click="sidebarOpen = false"
             x-cloak
         ></div>
 
         <aside
-            class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col overflow-x-hidden border-r border-pink-200/90 bg-gradient-to-b from-pink-100/95 via-pink-50 to-[#fffafc] text-ink-800 shadow-[4px_0_24px_-8px_rgba(192,149,174,0.25)] transition-transform duration-300 ease-out lg:static lg:translate-x-0"
-            :class="{ '!translate-x-0': sidebarOpen }"
+            class="admin-layout__sidebar"
+            :class="{ 'is-open': sidebarOpen }"
         >
-            <div class="flex h-14 shrink-0 items-center gap-2 border-b border-pink-200/80 bg-pink-50/80 px-4 lg:h-16">
+            <div class="flex h-14 shrink-0 items-center gap-2 border-b border-zinc-200/80 bg-zinc-50/80 px-4 lg:h-16">
                 <a href="{{ route('home') }}" @click="sidebarOpen = false" class="font-display text-lg font-bold uppercase tracking-mega text-ink-900">
                     {{ config('app.name') }}
                 </a>
-                <span class="rounded-md bg-accent-200/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-800 ring-1 ring-pink-300/50">Admin</span>
+                <span class="rounded-md bg-accent-200/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-800 ring-1 ring-zinc-300/50">Admin</span>
             </div>
 
-            <div class="shrink-0 border-b border-pink-200/80 px-3 pb-3 pt-2">
+            <div class="shrink-0 border-b border-zinc-200/80 px-3 pb-3 pt-2">
                 <a
                     href="{{ route('shop.index') }}"
                     @click="sidebarOpen = false"
-                    class="flex w-full items-center justify-center gap-2 rounded-xl border border-pink-200/90 bg-white/90 px-3 py-2.5 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-pink-100/80 hover:text-ink-900"
+                    class="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200/90 bg-white/90 px-3 py-2.5 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-zinc-100/80 hover:text-ink-900"
                 >
                     <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
                     View storefront
@@ -77,12 +77,12 @@
             </nav>
         </aside>
 
-        <div class="flex min-w-0 flex-1 flex-col">
-            <header class="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-pink-200/80 bg-white/95 px-4 shadow-sm backdrop-blur-md sm:px-6 lg:h-16 lg:px-8">
+        <div class="admin-layout__main">
+            <header class="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-zinc-200/80 bg-white/95 px-4 shadow-sm backdrop-blur-md sm:px-6 lg:h-16 lg:px-8">
                 <div class="flex min-w-0 items-center gap-3">
                     <button
                         type="button"
-                        class="inline-flex size-10 items-center justify-center rounded-xl border border-pink-200/90 bg-pink-50/80 text-ink-700 shadow-sm lg:hidden"
+                        class="inline-flex size-10 items-center justify-center rounded-xl border border-zinc-200/90 bg-zinc-50/80 text-ink-700 shadow-sm lg:hidden"
                         @click="sidebarOpen = true"
                         aria-label="Open menu"
                     >
@@ -96,7 +96,7 @@
                 <div class="flex shrink-0 items-center gap-2 sm:gap-4">
                     <a
                         href="{{ route('shop.index') }}"
-                        class="inline-flex items-center gap-1.5 rounded-xl border border-pink-200/90 bg-white px-2.5 py-2 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-pink-50 sm:gap-2 sm:px-3"
+                        class="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200/90 bg-white px-2.5 py-2 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-zinc-50 sm:gap-2 sm:px-3"
                         title="Open the customer storefront"
                     >
                         <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
@@ -104,10 +104,10 @@
                         <span class="sm:hidden">Shop</span>
                     </a>
                     <span class="hidden max-w-[10rem] truncate text-sm text-ink-600 sm:block" title="{{ auth()->user()->email }}">{{ auth()->user()->name }}</span>
-                    <span class="hidden rounded-full bg-pink-100/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-800 ring-1 ring-pink-200/80 sm:inline">{{ auth()->user()->role }}</span>
+                    <span class="hidden rounded-full bg-zinc-100/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-800 ring-1 ring-zinc-200/80 sm:inline">{{ auth()->user()->role }}</span>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="rounded-xl border border-pink-200/90 bg-white px-3 py-2 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-pink-50">Log out</button>
+                        <button type="submit" class="rounded-xl border border-zinc-200/90 bg-white px-3 py-2 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-zinc-50">Log out</button>
                     </form>
                 </div>
             </header>

@@ -50,7 +50,7 @@
                             </td>
                             <td class="text-ink-600">{{ $order->created_at->format('M j, Y H:i') }}</td>
                             <td>
-                                <span class="inline-flex rounded-full border border-pink-200/80 bg-pink-50/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-800">{{ $order->status->label() }}</span>
+                                <span class="inline-flex rounded-full border border-zinc-200/80 bg-zinc-50/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-800">{{ $order->status->label() }}</span>
                             </td>
                             <td class="font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $order->total, 2) }}</td>
                             <td class="text-right">
