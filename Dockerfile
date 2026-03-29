@@ -1,5 +1,6 @@
-# Use PHP 8.1 with Apache
-FROM php:8.1-apache
+# Optional single-image build (e.g. some PaaS). Local development uses Laravel Sail: see compose.yaml.
+# Requires PHP 8.2+ per composer.json — bump the FROM line if you use this file.
+FROM php:8.2-apache
 
 # Set working directory
 WORKDIR /var/www/html
