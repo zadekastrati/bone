@@ -28,19 +28,19 @@
     </section>
 
     {{-- Category strip: editorial labels + quick links --}}
-    <section class="border-y border-zinc-200/80 bg-zinc-100/65 px-4 py-4 sm:px-6">
+    <section class="border-y border-zinc-200/80 bg-zinc-100/80 px-4 py-4 sm:px-6">
         <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row sm:gap-8">
             <p class="text-center text-[10px] font-bold uppercase tracking-mega text-accent-700 sm:text-left">Trending</p>
             <div class="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
                 @foreach (['New arrivals' => route('shop.index') . '#new', 'Shop all' => route('shop.index'), 'Sports bras' => route('shop.index'), 'Layers' => route('shop.index')] as $label => $href)
-                    <a href="{{ $href }}" class="rounded-full border border-zinc-200/90 bg-zinc-50/90 px-4 py-2 text-[10px] font-bold uppercase tracking-mega text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-white">{{ $label }}</a>
+                    <a href="{{ $href }}" class="rounded-full border border-zinc-200/90 bg-white/90 px-4 py-2 text-[10px] font-bold uppercase tracking-mega text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-zinc-50">{{ $label }}</a>
                 @endforeach
             </div>
         </div>
     </section>
 
     {{-- Shop by category --}}
-    <section class="bg-gradient-to-b from-zinc-50 via-zinc-50/90 to-zinc-100/40 px-4 py-16 sm:px-6 lg:py-24">
+    <section class="bg-gradient-to-b from-zinc-50 via-zinc-50/90 to-white px-4 py-16 sm:px-6 lg:py-24">
         <div class="mx-auto max-w-7xl">
             <div class="flex flex-col gap-6 border-b border-ink-200/60 pb-10 sm:flex-row sm:items-end sm:justify-between">
                 <div>
@@ -60,7 +60,7 @@
                     <a
                         href="{{ $tile['href'] }}"
                         class="group relative flex min-h-[260px] flex-col justify-end overflow-hidden rounded-3xl p-7 text-ink-900 shadow-float ring-1 ring-zinc-200/60 transition duration-500 ease-out-expo motion-reduce:transition-none motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-[0_28px_56px_-16px_rgba(63,63,70,0.35)] motion-safe:hover:ring-accent-300/50"
-                        style="background-image: linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(247,241,235,0.88) 72%, rgba(244,236,228,0.96) 100%), url('{{ $tile['image'] }}'); background-size: cover; background-position: center; filter: saturate(0.72) contrast(0.95);"
+                        style="background-image: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(250,246,241,0.86) 74%, rgba(247,241,235,0.94) 100%), url('{{ $tile['image'] }}'); background-size: cover; background-position: center;"
                     >
                         <div class="absolute inset-0 bg-card-shine opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
                         <span class="relative text-xs font-bold uppercase tracking-mega text-ink-600">{{ $tile['sub'] }}</span>
@@ -73,7 +73,7 @@
     </section>
 
     {{-- Training modes: pill row --}}
-    <section class="border-y border-ink-200/60 bg-zinc-50/45 px-4 py-12 sm:px-6 lg:py-16">
+    <section class="border-y border-ink-200/60 bg-white px-4 py-12 sm:px-6 lg:py-16">
         <div class="mx-auto max-w-5xl text-center">
             <h2 class="font-display text-2xl font-bold uppercase tracking-wide text-ink-950 sm:text-3xl">How do you train?</h2>
             <p class="mx-auto mt-3 max-w-lg text-sm text-ink-600 text-pretty">Tap a focus — we&apos;ll drop you in the shop to build your kit.</p>
@@ -91,7 +91,7 @@
     </section>
 
     {{-- Editorial band --}}
-    <section class="relative overflow-hidden bg-gradient-to-br from-zinc-100/85 via-zinc-100/75 to-zinc-50/65 px-4 py-24 text-ink-900 sm:px-6 lg:py-32">
+    <section class="relative overflow-hidden bg-gradient-to-br from-zinc-100 via-zinc-100 to-zinc-50 px-4 py-24 text-ink-900 sm:px-6 lg:py-32">
         <div class="pointer-events-none absolute -right-20 -top-20 size-[28rem] rounded-full bg-accent-200/50 blur-3xl sm:size-[36rem]"></div>
         <div class="pointer-events-none absolute bottom-0 left-0 size-64 rounded-full bg-white/60 blur-3xl"></div>
         <div class="relative mx-auto max-w-3xl text-center">
@@ -105,7 +105,7 @@
     </section>
 
     {{-- Trust + SEO --}}
-    <section class="border-t border-ink-200/80 bg-zinc-50/55 px-4 py-16 sm:px-6 lg:py-20">
+    <section class="border-t border-ink-200/80 bg-white px-4 py-16 sm:px-6 lg:py-20">
         <div class="mx-auto grid max-w-7xl gap-6 sm:grid-cols-3 sm:gap-6 lg:gap-8">
             @foreach ([
                 ['t' => 'Fast dispatch', 'd' => 'Orders ship quickly on business days.'],
