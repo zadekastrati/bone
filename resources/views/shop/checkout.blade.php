@@ -142,9 +142,14 @@
                     @foreach ($lines as $line)
                         @php
                             $v = $line['variant'];
+                            $product = $v->product;
+                            $thumb = $product->images->first();
                         @endphp
-                        <li class="flex justify-between gap-4">
-                            <span>{{ $v->product->name }} <span class="text-ink-500">× {{ $line['quantity'] }}</span></span>
+                        <li class="flex items-start justify-between gap-4">
+                            <span class="flex min-w-0 items-start gap-3">
+                                <x-product-image-thumb :path="$thumb?->path" size="sm" />
+                                <span class="min-w-0 leading-snug">{{ $product->name }} <span class="text-ink-500">× {{ $line['quantity'] }}</span></span>
+                            </span>
                             <span class="shrink-0 font-medium">{{ config('store.currency_symbol') }}{{ number_format((float) $line['line_total'], 2) }}</span>
                         </li>
                     @endforeach

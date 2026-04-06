@@ -29,73 +29,106 @@
             <a href="{{ route('shop.index') }}" class="btn-primary mt-8 inline-flex px-10">Continue shopping</a>
         </div>
     @else
-        <div class="table-shell mt-10">
-            <div class="overflow-x-auto">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Variant</th>
-                            <th>Price</th>
-                            <th>Qty</th>
-                            <th>Line</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($lines as $line)
-                            @php
-                                $v = $line['variant'];
-                                $p = $v->product;
-                            @endphp
-                            <tr>
-                                <td>
-                                    <a href="{{ route('shop.product', [$p->category, $p]) }}" class="font-medium text-ink-950 hover:text-accent-700">{{ $p->name }}</a>
-                                </td>
-                                <td class="text-ink-600">{{ $v->color }} · {{ $v->size }}</td>
-                                <td class="tabular-nums">{{ config('store.currency_symbol') }}{{ number_format((float) $p->price, 2) }}</td>
-                                <td>
-                                    <form method="POST" action="{{ route('cart.update', $v->id) }}" class="flex items-center gap-2">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="number" name="quantity" value="{{ $line['quantity'] }}" min="0" max="99" class="form-input w-20 py-1.5 text-sm">
-                                        <button type="submit" class="link-brand text-xs">Update</button>
-                                    </form>
-                                </td>
-                                <td class="tabular-nums font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $line['line_total'], 2) }}</td>
-                                <td class="text-right">
-                                    <form method="POST" action="{{ route('cart.destroy', $v->id) }}" onsubmit="return confirm('Remove this item?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-xs font-semibold text-red-600 hover:text-red-800">Remove</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        {{-- One column width for lines + checkout (aligned); wider than max-w-3xl --}}
+        <div class="mx-auto mt-10 w-full max-w-5xl">
+            <div class="divide-y divide-zinc-200/90 border-t border-zinc-200/90">
+            @foreach ($lines as $line)
+                @php
+                    $v = $line['variant'];
+                    $p = $v->product;
+                    $thumb = $p->images->first();
+                @endphp
+                <article class="flex gap-5 py-8 sm:gap-8 sm:py-10">
+                    <a
+                        href="{{ route('shop.product', [$p->category, $p]) }}"
+                        class="group shrink-0 self-start"
+                    >
+                        <x-product-image-thumb :path="$thumb?->path" size="cartRow" class="transition duration-200 group-hover:opacity-90" />
+                    </a>
 
-        <div class="surface-muted mt-10 flex max-w-md flex-col items-end gap-4 sm:ml-auto">
-            <p class="text-lg font-semibold text-ink-950">
-                Subtotal
-                <span class="ml-2 text-accent-700">{{ config('store.currency_symbol') }}{{ number_format((float) $subtotal, 2) }}</span>
-            </p>
-            @guest
-                <p class="max-w-md text-right text-sm text-ink-600">Log in or register to enter shipping details and place your order.</p>
-                <div class="flex flex-wrap justify-end gap-3">
-                    <a href="{{ route('login') }}" class="btn-primary">Log in</a>
-                    <a href="{{ route('register') }}" class="btn-secondary">Register</a>
+                    <div class="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+                        <div class="min-w-0 space-y-2">
+                            <a
+                                href="{{ route('shop.product', [$p->category, $p]) }}"
+                                class="font-display text-sm font-bold uppercase leading-snug tracking-wide text-ink-950 transition hover:text-accent-700 sm:text-base"
+                            >
+                                {{ $p->name }}
+                            </a>
+                            <p class="text-xs uppercase tracking-wide text-ink-600">
+                                {{ $v->size }} <span class="text-ink-300">|</span> {{ $v->color }}
+                            </p>
+                            <p class="font-display text-sm font-semibold tabular-nums text-ink-950">
+                                {{ config('store.currency_symbol') }}{{ number_format((float) $p->price, 2) }}
+                                <span class="text-xs font-normal text-ink-500">each</span>
+                            </p>
+                            @if ($v->stock_quantity < 1)
+                                <p class="text-[11px] font-bold uppercase tracking-wide text-amber-800">Sold out — no stock left</p>
+                            @elseif (! $v->isInStock((int) $line['quantity']))
+                                <p class="text-[11px] font-semibold text-amber-800">Only {{ $v->stock_quantity }} left — reduce quantity</p>
+                            @endif
+                        </div>
+
+                        <div class="flex flex-col gap-4 sm:items-end sm:text-right">
+                            <form method="POST" action="{{ route('cart.update', $v->id) }}" class="flex flex-wrap items-center gap-2 sm:justify-end">
+                                @csrf
+                                @method('PATCH')
+                                <label class="text-xs font-semibold uppercase tracking-wider text-ink-500" for="qty-{{ $v->id }}">Qty</label>
+                                <input
+                                    id="qty-{{ $v->id }}"
+                                    type="number"
+                                    name="quantity"
+                                    value="{{ $line['quantity'] }}"
+                                    min="0"
+                                    max="99"
+                                    class="w-16 rounded-lg border border-zinc-200/90 bg-white px-2 py-1.5 text-center text-sm tabular-nums text-ink-900 shadow-sm focus:border-accent-400 focus:outline-none focus:ring-2 focus:ring-accent-400/20"
+                                >
+                                <button type="submit" class="text-xs font-semibold uppercase tracking-wider text-accent-700 hover:underline">Update</button>
+                            </form>
+
+                            <p class="font-display text-base font-semibold tabular-nums text-ink-950">
+                                {{ config('store.currency_symbol') }}{{ number_format((float) $line['line_total'], 2) }}
+                                @if ($line['quantity'] > 1)
+                                    <span class="block text-xs font-normal text-ink-500">line total</span>
+                                @endif
+                            </p>
+
+                            <form method="POST" action="{{ route('cart.destroy', $v->id) }}" onsubmit="return confirm('Remove this item?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs font-bold uppercase tracking-[0.2em] text-ink-600 transition hover:text-red-700">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            @endforeach
+            </div>
+
+            <div class="surface-muted mt-12 flex w-full flex-col gap-4">
+                <div class="flex flex-col items-end gap-2 sm:flex-row sm:items-baseline sm:justify-end sm:gap-4">
+                    <span class="text-sm font-medium text-ink-600">Subtotal</span>
+                    <span class="font-display text-2xl font-semibold tabular-nums text-ink-950">{{ config('store.currency_symbol') }}{{ number_format((float) $subtotal, 2) }}</span>
                 </div>
-            @else
-                @if (auth()->user()->hasVerifiedEmail())
-                    <a href="{{ route('checkout.create') }}" class="btn-primary px-10 py-3">Proceed to checkout</a>
+                @guest
+                    <p class="text-right text-sm text-ink-600">Log in or register to enter shipping details and place your order.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <a href="{{ route('login') }}" class="btn-primary">Log in</a>
+                        <a href="{{ route('register') }}" class="btn-secondary">Register</a>
+                    </div>
                 @else
-                    <p class="max-w-md text-right text-sm text-ink-600">Confirm your email address before you can place an order.</p>
-                    <a href="{{ route('verification.notice') }}" class="btn-primary px-10 py-3">Verify email</a>
-                @endif
-            @endguest
+                    @if (auth()->user()->hasVerifiedEmail())
+                        <div class="flex justify-end">
+                            <a href="{{ route('checkout.create') }}" class="btn-primary min-w-[14rem] px-10 py-3 text-center">Proceed to checkout</a>
+                        </div>
+                    @else
+                        <p class="text-right text-sm text-ink-600">Confirm your email address before you can place an order.</p>
+                        <div class="flex justify-end">
+                            <a href="{{ route('verification.notice') }}" class="btn-primary px-10 py-3">Verify email</a>
+                        </div>
+                    @endif
+                @endguest
+            </div>
         </div>
     @endif
 @endsection

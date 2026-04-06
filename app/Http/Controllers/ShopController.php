@@ -28,21 +28,23 @@ class ShopController extends Controller
                 ->where('is_active', true)
                 ->search($q)
                 ->with(['category', 'images'])
+                ->withSum('variants', 'stock_quantity')
                 ->latest()
                 ->paginate(12)
-                ->withQueryString();
+                ->appends($request->query());
         }
 
-        $featured = $q === ''
+        $products = $q === ''
             ? Product::query()
                 ->where('is_active', true)
                 ->with(['category', 'images'])
+                ->withSum('variants', 'stock_quantity')
                 ->latest()
-                ->take(12)
-                ->get()
-            : collect();
+                ->paginate(12)
+                ->appends($request->query())
+            : null;
 
-        return view('shop.index', compact('categories', 'featured', 'q', 'searchResults'));
+        return view('shop.index', compact('categories', 'products', 'q', 'searchResults'));
     }
 
     public function category(Category $category): View
@@ -51,6 +53,7 @@ class ShopController extends Controller
 
         $products = $category->activeProducts()
             ->with(['images'])
+            ->withSum('variants', 'stock_quantity')
             ->latest()
             ->paginate(12);
 

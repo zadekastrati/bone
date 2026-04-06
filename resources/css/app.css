@@ -5,7 +5,7 @@
 @layer base {
     html {
         scroll-behavior: smooth;
-        -webkit-tap-highlight-color: rgb(113 113 122 / 0.25);
+        -webkit-tap-highlight-color: rgb(139 120 104 / 0.22);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -28,7 +28,7 @@
     }
 
     ::selection {
-        @apply bg-accent-200/90 text-ink-900;
+        @apply bg-accent-200/70 text-ink-900;
     }
 }
 
@@ -50,7 +50,7 @@
     }
 
     .btn-primary {
-        @apply btn border border-accent-400/50 bg-accent-300 text-ink-900 shadow-soft focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
+        @apply btn border border-accent-700/80 bg-accent-700 text-white shadow-soft focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
     }
 
     .btn-on-dark {
@@ -58,7 +58,7 @@
     }
 
     .btn-secondary {
-        @apply btn border border-zinc-200/90 bg-white/90 text-ink-800 shadow-soft backdrop-blur-sm focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
+        @apply btn border border-zinc-300/90 bg-zinc-50/90 text-ink-800 shadow-soft backdrop-blur-sm focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
     }
 
     .btn-ghost {
@@ -78,7 +78,7 @@
     }
 
     .btn-outline-light {
-        @apply btn rounded-xl border border-ink-300/70 bg-white/85 text-ink-800 shadow-sm backdrop-blur-sm focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
+        @apply btn rounded-xl border border-zinc-300/80 bg-zinc-50/85 text-ink-800 shadow-sm backdrop-blur-sm focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50;
     }
 
     /*
@@ -88,7 +88,7 @@
      */
     @media (hover: hover) {
         .btn-primary:hover {
-            @apply border-accent-400 bg-accent-200 shadow-soft-lg;
+            @apply border-accent-800 bg-accent-800 text-white shadow-soft-lg;
         }
 
         .btn-on-dark:hover {
@@ -96,7 +96,7 @@
         }
 
         .btn-secondary:hover {
-            @apply border-accent-300/80 bg-zinc-50/90 shadow-soft-lg;
+            @apply border-accent-300/70 bg-white shadow-soft-lg;
         }
 
         .btn-ghost:hover {
@@ -116,7 +116,7 @@
         }
 
         .btn-outline-light:hover {
-            @apply border-accent-300 bg-white;
+            @apply border-accent-300/80 bg-white;
         }
     }
 
@@ -151,7 +151,7 @@
     }
 
     .panel {
-        @apply rounded-2xl border border-ink-200/60 bg-white p-6 shadow-soft sm:p-8;
+        @apply rounded-2xl border border-zinc-200/70 bg-zinc-50/60 p-6 shadow-soft sm:p-8;
     }
 
     /* Storefront cards — one clean pattern (no stacked ring + heavy shadow) */
@@ -170,11 +170,11 @@
     }
 
     .surface-card {
-        @apply rounded-2xl border border-ink-200/60 bg-white p-6 shadow-soft sm:p-8;
+        @apply rounded-2xl border border-zinc-200/70 bg-zinc-50/60 p-6 shadow-soft sm:p-8;
     }
 
     .surface-muted {
-        @apply rounded-2xl border border-zinc-200/50 bg-zinc-50/70 p-6 sm:p-8;
+        @apply rounded-2xl border border-zinc-200/70 bg-zinc-100/65 p-6 sm:p-8;
     }
 
     /* Data tables — storefront (readable, not spreadsheet-heavy) */
@@ -183,7 +183,7 @@
     }
 
     .table-shell--admin {
-        @apply rounded-xl border-zinc-200/90 bg-white shadow-[0_1px_2px_rgb(113_113_122/0.08),0_16px_40px_-12px_rgb(113_113_122/0.12)] ring-1 ring-zinc-900/[0.05];
+        @apply rounded-xl border-zinc-200/90 bg-zinc-50/70 shadow-[0_1px_2px_rgb(120_100_88/0.08),0_16px_40px_-12px_rgb(120_100_88/0.12)] ring-1 ring-zinc-900/[0.05];
     }
 
     .data-table {
@@ -191,7 +191,7 @@
     }
 
     .data-table thead {
-        @apply bg-ink-100/35;
+        @apply bg-zinc-100/75;
     }
 
     .data-table thead tr {
@@ -229,7 +229,7 @@
     }
 
     .data-table--admin thead {
-        @apply bg-gradient-to-b from-zinc-50/95 to-zinc-100/80;
+        @apply bg-gradient-to-b from-zinc-100/90 to-zinc-200/65;
     }
 
     .data-table--admin thead tr {
@@ -246,7 +246,7 @@
 
     @media (hover: hover) {
         .data-table--admin tbody tr:hover {
-            @apply bg-zinc-50/80;
+            @apply bg-zinc-100/65;
         }
     }
 
@@ -270,6 +270,38 @@
 
     .data-table--compact td {
         @apply py-2.5;
+    }
+
+    /**
+     * Product admin forms: calmer labels + neutral variant grid (enterprise-style).
+     */
+    .admin-pro-form .form-input,
+    .admin-pro-form .form-select {
+        @apply rounded-lg shadow-none;
+    }
+
+    .admin-pro-form .form-label {
+        @apply text-sm font-medium normal-case tracking-normal text-zinc-700;
+    }
+
+    .data-table--variants {
+        @apply text-[13px];
+    }
+
+    .data-table--variants.data-table--admin thead {
+        @apply bg-zinc-50;
+    }
+
+    .data-table--variants.data-table--admin thead tr {
+        @apply border-zinc-200;
+    }
+
+    .data-table--variants.data-table--admin th {
+        @apply py-3 text-xs font-medium normal-case tracking-normal text-zinc-600;
+    }
+
+    .data-table--variants.data-table--admin tbody tr:hover {
+        @apply bg-zinc-50/50;
     }
 
     .pagination-wrap {
@@ -443,7 +475,7 @@
     }
 
     .search-bar {
-        @apply flex flex-col gap-3 rounded-2xl border border-ink-200/50 bg-white p-4 shadow-soft sm:flex-row sm:items-end sm:p-5;
+        @apply flex flex-col gap-3 rounded-2xl border border-zinc-200/70 bg-zinc-50/65 p-4 shadow-soft sm:flex-row sm:items-end sm:p-5;
     }
 
     .nav-link {
@@ -451,7 +483,7 @@
     }
 
     .nav-link-active {
-        @apply bg-zinc-200/80 text-ink-900 ring-1 ring-zinc-300/50;
+        @apply bg-accent-100/70 text-ink-900 ring-1 ring-accent-200/55;
     }
 
     .nav-link-muted {
@@ -477,7 +509,7 @@
     }
 
     .link-brand {
-        @apply font-semibold text-accent-600 underline-offset-4 transition-colors duration-200;
+        @apply font-semibold text-accent-700 underline-offset-4 transition-colors duration-200;
     }
 
     .link-inverse {
@@ -503,15 +535,15 @@
     }
 
     .admin-sidebar-link-active {
-        @apply bg-zinc-200/80 text-ink-900 ring-1 ring-zinc-300/60;
+        @apply bg-accent-100/70 text-ink-900 ring-1 ring-accent-200/60;
     }
 
     .admin-panel {
-        @apply overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-sm ring-1 ring-zinc-900/[0.04];
+        @apply overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-50/70 shadow-sm ring-1 ring-zinc-900/[0.04];
     }
 
     .admin-form-surface {
-        @apply rounded-xl border border-zinc-200/80 bg-gradient-to-br from-zinc-50/95 to-white p-6 shadow-sm ring-1 ring-zinc-900/[0.04];
+        @apply rounded-xl border border-zinc-200/80 bg-gradient-to-br from-zinc-100/80 to-zinc-50/60 p-6 shadow-sm ring-1 ring-zinc-900/[0.04];
     }
 
     /**
@@ -534,7 +566,7 @@
     }
 
     .admin-layout__sidebar {
-        @apply flex w-64 flex-col overflow-x-hidden border-r border-zinc-200/90 bg-gradient-to-b from-zinc-100/95 via-zinc-50 to-zinc-50 text-ink-800 shadow-[4px_0_24px_-8px_rgba(82,82,91,0.2)] transition-transform duration-300 ease-out;
+        @apply flex w-64 flex-col overflow-x-hidden border-r border-zinc-200/90 bg-gradient-to-b from-zinc-100 via-zinc-50/95 to-zinc-100/55 text-ink-800 shadow-[4px_0_24px_-8px_rgba(94,82,74,0.16)] transition-transform duration-300 ease-out;
         position: fixed;
         top: 0;
         bottom: 0;

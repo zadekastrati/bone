@@ -45,34 +45,40 @@ Stack: **`compose.yaml`** — PHP 8.2, MySQL 8.4, Mailpit.
 4. **Start the stack**
 
    ```bash
-   ./vendor/bin/sail up -d
+   docker compose up -d
    ```
-
-   On Windows, use **Git Bash**, **WSL**, or: `bash ./vendor/bin/sail up -d`
 
 5. **Key, assets, storage, database**
 
+   Use **one terminal** (PowerShell, Git Bash, Terminal, etc.). Run the lines **in order**, one after another — or copy the whole block and paste once; your shell will run each line in sequence.
+
    ```bash
-   ./vendor/bin/sail artisan key:generate
-   ./vendor/bin/sail npm install
-   ./vendor/bin/sail npm run build
-   ./vendor/bin/sail artisan storage:link
-   ./vendor/bin/sail artisan migrate --seed
+   docker compose exec laravel.test php artisan key:generate
+   docker compose exec laravel.test npm install
+   docker compose exec laravel.test npm run build
+   docker compose exec laravel.test php artisan storage:link
+   docker compose exec laravel.test php artisan migrate --seed
+   ```
+
+   Optional one-liner (same result, stops if any step fails):
+
+   ```bash
+   docker compose exec laravel.test php artisan key:generate && docker compose exec laravel.test npm install && docker compose exec laravel.test npm run build && docker compose exec laravel.test php artisan storage:link && docker compose exec laravel.test php artisan migrate --seed
    ```
 
 6. **Open**
 
    - App: **http://localhost** (if port 80 is busy, set `APP_PORT=8080` in `.env` → **http://localhost:8080**)
    - Mailpit: **http://localhost:8025**
-   - Optional — Vite hot reload: `./vendor/bin/sail npm run dev` (second terminal)
+   - Optional — Vite hot reload (second terminal): `docker compose exec laravel.test npm run dev`
 
 7. **Stop**
 
    ```bash
-   ./vendor/bin/sail down
+   docker compose down
    ```
 
-Use `./vendor/bin/sail artisan …` and `./vendor/bin/sail composer …` for any other Laravel or Composer commands.
+   On **macOS/Linux**, if you prefer the Sail helper: `./vendor/bin/sail` works the same way (`sail up`, `sail artisan`, …). On **Windows**, `docker compose` + `docker compose exec laravel.test` avoids Bash/WSL issues with the `sail` script.
 
 ## Default seeded accounts
 

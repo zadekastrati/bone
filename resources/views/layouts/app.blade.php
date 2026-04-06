@@ -12,41 +12,43 @@
     </title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=oswald:500,600,700|outfit:400,500,600,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 @inject('cartService', \App\Services\CartService::class)
-<body class="flex min-h-full flex-col bg-page-mesh font-sans text-base leading-relaxed text-ink-900 antialiased">
+<body @class([
+    'flex min-h-full flex-col font-sans text-base leading-relaxed text-ink-900 antialiased',
+    'bg-white' => request()->routeIs('cart.index'),
+    'bg-page-mesh' => ! request()->routeIs('cart.index'),
+])>
     <div class="flex min-h-full flex-1 flex-col" x-data="{ mobileOpen: false }" @keydown.window.escape="mobileOpen = false">
         <x-store-promo-bar />
 
-        <header class="sticky top-0 z-50 border-b border-zinc-200/80 bg-zinc-50/95 text-ink-900 shadow-[0_8px_30px_-12px_rgba(82,82,91,0.2)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-zinc-50/90">
-            <div class="page-shell flex h-14 items-center gap-3 sm:gap-4 lg:h-[4.25rem]">
-                <a href="{{ route('home') }}" class="font-display shrink-0 truncate text-lg font-bold uppercase tracking-mega text-ink-900 transition-opacity hover:opacity-80 lg:text-xl">
+        <header class="sticky top-0 z-50 border-b border-zinc-200/80 bg-gradient-to-b from-zinc-50/95 to-zinc-100/80 text-ink-900 shadow-[0_8px_30px_-12px_rgba(94,82,74,0.14)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-zinc-50/90">
+            <div class="page-shell flex h-14 min-w-0 items-center gap-2 sm:gap-3 lg:h-[4.25rem] lg:gap-4">
+                <a href="{{ route('home') }}" class="font-display min-w-0 shrink truncate text-lg font-bold uppercase tracking-mega text-ink-900 transition-opacity hover:opacity-80 lg:max-w-none lg:text-xl">
                     {{ config('app.name') }}
                 </a>
 
-                @unless (request()->routeIs('shop.index'))
-                    <x-store-search-form variant="header" />
-                @endunless
+                {{-- Middle: search + desktop nav share the flexible width so the cart column is never pushed off-screen --}}
+                <div class="flex min-w-0 flex-1 items-center gap-2 lg:gap-4">
+                    @unless (request()->routeIs('shop.index'))
+                        <x-store-search-form variant="header" />
+                    @endunless
 
-                <nav class="hidden items-center gap-0.5 lg:flex lg:shrink-0" aria-label="Primary">
-                    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
-                    <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
-                    <a href="{{ route('cart.index') }}" class="nav-link {{ request()->routeIs('cart.*') ? 'nav-link-active' : '' }}">
-                        Cart
-                        @if ($cartService->count() > 0)
-                            <span class="ml-1 rounded-full bg-zinc-400 px-1.5 py-0.5 text-[10px] font-bold text-zinc-950">{{ $cartService->count() }}</span>
-                        @endif
-                    </a>
-                    @auth
-                        <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.*') ? 'nav-link-active' : '' }}">Orders</a>
-                        @if (auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">Dashboard</a>
-                        @endif
-                    @endauth
-                </nav>
+                    <nav class="hidden min-w-0 items-center gap-0.5 lg:flex" aria-label="Primary">
+                        <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
+                        <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
+                        @auth
+                            <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.*') ? 'nav-link-active' : '' }}">Orders</a>
+                            @if (auth()->user()->isAdmin())
+                                <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">Dashboard</a>
+                            @endif
+                        @endauth
+                    </nav>
+                </div>
 
-                <div class="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+                <div class="flex shrink-0 items-center gap-2 sm:gap-3">
                     @guest
                         <a href="{{ route('login') }}" class="btn-ghost-inverse hidden px-3 py-2 sm:inline-flex">Log in</a>
                         <a href="{{ route('register') }}" class="btn-on-dark hidden px-4 py-2.5 sm:inline-flex">Join</a>
@@ -65,16 +67,16 @@
 
                     <button
                         type="button"
-                        class="btn-ghost-inverse inline-flex size-10 items-center justify-center rounded-xl lg:hidden"
+                        class="inline-flex size-10 items-center justify-center rounded-xl text-ink-950 transition-colors hover:bg-zinc-200/50 lg:hidden"
                         @click="mobileOpen = !mobileOpen"
                         :aria-expanded="mobileOpen"
                         aria-controls="mobile-nav"
                         aria-label="Toggle menu"
                     >
-                        <svg x-show="!mobileOpen" class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <svg x-show="!mobileOpen" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                         </svg>
-                        <svg x-show="mobileOpen" x-cloak class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <svg x-show="mobileOpen" x-cloak class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -94,12 +96,19 @@
                 class="border-t border-zinc-200/80 bg-zinc-50/98 backdrop-blur-xl lg:hidden"
             >
                 <nav class="page-shell flex flex-col gap-0.5 py-4" aria-label="Mobile">
-                    @unless (request()->routeIs('shop.index'))
-                        <x-store-search-form variant="drawer" />
-                    @endunless
+                    <div x-data="{ openSearch: false }" class="mb-1">
+                        <button type="button" @click="openSearch = !openSearch; if(openSearch) $nextTick(() => { document.getElementById('store-search-q-drawer').focus(); })" class="nav-link flex w-full items-center justify-between" :aria-expanded="openSearch">
+                            <span>Search products</span>
+                            <svg class="size-5 text-ink-500 transition-colors duration-200" :class="{ 'text-ink-900': openSearch }" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197M15.803 15.803A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                            </svg>
+                        </button>
+                        <div x-show="openSearch" x-cloak x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-2 pb-2">
+                            <x-store-search-form variant="drawer" />
+                        </div>
+                    </div>
                     <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
                     <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
-                    <a href="{{ route('cart.index') }}" class="nav-link {{ request()->routeIs('cart.*') ? 'nav-link-active' : '' }}">Cart @if ($cartService->count() > 0) ({{ $cartService->count() }}) @endif</a>
                     @guest
                         <a href="{{ route('login') }}" class="nav-link">Log in</a>
                         <a href="{{ route('register') }}" class="btn-on-dark mt-3 justify-center">Join</a>
@@ -159,7 +168,7 @@
                 @yield('content')
             </div>
         @else
-            <div class="page-shell flex-1 pb-16 pt-2 lg:pb-24 lg:pt-4">
+            <div class="page-shell flex-1 pb-28 pt-2 max-lg:pb-32 lg:pb-24 lg:pt-4">
                 @yield('content')
             </div>
         @endif
@@ -168,11 +177,30 @@
             <div class="page-shell grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-20">
                 <div class="sm:col-span-2 lg:col-span-1">
                     <p class="font-display text-lg font-bold uppercase tracking-mega text-ink-900">{{ config('app.name') }}</p>
-                    <p class="mt-4 max-w-sm text-sm leading-relaxed text-ink-600 text-pretty">Performance gym wear designed for women who train hard. Cut, fabric, and finish built for the floor.</p>
+                    <p class="mt-4 flex items-center gap-2 text-pretty text-sm text-ink-600">
+                        <i class="fas fa-envelope"></i>
+                        bone@example.com
+                    </p>
+                    <p class="mt-2 flex items-center gap-2 text-pretty text-sm text-ink-600">
+                        <i class="fas fa-phone"></i>
+                        +383 49 123 456
+                    </p>
+                    <div class="mt-4 flex items-center gap-4 text-pretty text-ink-600">
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
                 </div>
                 <div>
                     <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">Shop</p>
                     <ul class="mt-5 space-y-3 text-sm">
+                        <li><a href="{{ route('cart.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Bag / cart</a></li>
                         <li><a href="{{ route('shop.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">All women&apos;s</a></li>
                         <li><a href="{{ route('shop.index') }}#leggings" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Leggings</a></li>
                         <li><a href="{{ route('shop.index') }}#bras" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Sports bras</a></li>
@@ -182,9 +210,11 @@
                 <div>
                     <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">Help</p>
                     <ul class="mt-5 space-y-3 text-sm">
-                        <li><a href="#" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Shipping</a></li>
-                        <li><a href="#" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Returns</a></li>
-                        <li><a href="#" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Size guide</a></li>
+                        <li><a href="{{ route('about') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">About us</a></li>
+                        <li><a href="{{ route('contact') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Contact us</a></li>
+                        <li><a href="{{ route('terms') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Terms &amp; conditions</a></li>
+                        <li><a href="{{ route('returns') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Returns</a></li>
+                        <li><a href="{{ route('size-guide') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Size guide</a></li>
                     </ul>
                 </div>
                 <div>
@@ -201,12 +231,14 @@
             </div>
             <div class="border-t border-zinc-200/70 py-7">
                 <div class="page-shell flex flex-col items-center justify-between gap-4 text-center text-[11px] leading-relaxed text-ink-500 sm:flex-row sm:text-left">
-                    <p class="text-balance">&copy; {{ date('Y') }} {{ config('app.name') }}. Women&apos;s gym wear.</p>
-                    <p class="max-w-md text-pretty">Independent storefront demo — not affiliated with any third-party brand.</p>
+                    <p class="text-balance">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
                 </div>
             </div>
         </footer>
     </div>
+
+    {{-- Floating bag: fixed to viewport (all breakpoints), high z-index --}}
+    <x-cart-fab :count="$cartService->count()" />
 
     <style>
         [x-cloak] { display: none !important; }

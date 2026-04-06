@@ -14,7 +14,7 @@
     <link href="https://fonts.bunny.net/css?family=oswald:500,600,700|outfit:400,500,600,700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-full bg-zinc-50 font-sans text-base leading-relaxed text-ink-900 antialiased lg:h-full lg:overflow-hidden">
+<body class="min-h-full bg-zinc-100/70 font-sans text-base leading-relaxed text-ink-900 antialiased lg:h-full lg:overflow-hidden">
     <div
         class="admin-layout"
         x-data="{ sidebarOpen: false }"
@@ -74,15 +74,19 @@
                     <svg class="size-5 shrink-0 opacity-80" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
                     Users
                 </a>
+                <a href="{{ route('admin.messages.index') }}" @click="sidebarOpen = false" class="admin-sidebar-link {{ request()->routeIs('admin.messages.*') ? 'admin-sidebar-link-active' : '' }}">
+                    <svg class="size-5 shrink-0 opacity-80" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 7.5v9A2.25 2.25 0 0 1 19.5 18.75h-15A2.25 2.25 0 0 1 2.25 16.5v-9m19.5 0A2.25 2.25 0 0 0 19.5 5.25h-15A2.25 2.25 0 0 0 2.25 7.5m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0l-7.5-4.615a2.25 2.25 0 0 1-1.07-1.916V7.5" /></svg>
+                    Messages
+                </a>
             </nav>
         </aside>
 
         <div class="admin-layout__main">
-            <header class="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-zinc-200/80 bg-white/95 px-4 shadow-sm backdrop-blur-md sm:px-6 lg:h-16 lg:px-8">
+            <header class="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-zinc-200/80 bg-gradient-to-b from-zinc-50/95 to-zinc-100/70 px-4 shadow-sm backdrop-blur-md sm:px-6 lg:h-16 lg:px-8">
                 <div class="flex min-w-0 items-center gap-3">
                     <button
                         type="button"
-                        class="inline-flex size-10 items-center justify-center rounded-xl border border-zinc-200/90 bg-zinc-50/80 text-ink-700 shadow-sm lg:hidden"
+                        class="inline-flex size-10 items-center justify-center rounded-xl border border-zinc-200/90 bg-zinc-100/70 text-ink-700 shadow-sm lg:hidden"
                         @click="sidebarOpen = true"
                         aria-label="Open menu"
                     >
@@ -96,7 +100,7 @@
                 <div class="flex shrink-0 items-center gap-2 sm:gap-4">
                     <a
                         href="{{ route('shop.index') }}"
-                        class="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200/90 bg-white px-2.5 py-2 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-zinc-50 sm:gap-2 sm:px-3"
+                        class="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200/90 bg-zinc-50/85 px-2.5 py-2 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-white sm:gap-2 sm:px-3"
                         title="Open the customer storefront"
                     >
                         <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
@@ -104,10 +108,10 @@
                         <span class="sm:hidden">Shop</span>
                     </a>
                     <span class="hidden max-w-[10rem] truncate text-sm text-ink-600 sm:block" title="{{ auth()->user()->email }}">{{ auth()->user()->name }}</span>
-                    <span class="hidden rounded-full bg-zinc-100/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-800 ring-1 ring-zinc-200/80 sm:inline">{{ auth()->user()->role }}</span>
+                    <span class="hidden rounded-full bg-zinc-100/95 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-800 ring-1 ring-zinc-300/70 sm:inline">{{ auth()->user()->role }}</span>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="rounded-xl border border-zinc-200/90 bg-white px-3 py-2 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-zinc-50">Log out</button>
+                        <button type="submit" class="rounded-xl border border-zinc-200/90 bg-zinc-50/85 px-3 py-2 text-xs font-semibold text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-white">Log out</button>
                     </form>
                 </div>
             </header>

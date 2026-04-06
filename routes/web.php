@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -20,6 +22,15 @@ use Illuminate\View\View;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+Route::view('/about', 'about')->name('about');
+Route::view('/contact', 'contact')->name('contact');
+Route::view('/terms-and-conditions', 'terms-and-conditions')->name('terms');
+Route::view('/returns', 'returns')->name('returns');
+Route::view('/size-guide', 'size-guide')->name('size-guide');
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('contact.store');
 
 Route::prefix('shop')->name('shop.')->group(function (): void {
     Route::get('/', [ShopController::class, 'index'])->name('index');
@@ -69,6 +80,9 @@ Route::middleware('auth')->group(function (): void {
         Route::resource('products', AdminProductController::class)
             ->parameters(['products' => 'id'])
             ->except(['show']);
+        Route::resource('messages', AdminContactMessageController::class)
+            ->parameters(['messages' => 'id'])
+            ->only(['index', 'show']);
         Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
     });
 });
