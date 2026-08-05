@@ -6,16 +6,22 @@
 
 @section('content')
     {{-- Hero: full-bleed campaign block (layout inspired by major athletic retail sites) --}}
-    <section
-        class="relative flex min-h-[85vh] flex-col justify-end overflow-hidden pb-20 pt-28 text-ink-900 sm:min-h-[90vh] sm:justify-center sm:pb-28 sm:pt-20 lg:pt-24"
-        style="background-image: linear-gradient(110deg, rgba(250, 247, 243, 0.92) 0%, rgba(250, 247, 243, 0.8) 42%, rgba(250, 247, 243, 0.5) 100%), url('https://images.pexels.com/photos/8436586/pexels-photo-8436586.jpeg?auto=compress&cs=tinysrgb&w=2000&dpr=2'); background-size: cover; background-position: center;"
-    >
+    <section class="relative flex min-h-[85vh] flex-col justify-end overflow-hidden pb-20 pt-28 text-white sm:min-h-[90vh] sm:justify-center sm:pb-28 sm:pt-20 lg:pt-24">
+        <video
+            class="absolute inset-0 h-full w-full object-cover"
+            autoplay
+            muted
+            loop
+            playsinline
+        >
+            <source src="{{ asset('videos/hero-banner.mp4') }}" type="video/mp4" />
+        </video>
         <div class="relative mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-            <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-accent-600 sm:text-xs">Women&apos;s performance · gym to street</p>
-            <h1 class="font-display mt-5 max-w-4xl text-5xl font-bold uppercase leading-[0.9] tracking-tight text-balance text-ink-950 sm:text-7xl md:text-8xl lg:text-9xl">
+            <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-accent-300 sm:text-xs">Women&apos;s performance · gym to street</p>
+            <h1 class="font-display mt-5 max-w-4xl text-5xl font-bold uppercase leading-[0.9] tracking-tight text-balance text-white sm:text-7xl md:text-8xl lg:text-9xl">
                 Become your<br class="hidden sm:inline" /> personal best
             </h1>
-            <p class="mx-auto mt-8 max-w-xl text-base leading-relaxed text-ink-600 text-pretty sm:mx-0 sm:text-lg sm:leading-relaxed">
+            <p class="mx-auto mt-8 max-w-xl text-base leading-relaxed text-white/90 text-pretty sm:mx-0 sm:text-lg sm:leading-relaxed">
                 Kit that keeps up when the set gets ugly — compression, support, and layers that move with you from warm-up to last rep.
             </p>
             <div class="mt-10 flex flex-wrap items-center gap-3 sm:mt-12 sm:gap-4">

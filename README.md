@@ -28,18 +28,26 @@ Stack: **`compose.yaml`** — PHP 8.2, MySQL 8.4, Mailpit.
 
    `.env.example` is already configured for Sail (MySQL and Mailpit service names). Uncomment `WWWGROUP` / `WWWUSER` on Linux if file permissions are wrong inside the container. If port **80** is taken, add `APP_PORT=8080` to `.env`. If **3306** is already used on the host (e.g. Laragon MySQL), keep `FORWARD_DB_PORT=3307` in `.env` (already set) so Docker can bind MySQL on **3307** instead — Laravel inside the container still uses `mysql:3306`.
 
-3. **Install Composer dependencies** (one-off container — no local PHP/Composer needed)
+3. **Install Composer dependencies**
 
-   **macOS / Linux / Git Bash:**
+   If you already have PHP + Composer installed on your machine, the simplest cross-platform option is:
+
+   ```bash
+   composer install --ignore-platform-reqs
+   ```
+
+   This populates the local `vendor/` folder that the Sail stack expects when Docker mounts the project.
+
+   **macOS / Linux / Git Bash** (alternative containerized install):
 
    ```bash
    docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php82-composer:latest composer install --ignore-platform-reqs
    ```
 
-   **Windows PowerShell** (run from the project folder):
+   **Windows PowerShell** (if you prefer the containerized Composer route, use an absolute path):
 
    ```powershell
-   docker run --rm -v "${PWD}:/var/www/html" -w /var/www/html laravelsail/php82-composer:latest composer install --ignore-platform-reqs
+   docker run --rm -v "C:/path/to/bone:/var/www/html" -w /var/www/html laravelsail/php82-composer:latest composer install --ignore-platform-reqs
    ```
 
 4. **Start the stack**
