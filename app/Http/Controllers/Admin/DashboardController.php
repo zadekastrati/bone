@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\ContactMessage;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
@@ -26,6 +27,11 @@ class DashboardController extends Controller
             ->limit(8)
             ->get();
 
+        $recentContactMessages = ContactMessage::query()
+            ->latest()
+            ->limit(8)
+            ->get();
+
         return view('admin.dashboard', [
             'stats' => [
                 'orders_pending' => $pendingOrders,
@@ -34,8 +40,10 @@ class DashboardController extends Controller
                 'products' => Product::query()->count(),
                 'categories' => Category::query()->count(),
                 'users' => User::query()->count(),
+                'contacts' => ContactMessage::query()->count(),
             ],
             'recentOrders' => $recentOrders,
+            'recentContactMessages' => $recentContactMessages,
         ]);
     }
 }

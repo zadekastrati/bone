@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int $category_id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $style_code
+ * @property string $description
+ * @property float|string $price
+ * @property bool $is_active
+ */
 class Product extends Model
 {
     use SoftDeletes;
@@ -16,6 +26,7 @@ class Product extends Model
         'category_id',
         'name',
         'slug',
+        'style_code',
         'description',
         'price',
         'is_active',
@@ -74,6 +85,26 @@ class Product extends Model
     public function primaryImage(): ?ProductImage
     {
         return $this->images()->first();
+    }
+
+    /**
+     * No variant has stock, or there are no variants (treat as unavailable).
+     */
+    public function isSoldOut(): bool
+    {
+        if (array_key_exists('variants_sum_stock_quantity', $this->getAttributes())) {
+            return (int) ($this->getAttributes()['variants_sum_stock_quantity'] ?? 0) < 1;
+        }
+
+        if ($this->relationLoaded('variants')) {
+            if ($this->variants->isEmpty()) {
+                return true;
+            }
+
+            return $this->variants->every(fn (ProductVariant $v): bool => $v->stock_quantity < 1);
+        }
+
+        return ! $this->variants()->where('stock_quantity', '>', 0)->exists();
     }
 
     /** @return list<array{name: string, hex: ?string}> */

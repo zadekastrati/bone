@@ -14,7 +14,7 @@
     <div class="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div class="space-y-4">
             @if ($product->images->isEmpty())
-                <div class="aspect-[4/5] overflow-hidden rounded-3xl bg-gradient-to-br from-pink-100 to-accent-200 shadow-float">
+                <div class="aspect-[4/5] overflow-hidden rounded-3xl bg-gradient-to-br from-zinc-100 to-accent-200 shadow-float">
                     <div class="flex size-full items-center justify-center text-xs font-bold uppercase tracking-mega text-white/40">Photo soon</div>
                 </div>
             @else
@@ -60,6 +60,13 @@
                 </div>
             @endif
 
+            @if ($product->isSoldOut())
+                <div class="mt-10 rounded-2xl border border-zinc-200/80 bg-zinc-100/80 px-5 py-6 text-center">
+                    <p class="font-display text-sm font-bold uppercase tracking-[0.2em] text-ink-800">Sold out</p>
+                    <p class="mt-2 text-sm text-ink-600">This product is not available right now. Try another size or colour on other items, or check back later.</p>
+                    <a href="{{ route('shop.category', $category) }}" class="btn-secondary mt-6 inline-flex px-6 py-3">Back to {{ $category->name }}</a>
+                </div>
+            @else
             <form id="add-to-cart-form" method="POST" action="{{ route('cart.store') }}" class="mt-10 space-y-8">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -162,9 +169,11 @@
                 </div>
                 <p id="add-to-cart-hint" class="text-xs text-ink-500">Choose a color and size to add this item to your cart.</p>
             </form>
+            @endif
         </div>
     </div>
 
+    @if (! $product->isSoldOut())
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('add-to-cart-form');
@@ -247,4 +256,5 @@
             syncPanels();
         });
     </script>
+    @endif
 @endsection

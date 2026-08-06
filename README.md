@@ -4,77 +4,89 @@ Production-style starter with **MySQL**, **Blade + Tailwind (Vite)**, **session 
 
 ## Requirements
 
-- PHP **8.1+** and Composer
-- MySQL **5.7+** / **8.x**
-- Node.js **18+** and npm (for Vite / Tailwind)
+- **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** (Windows/Mac) or Docker Engine + Compose (Linux)
+- **Git**
 
-## Setup (step by step)
+PHP, Composer, Node, and MySQL run **inside** containers ([Laravel Sail](https://laravel.com/docs/sail)); you do not install them on the host.
 
-1. **Clone or copy the project** into your environment.
+## Setup
 
-2. **Install PHP dependencies**
+Stack: **`compose.yaml`** — PHP 8.2, MySQL 8.4, Mailpit.
+
+1. **Clone and enter the project**
 
    ```bash
-   composer install
+   git clone <YOUR_REPO_URL> bone
+   cd bone
    ```
 
-3. **Environment file**
+2. **Environment**
 
    ```bash
    cp .env.example .env
-   php artisan key:generate
    ```
 
-4. **Configure MySQL** in `.env`:
+   `.env.example` is already configured for Sail (MySQL and Mailpit service names). Uncomment `WWWGROUP` / `WWWUSER` on Linux if file permissions are wrong inside the container. If port **80** is taken, add `APP_PORT=8080` to `.env`. If **3306** is already used on the host (e.g. Laragon MySQL), keep `FORWARD_DB_PORT=3307` in `.env` (already set) so Docker can bind MySQL on **3307** instead — Laravel inside the container still uses `mysql:3306`.
 
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=bone_app
-   DB_USERNAME=your_user
-   DB_PASSWORD=your_password
-   ```
+3. **Install Composer dependencies**
 
-   Create the database (example):
-
-   ```sql
-   CREATE DATABASE bone_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-   ```
-
-5. **Install front-end dependencies and build assets**
+   If you already have PHP + Composer installed on your machine, the simplest cross-platform option is:
 
    ```bash
-   npm install
-   npm run build
+   composer install --ignore-platform-reqs
    ```
 
-   For local development with hot reload:
+   This populates the local `vendor/` folder that the Sail stack expects when Docker mounts the project.
+
+   **macOS / Linux / Git Bash** (alternative containerized install):
 
    ```bash
-   npm run dev
+   docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php82-composer:latest composer install --ignore-platform-reqs
    ```
 
-6. **Public storage link** (required for uploaded post/event images)
+   **Windows PowerShell** (if you prefer the containerized Composer route, use an absolute path):
+
+   ```powershell
+   docker run --rm -v "C:/path/to/bone:/var/www/html" -w /var/www/html laravelsail/php82-composer:latest composer install --ignore-platform-reqs
+   ```
+
+4. **Start the stack**
 
    ```bash
-   php artisan storage:link
+   docker compose up -d
    ```
 
-7. **Migrate and seed**
+5. **Key, assets, storage, database**
+
+   Use **one terminal** (PowerShell, Git Bash, Terminal, etc.). Run the lines **in order**, one after another — or copy the whole block and paste once; your shell will run each line in sequence.
 
    ```bash
-   php artisan migrate
-   php artisan db:seed
+   docker compose exec laravel.test php artisan key:generate
+   docker compose exec laravel.test npm install
+   docker compose exec laravel.test npm run build
+   docker compose exec laravel.test php artisan storage:link
+   docker compose exec laravel.test php artisan migrate --seed
    ```
 
-8. **Run the application**
+   Optional one-liner (same result, stops if any step fails):
 
    ```bash
-   php artisan serve
+   docker compose exec laravel.test php artisan key:generate && docker compose exec laravel.test npm install && docker compose exec laravel.test npm run build && docker compose exec laravel.test php artisan storage:link && docker compose exec laravel.test php artisan migrate --seed
    ```
 
-   Open `http://127.0.0.1:8000`.
+6. **Open**
+
+   - App: **http://localhost** (if port 80 is busy, set `APP_PORT=8080` in `.env` → **http://localhost:8080**)
+   - Mailpit: **http://localhost:8025**
+   - Optional — Vite hot reload (second terminal): `docker compose exec laravel.test npm run dev`
+
+7. **Stop**
+
+   ```bash
+   docker compose down
+   ```
+
+   On **macOS/Linux**, if you prefer the Sail helper: `./vendor/bin/sail` works the same way (`sail up`, `sail artisan`, …). On **Windows**, `docker compose` + `docker compose exec laravel.test` avoids Bash/WSL issues with the `sail` script.
 
 ## Default seeded accounts
 
@@ -96,4 +108,4 @@ Seeding also creates **5 sample posts** and **5 sample events** (see `PostSeeder
 ## Project notes
 
 - Set `APP_URL` in `.env` to your real URL in production so storage URLs resolve correctly.
-- Use `php artisan config:cache` and `php artisan route:cache` in production after deployment.
+- Production deploys without Sail: build assets and run `php artisan optimize`, `config:cache`, `route:cache` as usual on the server.

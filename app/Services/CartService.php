@@ -98,7 +98,7 @@ class CartService
 
         $variantIds = array_map(intval(...), array_keys($contents));
         $variants = ProductVariant::query()
-            ->with(['product.category'])
+            ->with(['product.category', 'product.images'])
             ->whereIn('id', $variantIds)
             ->get()
             ->keyBy('id');

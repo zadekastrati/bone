@@ -1,0 +1,1744 @@
+{
+  "categories": [
+    {
+      "name": "SPORTS BRA",
+      "slug": "sports-bras",
+      "description": "Low to high impact — racerback, longline, and strappy.",
+      "sort_order": 1
+    },
+    {
+      "name": "SHORTS",
+      "slug": "shorts",
+      "description": "Bike shorts, training shorts, and relaxed fits.",
+      "sort_order": 2
+    },
+    {
+      "name": "T-SHIRT AND TOPS",
+      "slug": "tops-tanks",
+      "description": "Crops, tanks, and tees for training and rest days.",
+      "sort_order": 3
+    },
+    {
+      "name": "LEGGINGS",
+      "slug": "leggings",
+      "description": "High-rise holds, squat-proof fabrics, full length to 7/8.",
+      "sort_order": 4
+    },
+    {
+      "name": "BODYSUIT",
+      "slug": "bodysuits",
+      "description": "Seamless one-piece silhouettes for workout-to-street layering.",
+      "sort_order": 5
+    }
+  ],
+  "products": [
+    {
+      "category": "SPORTS BRA",
+      "name": "The Essential Sport Bra",
+      "description": "THE ESSENTIAL SPORTS BRA — Built for all-day movement. Reliable low–to–medium support in a clean, minimal silhouette. Smooth, moisture‑wicking fabric and a wide supportive band keep you secure, while removable cups let you choose shape and coverage.",
+      "price": 25.0,
+      "variants": [
+        {
+          "color": "White And Blue",
+          "color_hex": "#DCE6FF",
+          "size": "M",
+          "sku": "BONE-BRA-ESB-WNB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "White And Blue",
+          "color_hex": "#DCE6FF",
+          "size": "S",
+          "sku": "BONE-BRA-ESB-WNB-WAB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "White And Blue",
+          "color_hex": "#DCE6FF",
+          "size": "L",
+          "sku": "BONE-BRA-ESB-WNB-WAB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "White And Blue",
+          "color_hex": "#DCE6FF",
+          "size": "XL",
+          "sku": "BONE-BRA-ESB-WNB-WAB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "M",
+          "sku": "BONE-BRA-ESB-PLP",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "S",
+          "sku": "BONE-BRA-ESB-PLP-PUP-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "L",
+          "sku": "BONE-BRA-ESB-PLP-PUP-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "XL",
+          "sku": "BONE-BRA-ESB-PLP-PUP-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "M",
+          "sku": "BONE-BRA-ESB-DPE",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "S",
+          "sku": "BONE-BRA-ESB-DPE-DEE-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "L",
+          "sku": "BONE-BRA-ESB-DPE-DEE-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "XL",
+          "sku": "BONE-BRA-ESB-DPE-DEE-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "SHORTS",
+      "name": "Everyday Seam Shorts",
+      "description": "Designed for performance and everyday wear: compressive, high‑recovery fabric sculpts and supports; contour zones and engineered scrunch define the glutes; flat‑lock seams and a mid‑low waistband prevent digging or slipping",
+      "price": 32.0,
+      "variants": [
+        {
+          "color": "White And Blue",
+          "color_hex": "#DCE6FF",
+          "size": "M",
+          "sku": "BONE-SHT-ESS-WNB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "White And Blue",
+          "color_hex": "#DCE6FF",
+          "size": "S",
+          "sku": "BONE-SHT-ESS-WNB-WAB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "White And Blue",
+          "color_hex": "#DCE6FF",
+          "size": "L",
+          "sku": "BONE-SHT-ESS-WNB-WAB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "White And Blue",
+          "color_hex": "#DCE6FF",
+          "size": "XL",
+          "sku": "BONE-SHT-ESS-WNB-WAB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "M",
+          "sku": "BONE-SHT-ESS-PLP",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "S",
+          "sku": "BONE-SHT-ESS-PLP-PUP-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "L",
+          "sku": "BONE-SHT-ESS-PLP-PUP-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "XL",
+          "sku": "BONE-SHT-ESS-PLP-PUP-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "M",
+          "sku": "BONE-SHT-ESS-DPE",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "S",
+          "sku": "BONE-SHT-ESS-DPE-DEE-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "L",
+          "sku": "BONE-SHT-ESS-DPE-DEE-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "XL",
+          "sku": "BONE-SHT-ESS-DPE-DEE-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Denim Blue",
+          "color_hex": "#4A6A95",
+          "size": "M",
+          "sku": "BONE-SHT-ESS-DNB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Denim Blue",
+          "color_hex": "#4A6A95",
+          "size": "S",
+          "sku": "BONE-SHT-ESS-DNB-DEB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Denim Blue",
+          "color_hex": "#4A6A95",
+          "size": "L",
+          "sku": "BONE-SHT-ESS-DNB-DEB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Denim Blue",
+          "color_hex": "#4A6A95",
+          "size": "XL",
+          "sku": "BONE-SHT-ESS-DNB-DEB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Leather Pink",
+          "color_hex": "#B77A8A",
+          "size": "M",
+          "sku": "BONE-SHT-ESS-LEP",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Leather Pink",
+          "color_hex": "#B77A8A",
+          "size": "S",
+          "sku": "BONE-SHT-ESS-LEP-LEP-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Leather Pink",
+          "color_hex": "#B77A8A",
+          "size": "L",
+          "sku": "BONE-SHT-ESS-LEP-LEP-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Leather Pink",
+          "color_hex": "#B77A8A",
+          "size": "XL",
+          "sku": "BONE-SHT-ESS-LEP-LEP-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Birch Tea Brown",
+          "color_hex": "#9F8A76",
+          "size": "M",
+          "sku": "BONE-SHT-ESS-BTB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Birch Tea Brown",
+          "color_hex": "#9F8A76",
+          "size": "S",
+          "sku": "BONE-SHT-ESS-BTB-BTB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Birch Tea Brown",
+          "color_hex": "#9F8A76",
+          "size": "L",
+          "sku": "BONE-SHT-ESS-BTB-BTB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Birch Tea Brown",
+          "color_hex": "#9F8A76",
+          "size": "XL",
+          "sku": "BONE-SHT-ESS-BTB-BTB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Free Grey",
+          "color_hex": "#B6B6B6",
+          "size": "M",
+          "sku": "BONE-SHT-ESS-FRG",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Free Grey",
+          "color_hex": "#B6B6B6",
+          "size": "S",
+          "sku": "BONE-SHT-ESS-FRG-FRG-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Free Grey",
+          "color_hex": "#B6B6B6",
+          "size": "L",
+          "sku": "BONE-SHT-ESS-FRG-FRG-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Free Grey",
+          "color_hex": "#B6B6B6",
+          "size": "XL",
+          "sku": "BONE-SHT-ESS-FRG-FRG-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Sand Washed Black",
+          "color_hex": "#7E7469",
+          "size": "M",
+          "sku": "BONE-SHT-ESS-SWB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Sand Washed Black",
+          "color_hex": "#7E7469",
+          "size": "S",
+          "sku": "BONE-SHT-ESS-SWB-SWB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Sand Washed Black",
+          "color_hex": "#7E7469",
+          "size": "L",
+          "sku": "BONE-SHT-ESS-SWB-SWB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Sand Washed Black",
+          "color_hex": "#7E7469",
+          "size": "XL",
+          "sku": "BONE-SHT-ESS-SWB-SWB-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "T-SHIRT AND TOPS",
+      "name": "Seamless Support Top",
+      "description": "The Seamless Support Top combines a seamless knit silhouette with built-in structure and fine adjustable straps, offering support that feels effortless and a fit that moves in step with you.",
+      "price": 29.0,
+      "variants": [
+        {
+          "color": "Khaki Brown",
+          "color_hex": "#A48C67",
+          "size": "M",
+          "sku": "BONE-TOP-SST-KHB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Khaki Brown",
+          "color_hex": "#A48C67",
+          "size": "S",
+          "sku": "BONE-TOP-SST-KHB-KHB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Khaki Brown",
+          "color_hex": "#A48C67",
+          "size": "L",
+          "sku": "BONE-TOP-SST-KHB-KHB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Khaki Brown",
+          "color_hex": "#A48C67",
+          "size": "XL",
+          "sku": "BONE-TOP-SST-KHB-KHB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "M",
+          "sku": "BONE-TOP-SST-DPE",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "S",
+          "sku": "BONE-TOP-SST-DPE-DEE-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "L",
+          "sku": "BONE-TOP-SST-DPE-DEE-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "XL",
+          "sku": "BONE-TOP-SST-DPE-DEE-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "M",
+          "sku": "BONE-TOP-SST-PLP",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "S",
+          "sku": "BONE-TOP-SST-PLP-PUP-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "L",
+          "sku": "BONE-TOP-SST-PLP-PUP-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "XL",
+          "sku": "BONE-TOP-SST-PLP-PUP-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "LEGGINGS",
+      "name": "Everyday Seam Leggings",
+      "description": "Designed for performance and everyday wear: compressive, high‑recovery fabric sculpts and supports; contour zones and engineered scrunch define the glutes; flat‑lock seams and a mid‑low waistband prevent digging or slipping",
+      "price": 40.0,
+      "variants": [
+        {
+          "color": "Khaki Brown",
+          "color_hex": "#A48C67",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-KHB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Khaki Brown",
+          "color_hex": "#A48C67",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-KHB-KHB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Khaki Brown",
+          "color_hex": "#A48C67",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-KHB-KHB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Khaki Brown",
+          "color_hex": "#A48C67",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-KHB-KHB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-DPE",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-DPE-DEE-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-DPE-DEE-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Deep Espresso",
+          "color_hex": "#5B4337",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-DPE-DEE-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-PLP",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-PLP-PUP-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-PLP-PUP-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Pulp Purple",
+          "color_hex": "#9D5D9A",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-PLP-PUP-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Burgundy",
+          "color_hex": "#6D2C3C",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-BUR",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Burgundy",
+          "color_hex": "#6D2C3C",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-BUR-BUR-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Burgundy",
+          "color_hex": "#6D2C3C",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-BUR-BUR-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Burgundy",
+          "color_hex": "#6D2C3C",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-BUR-BUR-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Sand Washed Black",
+          "color_hex": "#7E7469",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-SWB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Sand Washed Black",
+          "color_hex": "#7E7469",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-SWB-SWB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Sand Washed Black",
+          "color_hex": "#7E7469",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-SWB-SWB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Sand Washed Black",
+          "color_hex": "#7E7469",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-SWB-SWB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Free Grey",
+          "color_hex": "#B6B6B6",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-FRG",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Free Grey",
+          "color_hex": "#B6B6B6",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-FRG-FRG-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Free Grey",
+          "color_hex": "#B6B6B6",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-FRG-FRG-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Free Grey",
+          "color_hex": "#B6B6B6",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-FRG-FRG-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Birch Tea Brown",
+          "color_hex": "#9F8A76",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-BTB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Birch Tea Brown",
+          "color_hex": "#9F8A76",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-BTB-BTB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Birch Tea Brown",
+          "color_hex": "#9F8A76",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-BTB-BTB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Birch Tea Brown",
+          "color_hex": "#9F8A76",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-BTB-BTB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Leather Pink",
+          "color_hex": "#B77A8A",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-LEP",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Leather Pink",
+          "color_hex": "#B77A8A",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-LEP-LEP-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Leather Pink",
+          "color_hex": "#B77A8A",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-LEP-LEP-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Leather Pink",
+          "color_hex": "#B77A8A",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-LEP-LEP-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Denim Blue",
+          "color_hex": "#4A6A95",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-DNB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Denim Blue",
+          "color_hex": "#4A6A95",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-DNB-DEB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Denim Blue",
+          "color_hex": "#4A6A95",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-DNB-DEB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Denim Blue",
+          "color_hex": "#4A6A95",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-DNB-DEB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Coffe",
+          "color_hex": "#6F4E37",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-COF",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Coffe",
+          "color_hex": "#6F4E37",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-COF-COF-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Coffe",
+          "color_hex": "#6F4E37",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-COF-COF-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Coffe",
+          "color_hex": "#6F4E37",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-COF-COF-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "M",
+          "sku": "BONE-LEG-ESL-BLK",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "S",
+          "sku": "BONE-LEG-ESL-BLK-BLA-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "L",
+          "sku": "BONE-LEG-ESL-BLK-BLA-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "XL",
+          "sku": "BONE-LEG-ESL-BLK-BLA-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "T-SHIRT AND TOPS",
+      "name": "The Racer Top",
+      "description": "Cut for freedom, built to hold. A deep V and racerback silhouette that moves with you , structured, unbothered. This isn't just a top you train in. It's the one you reach for first.",
+      "price": 32.0,
+      "variants": [
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "M",
+          "sku": "BONE-TOP-RCT-MDB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "S",
+          "sku": "BONE-TOP-RCT-MDB-MIB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "L",
+          "sku": "BONE-TOP-RCT-MDB-MIB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "XL",
+          "sku": "BONE-TOP-RCT-MDB-MIB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "M",
+          "sku": "BONE-TOP-RCT-PMB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "S",
+          "sku": "BONE-TOP-RCT-PMB-PRB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "L",
+          "sku": "BONE-TOP-RCT-PMB-PRB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "XL",
+          "sku": "BONE-TOP-RCT-PMB-PRB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Red",
+          "color_hex": "#C53030",
+          "size": "M",
+          "sku": "BONE-TOP-RCT-RED",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Red",
+          "color_hex": "#C53030",
+          "size": "S",
+          "sku": "BONE-TOP-RCT-RED-RED-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Red",
+          "color_hex": "#C53030",
+          "size": "L",
+          "sku": "BONE-TOP-RCT-RED-RED-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Red",
+          "color_hex": "#C53030",
+          "size": "XL",
+          "sku": "BONE-TOP-RCT-RED-RED-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "LEGGINGS",
+      "name": "Soft Stretch Leggings",
+      "description": "Some leggings you train in. These, you live in. Soft Stretch Leggings are made from a buttery, second-skin fabric that moves with total ease , high-rise, curve-hugging, and squat-proof, without ever feeling restrictive. Whether it's a workout or a whole lazy Sunday, this is the pair you keep reaching for.",
+      "price": 42.0,
+      "variants": [
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "M",
+          "sku": "BONE-LEG-SSL-MDB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "S",
+          "sku": "BONE-LEG-SSL-MDB-MIB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "L",
+          "sku": "BONE-LEG-SSL-MDB-MIB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "XL",
+          "sku": "BONE-LEG-SSL-MDB-MIB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "M",
+          "sku": "BONE-LEG-SSL-PMB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "S",
+          "sku": "BONE-LEG-SSL-PMB-PRB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "L",
+          "sku": "BONE-LEG-SSL-PMB-PRB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "XL",
+          "sku": "BONE-LEG-SSL-PMB-PRB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Red",
+          "color_hex": "#C53030",
+          "size": "M",
+          "sku": "BONE-LEG-SSL-RED",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Red",
+          "color_hex": "#C53030",
+          "size": "S",
+          "sku": "BONE-LEG-SSL-RED-RED-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Red",
+          "color_hex": "#C53030",
+          "size": "L",
+          "sku": "BONE-LEG-SSL-RED-RED-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Red",
+          "color_hex": "#C53030",
+          "size": "XL",
+          "sku": "BONE-LEG-SSL-RED-RED-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "T-SHIRT AND TOPS",
+      "name": "The Frame Top",
+      "description": "Twist in front, open in back. The Frame Top is cropped, cinched, and cut to frame every angle — simple as that.",
+      "price": 30.0,
+      "variants": [
+        {
+          "color": "Slate Blue",
+          "color_hex": "#5A6F99",
+          "size": "M",
+          "sku": "BONE-TOP-FRT-SLB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Slate Blue",
+          "color_hex": "#5A6F99",
+          "size": "S",
+          "sku": "BONE-TOP-FRT-SLB-SLB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Slate Blue",
+          "color_hex": "#5A6F99",
+          "size": "L",
+          "sku": "BONE-TOP-FRT-SLB-SLB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Slate Blue",
+          "color_hex": "#5A6F99",
+          "size": "XL",
+          "sku": "BONE-TOP-FRT-SLB-SLB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "M",
+          "sku": "BONE-TOP-FRT-GRY",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "S",
+          "sku": "BONE-TOP-FRT-GRY-GRE-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "L",
+          "sku": "BONE-TOP-FRT-GRY-GRE-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "XL",
+          "sku": "BONE-TOP-FRT-GRY-GRE-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "M",
+          "sku": "BONE-TOP-FRT-BLK",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "S",
+          "sku": "BONE-TOP-FRT-BLK-BLA-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "L",
+          "sku": "BONE-TOP-FRT-BLK-BLA-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "XL",
+          "sku": "BONE-TOP-FRT-BLK-BLA-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "LEGGINGS",
+      "name": "The Sculpt Leggings",
+      "description": "Snatched waist and real pockets. The Sculpt Leggings hold their shape through every rep and every errand.",
+      "price": 42.0,
+      "variants": [
+        {
+          "color": "Slate Blue",
+          "color_hex": "#5A6F99",
+          "size": "M",
+          "sku": "BONE-LEG-SCL-SLB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Slate Blue",
+          "color_hex": "#5A6F99",
+          "size": "S",
+          "sku": "BONE-LEG-SCL-SLB-SLB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Slate Blue",
+          "color_hex": "#5A6F99",
+          "size": "L",
+          "sku": "BONE-LEG-SCL-SLB-SLB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Slate Blue",
+          "color_hex": "#5A6F99",
+          "size": "XL",
+          "sku": "BONE-LEG-SCL-SLB-SLB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "M",
+          "sku": "BONE-LEG-SCL-GRY",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "S",
+          "sku": "BONE-LEG-SCL-GRY-GRE-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "L",
+          "sku": "BONE-LEG-SCL-GRY-GRE-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "XL",
+          "sku": "BONE-LEG-SCL-GRY-GRE-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "M",
+          "sku": "BONE-LEG-SCL-BLK",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "S",
+          "sku": "BONE-LEG-SCL-BLK-BLA-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "L",
+          "sku": "BONE-LEG-SCL-BLK-BLA-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "XL",
+          "sku": "BONE-LEG-SCL-BLK-BLA-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "T-SHIRT AND TOPS",
+      "name": "The Halter Top",
+      "description": "Cinched right where it counts. A tie-back halter with a gathered front, cut close and built to hold . Support that feels intentional, not incidental. The top you throw on when the fit does the work.",
+      "price": 32.0,
+      "variants": [
+        {
+          "color": "Burgundy",
+          "color_hex": "#6D2C3C",
+          "size": "M",
+          "sku": "BONE-TOP-HLT-BUR",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Burgundy",
+          "color_hex": "#6D2C3C",
+          "size": "S",
+          "sku": "BONE-TOP-HLT-BUR-BUR-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Burgundy",
+          "color_hex": "#6D2C3C",
+          "size": "L",
+          "sku": "BONE-TOP-HLT-BUR-BUR-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Burgundy",
+          "color_hex": "#6D2C3C",
+          "size": "XL",
+          "sku": "BONE-TOP-HLT-BUR-BUR-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Coffe",
+          "color_hex": "#6F4E37",
+          "size": "M",
+          "sku": "BONE-TOP-HLT-COF",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Coffe",
+          "color_hex": "#6F4E37",
+          "size": "S",
+          "sku": "BONE-TOP-HLT-COF-COF-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Coffe",
+          "color_hex": "#6F4E37",
+          "size": "L",
+          "sku": "BONE-TOP-HLT-COF-COF-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Coffe",
+          "color_hex": "#6F4E37",
+          "size": "XL",
+          "sku": "BONE-TOP-HLT-COF-COF-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "M",
+          "sku": "BONE-TOP-HLT-BLK",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "S",
+          "sku": "BONE-TOP-HLT-BLK-BLA-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "L",
+          "sku": "BONE-TOP-HLT-BLK-BLA-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "XL",
+          "sku": "BONE-TOP-HLT-BLK-BLA-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "T-SHIRT AND TOPS",
+      "name": "The Base Top",
+      "description": "Square neck. Thin straps. Fitted through the body. The Base Top is the one piece that goes with everything — because it was built to.",
+      "price": 31.0,
+      "variants": [
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "M",
+          "sku": "BONE-TOP-BST-MDB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "S",
+          "sku": "BONE-TOP-BST-MDB-MIB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "L",
+          "sku": "BONE-TOP-BST-MDB-MIB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "XL",
+          "sku": "BONE-TOP-BST-MDB-MIB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Water Pink",
+          "color_hex": "#E8B6C5",
+          "size": "M",
+          "sku": "BONE-TOP-BST-WAP",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Water Pink",
+          "color_hex": "#E8B6C5",
+          "size": "S",
+          "sku": "BONE-TOP-BST-WAP-WAP-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Water Pink",
+          "color_hex": "#E8B6C5",
+          "size": "L",
+          "sku": "BONE-TOP-BST-WAP-WAP-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Water Pink",
+          "color_hex": "#E8B6C5",
+          "size": "XL",
+          "sku": "BONE-TOP-BST-WAP-WAP-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Bud Yellow",
+          "color_hex": "#7D7D7D",
+          "size": "M",
+          "sku": "BONE-TOP-BST-BUY",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Bud Yellow",
+          "color_hex": "#7D7D7D",
+          "size": "S",
+          "sku": "BONE-TOP-BST-BUY-BUY-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Bud Yellow",
+          "color_hex": "#7D7D7D",
+          "size": "L",
+          "sku": "BONE-TOP-BST-BUY-BUY-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Bud Yellow",
+          "color_hex": "#7D7D7D",
+          "size": "XL",
+          "sku": "BONE-TOP-BST-BUY-BUY-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "M",
+          "sku": "BONE-TOP-BST-BLK",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "S",
+          "sku": "BONE-TOP-BST-BLK-BLA-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "L",
+          "sku": "BONE-TOP-BST-BLK-BLA-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "XL",
+          "sku": "BONE-TOP-BST-BLK-BLA-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "SHORTS",
+      "name": "The Versa Skirt",
+      "description": "Court-ready. Street-ready. Any-day-ready. The Versa Skirt gives you a wrap-front silhouette and built-in shorts in one seamless piece — made to move wherever you take it.",
+      "price": 38.0,
+      "variants": [
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "M",
+          "sku": "BONE-SHT-VRS-MDB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "S",
+          "sku": "BONE-SHT-VRS-MDB-MIB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "L",
+          "sku": "BONE-SHT-VRS-MDB-MIB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Midnight Blue",
+          "color_hex": "#1E2F60",
+          "size": "XL",
+          "sku": "BONE-SHT-VRS-MDB-MIB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Water Pink",
+          "color_hex": "#E8B6C5",
+          "size": "M",
+          "sku": "BONE-SHT-VRS-WAP",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Water Pink",
+          "color_hex": "#E8B6C5",
+          "size": "S",
+          "sku": "BONE-SHT-VRS-WAP-WAP-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Water Pink",
+          "color_hex": "#E8B6C5",
+          "size": "L",
+          "sku": "BONE-SHT-VRS-WAP-WAP-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Water Pink",
+          "color_hex": "#E8B6C5",
+          "size": "XL",
+          "sku": "BONE-SHT-VRS-WAP-WAP-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Bud Yellow",
+          "color_hex": "#7D7D7D",
+          "size": "M",
+          "sku": "BONE-SHT-VRS-BUY",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Bud Yellow",
+          "color_hex": "#7D7D7D",
+          "size": "S",
+          "sku": "BONE-SHT-VRS-BUY-BUY-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Bud Yellow",
+          "color_hex": "#7D7D7D",
+          "size": "L",
+          "sku": "BONE-SHT-VRS-BUY-BUY-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Bud Yellow",
+          "color_hex": "#7D7D7D",
+          "size": "XL",
+          "sku": "BONE-SHT-VRS-BUY-BUY-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "M",
+          "sku": "BONE-SHT-VRS-BLK-01",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "S",
+          "sku": "BONE-SHT-VRS-BLK-01-BLA-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "L",
+          "sku": "BONE-SHT-VRS-BLK-01-BLA-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "XL",
+          "sku": "BONE-SHT-VRS-BLK-01-BLA-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "White",
+          "color_hex": "#FFFFFF",
+          "size": "M",
+          "sku": "BONE-SHT-VRS-WHT",
+          "stock_quantity": 4
+        },
+        {
+          "color": "White",
+          "color_hex": "#FFFFFF",
+          "size": "S",
+          "sku": "BONE-SHT-VRS-WHT-WHI-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "White",
+          "color_hex": "#FFFFFF",
+          "size": "L",
+          "sku": "BONE-SHT-VRS-WHT-WHI-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "White",
+          "color_hex": "#FFFFFF",
+          "size": "XL",
+          "sku": "BONE-SHT-VRS-WHT-WHI-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Olive Green",
+          "color_hex": "#6F7B39",
+          "size": "M",
+          "sku": "BONE-SHT-VRS-OLV",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Olive Green",
+          "color_hex": "#6F7B39",
+          "size": "S",
+          "sku": "BONE-SHT-VRS-OLV-OLG-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Olive Green",
+          "color_hex": "#6F7B39",
+          "size": "L",
+          "sku": "BONE-SHT-VRS-OLV-OLG-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Olive Green",
+          "color_hex": "#6F7B39",
+          "size": "XL",
+          "sku": "BONE-SHT-VRS-OLV-OLG-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "BODYSUIT",
+      "name": "The Zip Suit",
+      "description": "The Zip Suit pairs a structured mock-neck front with a sculpted keyhole back — a single, seamless piece built for precision and made to be noticed.",
+      "price": 59.0,
+      "variants": [
+        {
+          "color": "Birch Brown",
+          "color_hex": "#9F8A76",
+          "size": "M",
+          "sku": "BONE-BDY-ZPS-BRB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Birch Brown",
+          "color_hex": "#9F8A76",
+          "size": "S",
+          "sku": "BONE-BDY-ZPS-BRB-BIB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Birch Brown",
+          "color_hex": "#9F8A76",
+          "size": "L",
+          "sku": "BONE-BDY-ZPS-BRB-BIB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Birch Brown",
+          "color_hex": "#9F8A76",
+          "size": "XL",
+          "sku": "BONE-BDY-ZPS-BRB-BIB-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "M",
+          "sku": "BONE-BDY-ZPS-PMB",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "S",
+          "sku": "BONE-BDY-ZPS-PMB-PRB-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "L",
+          "sku": "BONE-BDY-ZPS-PMB-PRB-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Premium Black",
+          "color_hex": "#101010",
+          "size": "XL",
+          "sku": "BONE-BDY-ZPS-PMB-PRB-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "T-SHIRT AND TOPS",
+      "name": "The Ace Crop",
+      "description": "Clean lines, no distractions. The Ace Crop pairs a structured mock neckline with a fitted, cropped cut — simple, sharp, and quietly confident.",
+      "price": 34.0,
+      "variants": [
+        {
+          "color": "White",
+          "color_hex": "#FFFFFF",
+          "size": "M",
+          "sku": "BONE-TOP-ACC-WHT",
+          "stock_quantity": 4
+        },
+        {
+          "color": "White",
+          "color_hex": "#FFFFFF",
+          "size": "S",
+          "sku": "BONE-TOP-ACC-WHT-WHI-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "White",
+          "color_hex": "#FFFFFF",
+          "size": "L",
+          "sku": "BONE-TOP-ACC-WHT-WHI-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "White",
+          "color_hex": "#FFFFFF",
+          "size": "XL",
+          "sku": "BONE-TOP-ACC-WHT-WHI-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "M",
+          "sku": "BONE-TOP-ACC-BLK",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "S",
+          "sku": "BONE-TOP-ACC-BLK-BLA-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "L",
+          "sku": "BONE-TOP-ACC-BLK-BLA-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "XL",
+          "sku": "BONE-TOP-ACC-BLK-BLA-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Olive Green",
+          "color_hex": "#6F7B39",
+          "size": "M",
+          "sku": "BONE-TOP-ACC-OLV",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Olive Green",
+          "color_hex": "#6F7B39",
+          "size": "S",
+          "sku": "BONE-TOP-ACC-OLV-OLG-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Olive Green",
+          "color_hex": "#6F7B39",
+          "size": "L",
+          "sku": "BONE-TOP-ACC-OLV-OLG-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Olive Green",
+          "color_hex": "#6F7B39",
+          "size": "XL",
+          "sku": "BONE-TOP-ACC-OLV-OLG-XL",
+          "stock_quantity": 1
+        }
+      ]
+    },
+    {
+      "category": "BODYSUIT",
+      "name": "Slim Strap Suit",
+      "description": "The Slim Strap Suit unites a fitted halter silhouette with an open-back cutout and sculpted seat detailing. A single, considered piece designed to move as fluidly as it looks, with pockets built in for whatever you don't want to leave behind.",
+      "price": 55.0,
+      "variants": [
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "M",
+          "sku": "BONE-BDY-SSU-GRY-01",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "S",
+          "sku": "BONE-BDY-SSU-GRY-01-GRE-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "L",
+          "sku": "BONE-BDY-SSU-GRY-01-GRE-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Grey",
+          "color_hex": "#7D7D7D",
+          "size": "XL",
+          "sku": "BONE-BDY-SSU-GRY-01-GRE-XL",
+          "stock_quantity": 1
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "M",
+          "sku": "BONE-BDY-SSU-BLK",
+          "stock_quantity": 4
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "S",
+          "sku": "BONE-BDY-SSU-BLK-BLA-S",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "L",
+          "sku": "BONE-BDY-SSU-BLK-BLA-L",
+          "stock_quantity": 2
+        },
+        {
+          "color": "Black",
+          "color_hex": "#111111",
+          "size": "XL",
+          "sku": "BONE-BDY-SSU-BLK-BLA-XL",
+          "stock_quantity": 1
+        }
+      ]
+    }
+  ]
+}

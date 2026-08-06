@@ -37,6 +37,7 @@
             <table class="data-table data-table--admin">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Product</th>
                         <th>Category</th>
                         <th>Price</th>
@@ -48,6 +49,14 @@
                 <tbody>
                     @forelse ($products as $product)
                         <tr>
+                            <td class="w-24">
+                                @php $thumb = $product->images->first(); @endphp
+                                @if ($thumb)
+                                    <img src="{{ Storage::url($thumb->path) }}" alt="{{ $product->name }} thumbnail" class="h-14 w-14 rounded-xl object-cover" loading="lazy">
+                                @else
+                                    <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100 text-ink-400 text-xs uppercase tracking-[0.15em]">No image</div>
+                                @endif
+                            </td>
                             <td>
                                 <span class="font-medium text-ink-900">{{ $product->name }}</span>
                                 <span class="mt-0.5 block font-mono text-xs text-ink-500">{{ $product->slug }}</span>
@@ -56,17 +65,23 @@
                             <td class="font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}</td>
                             <td class="text-ink-600">{{ $product->variants_count }}</td>
                             <td>
-                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $product->is_active ? 'border-emerald-200/80 bg-emerald-50 text-emerald-900' : 'border-pink-200/80 bg-pink-100/80 text-ink-700' }}">
+                                <span class="inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide {{ $product->is_active ? 'border-emerald-200/80 bg-emerald-50 text-emerald-900' : 'border-zinc-200/80 bg-zinc-100/80 text-ink-700' }}">
                                     {{ $product->is_active ? 'Yes' : 'No' }}
                                 </span>
                             </td>
                             <td class="text-right">
-                                <a href="{{ route('admin.products.edit', $product->id) }}" class="link-brand text-sm">Edit</a>
-                                <form method="POST" action="{{ route('admin.products.destroy', $product->id) }}" class="ml-4 inline" onsubmit="return confirm('Archive this product?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-sm font-semibold text-red-600 hover:text-red-800">Archive</button>
-                                </form>
+                                <div class="inline-flex items-center justify-end gap-1">
+                                    <a href="{{ route('admin.products.edit', $product->id) }}" class="inline-flex size-9 items-center justify-center rounded-lg text-accent-700 transition hover:bg-accent-50 hover:text-accent-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/30" title="Edit" aria-label="Edit product">
+                                        <x-icons.pencil-square class="h-5 w-5" />
+                                    </a>
+                                    <form method="POST" action="{{ route('admin.products.destroy', $product->id) }}" class="inline" onsubmit="return confirm('Archive this product?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="inline-flex size-9 items-center justify-center rounded-lg text-red-600 transition hover:bg-red-50 hover:text-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/30" title="Archive" aria-label="Archive product">
+                                            <x-icons.archive-box class="h-5 w-5" />
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
