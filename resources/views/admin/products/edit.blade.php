@@ -62,13 +62,73 @@
                         <input type="number" name="price" id="price" value="{{ old('price', $product->price) }}" step="0.01" min="0" class="form-input pl-8" required>
                     </div>
                 </div>
-                <div class="flex items-end">
-                    <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-800">
-                        <input type="hidden" name="is_active" value="0">
-                        <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $product->is_active)) class="size-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-400/30">
-                        <span class="font-medium">Published</span>
-                        <span class="text-zinc-500">— visible in the storefront</span>
-                    </label>
+            </fieldset>
+
+            <fieldset class="space-y-4 rounded-3xl border border-ink-200/60 bg-white/95 p-6 shadow-soft">
+                <legend class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Images</legend>
+                @if ($product->images->isNotEmpty())
+                    <p class="text-xs font-bold uppercase tracking-mega text-ink-500">Remove existing</p>
+                    <ul class="space-y-2">
+                        @foreach ($product->images as $img)
+                            <li class="flex items-center gap-3">
+                                @if ($img->isVideo())
+                                    <span class="relative inline-block size-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-ink-200/60">
+                                        <video src="{{ $img->url() }}" class="size-full object-cover" muted playsinline></video>
+                                        <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink-950/45" aria-hidden="true">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
+                                        </span>
+                                    </span>
+                                @else
+                                    <img src="{{ $img->url() }}" alt="" class="size-14 rounded-lg object-cover ring-1 ring-ink-200/60">
+                                @endif
+                                <label class="flex items-center gap-2 text-sm text-ink-700">
+                                    <input type="checkbox" name="delete_image_ids[]" value="{{ $img->id }}">
+                                    Delete
+                                </label>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+                <div
+                    x-data="{
+                        files: [],
+                        previews: [],
+                        onFiles(event) {
+                            const input = event.target;
+                            const incoming = Array.from(input.files || []);
+                            if (!incoming.length) {
+                                return;
+                            }
+
+                            const dt = new DataTransfer();
+                            this.files.forEach((file) => dt.items.add(file));
+                            incoming.forEach((file) => dt.items.add(file));
+                            this.files = Array.from(dt.files);
+                            input.files = dt.files;
+
+                            this.previews.forEach((p) => URL.revokeObjectURL(p.url));
+                            this.previews = this.files.map((file) => ({
+                                url: URL.createObjectURL(file),
+                                isVideo: file.type.startsWith('video/') || /\.(mp4|webm|mov|ogg|m4v)$/i.test(file.name),
+                            }));
+                        },
+                    }"
+                >
+                    <label class="form-label">Add images</label>
+                    <input type="file" name="images[]" accept="image/*,video/*,.jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,.ogg,.m4v" multiple class="form-input" @change="onFiles($event)">
+                    <ul class="mt-2 space-y-2" x-show="previews.length" x-cloak>
+                        <template x-for="(preview, index) in previews" :key="index">
+                            <li class="flex items-center gap-3">
+                                <span class="relative inline-block size-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-ink-200/60" x-show="preview.isVideo">
+                                    <video :src="preview.url" class="size-full object-cover" muted playsinline></video>
+                                    <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink-950/45" aria-hidden="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
+                                    </span>
+                                </span>
+                                <img x-show="!preview.isVideo" :src="preview.url" alt="" class="size-14 rounded-lg object-cover ring-1 ring-ink-200/60">
+                            </li>
+                        </template>
+                    </ul>
                 </div>
             </div>
         </x-admin.form-section>

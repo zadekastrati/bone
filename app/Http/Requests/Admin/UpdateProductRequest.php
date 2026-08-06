@@ -31,7 +31,7 @@ class UpdateProductRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0', 'max:999999.99'],
             'is_active' => ['nullable', 'boolean'],
             'images' => ['nullable', 'array', 'max:12'],
-            'images.*' => ['file', 'image', 'max:5120'],
+            'images.*' => ['file', 'mimes:jpeg,jpg,png,webp,mp4,webm,mov,ogg,m4v', 'max:102400'],
             'delete_image_ids' => ['nullable', 'array', 'max:50'],
             'delete_image_ids.*' => ['integer', Rule::exists('product_images', 'id')->where('product_id', $productId)],
             'variants' => ['required', 'array', 'min:1', 'max:200'],
