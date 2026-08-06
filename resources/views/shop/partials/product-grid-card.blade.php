@@ -1,11 +1,16 @@
 @php
     $showCategory = $showCategory ?? true;
-    $image = $product->images->first();
+    // Prefer a still image for listing cards; fall back to the first media item.
+    $image = $product->images->first(fn ($m) => ! $m->isVideo()) ?? $product->images->first();
 @endphp
 <article class="store-card-interactive group/card overflow-hidden">
     <a href="{{ route('shop.product', [$product->category, $product]) }}" class="relative block aspect-[4/5] overflow-hidden bg-gradient-to-b from-white to-ink-100/80">
         @if ($image)
-            <img src="{{ \Illuminate\Support\Facades\Storage::url($image->path) }}" alt="" class="size-full object-cover transition duration-700 ease-out group-hover/card:scale-[1.03] motion-reduce:group-hover/card:scale-100">
+            @if ($image->isVideo())
+                <video src="{{ $image->url() }}" class="size-full object-cover transition duration-700 ease-out group-hover/card:scale-[1.03] motion-reduce:group-hover/card:scale-100" muted playsinline preload="metadata"></video>
+            @else
+                <img src="{{ $image->url() }}" alt="" class="size-full object-cover transition duration-700 ease-out group-hover/card:scale-[1.03] motion-reduce:group-hover/card:scale-100">
+            @endif
         @else
             <div class="flex size-full items-center justify-center bg-gradient-to-br from-pink-100 to-accent-200 text-center text-xs font-bold uppercase tracking-mega text-accent-700">Photo soon</div>
         @endif

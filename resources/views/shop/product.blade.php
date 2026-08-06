@@ -18,13 +18,28 @@
                     <div class="flex size-full items-center justify-center text-xs font-bold uppercase tracking-mega text-white/40">Photo soon</div>
                 </div>
             @else
+                @php $primary = $product->images->first(); @endphp
                 <div class="store-card overflow-hidden bg-ink-100 shadow-elevated">
-                    <img src="{{ \Illuminate\Support\Facades\Storage::url($product->images->first()->path) }}" alt="" class="aspect-[4/5] w-full object-cover">
+                    @if ($primary->isVideo())
+                        <video
+                            src="{{ $primary->url() }}"
+                            class="aspect-[4/5] w-full object-cover"
+                            controls
+                            playsinline
+                            preload="metadata"
+                        ></video>
+                    @else
+                        <img src="{{ $primary->url() }}" alt="" class="aspect-[4/5] w-full object-cover">
+                    @endif
                 </div>
                 @if ($product->images->count() > 1)
                     <div class="grid grid-cols-4 gap-3">
                         @foreach ($product->images->skip(1) as $img)
-                            <img src="{{ \Illuminate\Support\Facades\Storage::url($img->path) }}" alt="" class="aspect-square rounded-xl object-cover ring-1 ring-ink-200/60">
+                            @if ($img->isVideo())
+                                <video src="{{ $img->url() }}" class="aspect-square rounded-xl object-cover ring-1 ring-ink-200/60" muted playsinline preload="metadata"></video>
+                            @else
+                                <img src="{{ $img->url() }}" alt="" class="aspect-square rounded-xl object-cover ring-1 ring-ink-200/60">
+                            @endif
                         @endforeach
                     </div>
                 @endif

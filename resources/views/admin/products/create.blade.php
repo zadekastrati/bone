@@ -61,8 +61,47 @@
 
             <fieldset class="space-y-4 rounded-3xl border border-ink-200/60 bg-white/95 p-6 shadow-soft">
                 <legend class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Images</legend>
-                <input type="file" name="images[]" accept="image/*" multiple class="form-input">
-                <p class="text-xs text-ink-500">JPEG, PNG, or WebP. Up to 5 MB each.</p>
+                <div
+                    x-data="{
+                        files: [],
+                        previews: [],
+                        onFiles(event) {
+                            const input = event.target;
+                            const incoming = Array.from(input.files || []);
+                            if (!incoming.length) {
+                                return;
+                            }
+
+                            const dt = new DataTransfer();
+                            this.files.forEach((file) => dt.items.add(file));
+                            incoming.forEach((file) => dt.items.add(file));
+                            this.files = Array.from(dt.files);
+                            input.files = dt.files;
+
+                            this.previews.forEach((p) => URL.revokeObjectURL(p.url));
+                            this.previews = this.files.map((file) => ({
+                                url: URL.createObjectURL(file),
+                                isVideo: file.type.startsWith('video/') || /\.(mp4|webm|mov|ogg|m4v)$/i.test(file.name),
+                            }));
+                        },
+                    }"
+                >
+                    <input type="file" name="images[]" accept="image/*,video/*,.jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,.ogg,.m4v" multiple class="form-input" @change="onFiles($event)">
+                    <ul class="mt-2 space-y-2" x-show="previews.length" x-cloak>
+                        <template x-for="(preview, index) in previews" :key="index">
+                            <li class="flex items-center gap-3">
+                                <span class="relative inline-block size-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-ink-200/60" x-show="preview.isVideo">
+                                    <video :src="preview.url" class="size-full object-cover" muted playsinline></video>
+                                    <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink-950/45" aria-hidden="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
+                                    </span>
+                                </span>
+                                <img x-show="!preview.isVideo" :src="preview.url" alt="" class="size-14 rounded-lg object-cover ring-1 ring-ink-200/60">
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+                <p class="text-xs text-ink-500">JPEG, PNG, WebP, or MP4 / WebM / MOV video. Up to 30 MB each.</p>
             </fieldset>
         </div>
 
