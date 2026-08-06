@@ -46,6 +46,11 @@
                     <label for="slug" class="form-label">URL slug</label>
                     <input type="text" name="slug" id="slug" value="{{ old('slug', $product->slug) }}" class="form-input font-mono text-sm" required autocomplete="off">
                 </div>
+                <div>
+                    <label for="style_code" class="form-label">Style code</label>
+                    <input type="text" name="style_code" id="style_code" value="{{ old('style_code', $product->style_code) }}" class="form-input font-mono text-sm" autocomplete="off">
+                    <p class="mt-2 text-xs text-zinc-500">Product style code is shared across all sizes and colors. If blank, variant SKUs will only be used when entered.</p>
+                </div>
                 <div class="sm:col-span-2">
                     <label for="description" class="form-label">Description</label>
                     <textarea name="description" id="description" rows="6" class="form-input">{{ old('description', $product->description) }}</textarea>

@@ -37,6 +37,7 @@
             <table class="data-table data-table--admin">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Product</th>
                         <th>Category</th>
                         <th>Price</th>
@@ -48,6 +49,14 @@
                 <tbody>
                     @forelse ($products as $product)
                         <tr>
+                            <td class="w-24">
+                                @php $thumb = $product->images->first(); @endphp
+                                @if ($thumb)
+                                    <img src="{{ Storage::url($thumb->path) }}" alt="{{ $product->name }} thumbnail" class="h-14 w-14 rounded-xl object-cover" loading="lazy">
+                                @else
+                                    <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100 text-ink-400 text-xs uppercase tracking-[0.15em]">No image</div>
+                                @endif
+                            </td>
                             <td>
                                 <span class="font-medium text-ink-900">{{ $product->name }}</span>
                                 <span class="mt-0.5 block font-mono text-xs text-ink-500">{{ $product->slug }}</span>

@@ -26,6 +26,7 @@ class UpdateProductRequest extends FormRequest
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', Rule::unique('products', 'slug')->ignore($product->id)],
+            'style_code' => ['nullable', 'string', 'max:64', Rule::unique('products', 'style_code')->ignore($product->id)],
             'description' => ['nullable', 'string', 'max:20000'],
             'price' => ['required', 'numeric', 'min:0', 'max:999999.99'],
             'is_active' => ['nullable', 'boolean'],

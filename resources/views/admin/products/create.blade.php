@@ -35,9 +35,14 @@
                     <label for="name" class="form-label">Name</label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-input" required autocomplete="off">
                 </div>
-                <div class="sm:col-span-2">
+                <div>
                     <label for="slug" class="form-label">URL slug <span class="font-normal text-zinc-400">(optional)</span></label>
                     <input type="text" name="slug" id="slug" value="{{ old('slug') }}" class="form-input font-mono text-sm" autocomplete="off">
+                </div>
+                <div>
+                    <label for="style_code" class="form-label">Style code <span class="font-normal text-zinc-400">(optional)</span></label>
+                    <input type="text" name="style_code" id="style_code" value="{{ old('style_code') }}" class="form-input font-mono text-sm" autocomplete="off">
+                    <p class="mt-2 text-xs text-zinc-500">Product style code is shared across all sizes and colors. Leave blank to preserve variant SKUs only when entered.</p>
                 </div>
                 <div class="sm:col-span-2">
                     <label for="description" class="form-label">Description</label>

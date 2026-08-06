@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int $category_id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $style_code
+ * @property string $description
+ * @property float|string $price
+ * @property bool $is_active
+ */
 class Product extends Model
 {
     use SoftDeletes;
@@ -16,6 +26,7 @@ class Product extends Model
         'category_id',
         'name',
         'slug',
+        'style_code',
         'description',
         'price',
         'is_active',

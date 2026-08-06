@@ -24,7 +24,7 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $query = Product::query()->with(['category'])->withCount('variants')->latest();
+        $query = Product::query()->with(['category', 'images'])->withCount('variants')->latest();
 
         if ($request->boolean('inactive')) {
             $query->where('is_active', false);
