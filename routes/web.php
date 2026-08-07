@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CountryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
@@ -34,6 +35,10 @@ Route::view('/size-guide', 'size-guide')->name('size-guide');
 Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('contact.store');
+
+Route::post('/country', [CountryController::class, 'update'])
+    ->middleware('throttle:30,1')
+    ->name('country.update');
 
 Route::prefix('shop')->name('shop.')->group(function (): void {
     Route::get('/', [ShopController::class, 'index'])->name('index');

@@ -46,6 +46,8 @@
                 </div>
 
                 <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+                    <x-store.country-select class="hidden sm:block" />
+
                     @guest
                         <a href="{{ route('login') }}" class="btn-ghost-inverse hidden px-3 py-2 sm:inline-flex">Log in</a>
                         <a href="{{ route('register') }}" class="btn-on-dark hidden px-4 py-2.5 sm:inline-flex">Join</a>
@@ -137,6 +139,7 @@
                             <x-store-search-form variant="drawer" />
                         </div>
                     </div>
+                    <x-store.country-select class="mb-2 [&_select]:w-full" />
                     <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
                     <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
                     @guest

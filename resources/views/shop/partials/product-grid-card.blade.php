@@ -35,7 +35,7 @@
             <a href="{{ route('shop.product', [$product->category, $product]) }}" class="transition hover:text-accent-600">{{ $product->name }}</a>
         </h3>
         <p class="pt-2 font-display text-lg font-semibold tabular-nums tracking-tight text-ink-950">
-            {{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}
+            <x-price :amount="$product->price" />
         </p>
     </div>
 </article>

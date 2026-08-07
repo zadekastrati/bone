@@ -20,9 +20,10 @@
             <p class="ui-eyebrow">{{ $category->name }}</p>
             <h1 class="font-display mt-3 text-3xl font-bold uppercase tracking-tight text-ink-950 sm:text-4xl sm:tracking-wide">{{ $product->name }}</h1>
             <p class="mt-4 text-2xl font-semibold text-ink-900">
-                {{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}
-                <span class="text-sm font-medium text-ink-500">{{ config('store.currency') }}</span>
+                <x-price :amount="$product->price" />
+                <span class="text-sm font-medium text-ink-500">{{ app(\App\Services\CurrencyService::class)->currentCurrency() }}</span>
             </p>
+            <x-store.currency-disclaimer :amount="$product->price" class="mt-1.5" />
 
             @if ($product->description)
                 <div class="prose prose-ink mt-6 max-w-none text-sm leading-relaxed text-ink-600">

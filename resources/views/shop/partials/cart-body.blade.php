@@ -39,7 +39,7 @@
                             {{ $v->size }} <span class="text-ink-300">|</span> {{ $v->color }}
                         </p>
                         <p class="font-display text-sm font-semibold tabular-nums text-ink-950">
-                            {{ config('store.currency_symbol') }}{{ number_format((float) $p->price, 2) }}
+                            <x-price :amount="$p->price" />
                             <span class="text-xs font-normal text-ink-500">each</span>
                         </p>
                         @if ($v->stock_quantity < 1)
@@ -68,7 +68,7 @@
                         </form>
 
                         <p class="font-display text-base font-semibold tabular-nums text-ink-950">
-                            {{ config('store.currency_symbol') }}{{ number_format((float) $line['line_total'], 2) }}
+                            <x-price :amount="$line['line_total']" />
                             @if ($line['quantity'] > 1)
                                 <span class="block text-xs font-normal text-ink-500">line total</span>
                             @endif
@@ -90,8 +90,9 @@
         <div class="surface-muted mt-12 flex w-full flex-col gap-4">
             <div class="flex flex-col items-end gap-2 sm:flex-row sm:items-baseline sm:justify-end sm:gap-4">
                 <span class="text-sm font-medium text-ink-600">Subtotal</span>
-                <span class="font-display text-2xl font-semibold tabular-nums text-ink-950">{{ config('store.currency_symbol') }}{{ number_format((float) $subtotal, 2) }}</span>
+                <span class="font-display text-2xl font-semibold tabular-nums text-ink-950"><x-price :amount="$subtotal" /></span>
             </div>
+            <x-store.currency-disclaimer :amount="$subtotal" class="text-right" />
             @guest
                 <p class="text-right text-sm text-ink-600">Log in or register to enter shipping details and place your order.</p>
                 <div class="flex flex-wrap justify-end gap-3">

@@ -13,6 +13,7 @@ use App\Mail\PasswordChangedMail;
 use App\Mail\PhoneChangeOtpMail;
 use App\Models\Order;
 use App\Services\CartService;
+use App\Services\CurrencyService;
 use App\Services\EmailChangeOtpService;
 use App\Services\PhoneChangeOtpService;
 use Illuminate\Http\RedirectResponse;
@@ -25,6 +26,7 @@ class ProfileController extends Controller
 {
     public function __construct(
         private readonly CartService $cart,
+        private readonly CurrencyService $currency,
         private readonly EmailChangeOtpService $emailChangeOtp,
         private readonly PhoneChangeOtpService $phoneChangeOtp
     ) {}
@@ -46,7 +48,19 @@ class ProfileController extends Controller
         $pendingEmail = $this->activePendingEmail($request);
         $pendingPhone = $this->activePendingPhone($request);
 
-        return view('profile.edit', compact('user', 'orders', 'cartLines', 'cartSubtotal', 'pendingEmail', 'pendingPhone'));
+        $countries = $this->currency->countries();
+        $currentCountry = $this->currency->currentCountry();
+
+        return view('profile.edit', compact(
+            'user',
+            'orders',
+            'cartLines',
+            'cartSubtotal',
+            'pendingEmail',
+            'pendingPhone',
+            'countries',
+            'currentCountry'
+        ));
     }
 
     public function update(UpdateProfileRequest $request): RedirectResponse

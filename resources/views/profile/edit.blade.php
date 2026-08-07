@@ -106,6 +106,26 @@
                         <button type="submit" class="btn-primary px-8 py-3 text-sm">Save changes</button>
                     </div>
                 </form>
+
+                <div class="mt-8 border-t border-zinc-200/70 pt-6">
+                    <label for="country" class="form-label">Country &amp; currency</label>
+                    <p class="text-xs text-ink-500">Prices across the site are shown in this currency. All prices are set in EUR — other currencies are converted for display only, and you're always charged the EUR amount.</p>
+                    <form method="POST" action="{{ route('country.update') }}" class="mt-2 max-w-xs">
+                        @csrf
+                        <select
+                            name="country"
+                            id="country"
+                            onchange="this.form.requestSubmit()"
+                            class="form-select w-full"
+                        >
+                            @foreach ($countries as $code => $info)
+                                <option value="{{ $code }}" {{ $currentCountry === $code ? 'selected' : '' }}>
+                                    {{ $info['label'] }} ({{ $info['currency'] }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
             </div>
 
             {{-- Security --}}
@@ -134,7 +154,7 @@
                                     </div>
                                     <div class="flex shrink-0 items-center gap-3">
                                         <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
-                                        <span class="font-display text-sm font-semibold tabular-nums text-ink-950">{{ config('store.currency_symbol') }}{{ number_format((float) $order->total, 2) }}</span>
+                                        <span class="font-display text-sm font-semibold tabular-nums text-ink-950"><x-price :amount="$order->total" /></span>
                                     </div>
                                 </a>
                             </li>
@@ -165,13 +185,13 @@
                                     <p class="truncate text-sm font-semibold text-ink-900">{{ $p->name }}</p>
                                     <p class="text-xs text-ink-500">{{ $v->size }} · {{ $v->color }} · Qty {{ $line['quantity'] }}</p>
                                 </div>
-                                <span class="shrink-0 font-display text-sm font-semibold tabular-nums text-ink-950">{{ config('store.currency_symbol') }}{{ number_format((float) $line['line_total'], 2) }}</span>
+                                <span class="shrink-0 font-display text-sm font-semibold tabular-nums text-ink-950"><x-price :amount="$line['line_total']" /></span>
                             </li>
                         @endforeach
                     </ul>
                     <div class="flex items-center justify-between border-t border-zinc-200/70 px-8 py-4">
                         <span class="text-sm font-medium text-ink-600">Subtotal</span>
-                        <span class="font-display text-base font-semibold tabular-nums text-ink-950">{{ config('store.currency_symbol') }}{{ number_format((float) $cartSubtotal, 2) }}</span>
+                        <span class="font-display text-base font-semibold tabular-nums text-ink-950"><x-price :amount="$cartSubtotal" /></span>
                     </div>
                 @endif
             </div>

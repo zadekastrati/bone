@@ -16,9 +16,17 @@
             country: @json(old('shipping_country', $defaultCountry)),
             subtotal: {{ json_encode((float) $subtotal) }},
             rates: @json($shippingRateMap),
-            symbol: @json(config('store.currency_symbol')),
+            displayCurrency: @json($displayCurrency),
             get shipping() { return this.rates[this.country] ?? '0.00'; },
-            get total() { return (parseFloat(this.subtotal) + parseFloat(this.shipping)).toFixed(2); }
+            get total() { return (parseFloat(this.subtotal) + parseFloat(this.shipping)).toFixed(2); },
+            format(baseAmount) {
+                const c = this.displayCurrency;
+                const value = (parseFloat(baseAmount) || 0) * c.rate;
+                const parts = value.toFixed(c.decimals).split('.');
+                const withThousands = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, c.thousands_separator);
+                const number = c.decimals > 0 ? withThousands + c.decimal_separator + parts[1] : withThousands;
+                return c.symbol_position === 'before' ? c.symbol + number : number + ' ' + c.symbol;
+            }
         }"
     >
         <form method="POST" action="{{ route('checkout.store') }}" class="space-y-8 lg:col-span-3">
@@ -87,7 +95,7 @@
                             required
                         >
                             @foreach ($shippingCountries as $code => $info)
-                                <option value="{{ $code }}">{{ $info['label'] }} — {{ config('store.currency_symbol') }}{{ $info['amount'] }} shipping</option>
+                                <option value="{{ $code }}">{{ $info['label'] }} — <x-price :amount="$info['amount']" /> shipping</option>
                             @endforeach
                         </select>
                         <p class="mt-1 text-xs text-ink-500">Kosovo (XK), Albania (AL), or North Macedonia (MK) only.</p>
@@ -150,23 +158,30 @@
                                 <x-product-image-thumb :path="$thumb?->path" size="sm" />
                                 <span class="min-w-0 leading-snug">{{ $product->name }} <span class="text-ink-500">× {{ $line['quantity'] }}</span></span>
                             </span>
-                            <span class="shrink-0 font-medium">{{ config('store.currency_symbol') }}{{ number_format((float) $line['line_total'], 2) }}</span>
+                            <span class="shrink-0 font-medium"><x-price :amount="$line['line_total']" /></span>
                         </li>
                     @endforeach
                 </ul>
                 <div class="border-t border-ink-200/80 pt-4 text-sm">
                     <div class="flex justify-between text-ink-600">
                         <span>Subtotal</span>
-                        <span>{{ config('store.currency_symbol') }}{{ number_format((float) $subtotal, 2) }}</span>
+                        <span><x-price :amount="$subtotal" /></span>
                     </div>
                     <div class="mt-2 flex justify-between text-ink-600">
                         <span>Shipping</span>
-                        <span><span x-text="symbol"></span><span x-text="Number(shipping).toFixed(2)"></span></span>
+                        <span x-text="format(shipping)"></span>
                     </div>
                     <div class="mt-4 flex justify-between text-base font-bold text-ink-950">
                         <span>Total</span>
-                        <span><span x-text="symbol"></span><span x-text="total"></span></span>
+                        <span x-text="format(total)"></span>
                     </div>
+                    <p
+                        x-show="displayCurrency.rate !== 1"
+                        x-cloak
+                        class="mt-1 text-right text-xs text-ink-500"
+                    >
+                        Charged as <strong x-text="'€' + Number(total).toFixed(2)"></strong> — prices are set in EUR; the amount above is a converted estimate.
+                    </p>
                 </div>
             </div>
         </aside>
