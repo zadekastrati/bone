@@ -4,9 +4,9 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
 
-class RegistrationOtpService
+class EmailChangeOtpService
 {
-    private const CACHE_PREFIX = 'register_otp:';
+    private const CACHE_PREFIX = 'email_change_otp:';
 
     private const TTL_MINUTES = 15;
 
@@ -27,10 +27,6 @@ class RegistrationOtpService
         return self::CACHE_PREFIX.'attempts:'.hash('sha256', $this->normalizedEmail($email));
     }
 
-    /**
-     * Whether an unexpired code still exists for this email — the source of
-     * truth for whether a "register_pending" session is still resumable.
-     */
     public function hasActiveCode(string $email): bool
     {
         return Cache::has($this->key($email));

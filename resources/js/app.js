@@ -4,6 +4,90 @@ import Alpine from 'alpinejs';
 window.Alpine = Alpine;
 
 /**
+ * Global cart badge state. Bootstrapped from the server-rendered count on
+ * every full page load (see components/cart-fab.blade.php), then kept in
+ * sync client-side by the data-cart-form handler below without reloading.
+ */
+Alpine.store('cart', {
+    count: 0,
+    subtotal: '0.00',
+});
+
+/**
+ * Any <form data-cart-form> (add to cart, update quantity, remove line)
+ * submits via fetch instead of a full page reload. Cooperates with
+ * data-confirm above — if both are present, this waits for the confirm
+ * modal's requestSubmit() before intercepting.
+ *
+ * On success the global cart store updates instantly (badge everywhere),
+ * and if the form lives inside #cart-body, that container is swapped with
+ * the fresh server-rendered fragment so quantity/removal edits show
+ * immediately. A `cart-updated` (or `cart-error`) window event is also
+ * dispatched for any page-specific feedback (see shop/product.blade.php).
+ */
+document.addEventListener('submit', async (event) => {
+    const form = event.target;
+    if (! (form instanceof HTMLFormElement) || ! form.hasAttribute('data-cart-form')) {
+        return;
+    }
+
+    if (form.hasAttribute('data-confirm') && form.dataset.confirmed !== 'true') {
+        return;
+    }
+
+    event.preventDefault();
+
+    const submitter = event.submitter;
+    if (submitter) {
+        submitter.disabled = true;
+    }
+
+    try {
+        const response = await fetch(form.action, {
+            method: form.method || 'POST',
+            body: new FormData(form),
+            credentials: 'same-origin',
+            headers: {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        const data = await response.json();
+
+        if (! response.ok) {
+            window.dispatchEvent(new CustomEvent('cart-error', {
+                detail: { message: data.message ?? 'Something went wrong.' },
+            }));
+
+            return;
+        }
+
+        if (typeof data.count === 'number') {
+            Alpine.store('cart').count = data.count;
+        }
+        if (typeof data.subtotal === 'string') {
+            Alpine.store('cart').subtotal = data.subtotal;
+        }
+
+        const cartBody = document.getElementById('cart-body');
+        if (cartBody && typeof data.html === 'string') {
+            cartBody.innerHTML = data.html;
+        }
+
+        window.dispatchEvent(new CustomEvent('cart-updated', { detail: data }));
+    } catch (error) {
+        window.dispatchEvent(new CustomEvent('cart-error', {
+            detail: { message: 'Network error. Please try again.' },
+        }));
+    } finally {
+        if (submitter) {
+            submitter.disabled = false;
+        }
+    }
+});
+
+/**
  * Any <form data-confirm="Message?"> submits through the styled confirm
  * modal (see resources/views/components/confirm-modal.blade.php) instead of
  * the native browser confirm(). Optional data-confirm-label sets the button
@@ -116,6 +200,59 @@ Alpine.data('adminLiveSearch', (resultsId) => ({
             }
         } finally {
             this.loading = false;
+        }
+    },
+}));
+
+/**
+ * Admin header notification bell. Attach via
+ * x-data="adminNotifications(indexUrl, seenUrl)" (both routes passed in from
+ * Blade, mirroring adminLiveSearch above). Polls for new orders/messages so
+ * the badge and dropdown update without a page refresh, on every admin page
+ * since this lives in layouts/admin.blade.php.
+ */
+Alpine.data('adminNotifications', (indexUrl, seenUrl) => ({
+    open: false,
+    loading: false,
+    items: [],
+    unreadCount: 0,
+    _timer: null,
+
+    init() {
+        this.refresh();
+        this._timer = setInterval(() => this.refresh(), 20000);
+        this.$watch('open', (open) => {
+            if (open) {
+                this.markSeen();
+            }
+        });
+    },
+
+    async refresh() {
+        this.loading = true;
+        try {
+            const { data } = await window.axios.get(indexUrl);
+            this.items = data.items;
+            this.unreadCount = data.unread_count;
+        } catch (error) {
+            // Silent — the next poll retries.
+        } finally {
+            this.loading = false;
+        }
+    },
+
+    async markSeen() {
+        if (this.unreadCount === 0) {
+            return;
+        }
+
+        this.unreadCount = 0;
+        this.items = this.items.map((item) => ({ ...item, unread: false }));
+
+        try {
+            await window.axios.post(seenUrl);
+        } catch (error) {
+            // Next poll re-syncs the true state if this failed.
         }
     },
 }));

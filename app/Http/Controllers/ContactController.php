@@ -10,11 +10,19 @@ class ContactController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'email:rfc,dns', 'max:190'],
             'message' => ['required', 'string', 'max:3000'],
-        ]);
+        ];
+
+        if (! $request->user()) {
+            $rules['email'] = ['required', 'email:rfc,dns', 'max:190'];
+        }
+
+        $validated = $request->validate($rules);
+
+        // Logged-in users can't submit an arbitrary email — always use the account's.
+        $validated['email'] = $request->user()?->email ?? $validated['email'];
 
         ContactMessage::query()->create($validated);
 

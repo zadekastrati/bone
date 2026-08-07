@@ -20,9 +20,10 @@
             <p class="ui-eyebrow">{{ $category->name }}</p>
             <h1 class="font-display mt-3 text-3xl font-bold uppercase tracking-tight text-ink-950 sm:text-4xl sm:tracking-wide">{{ $product->name }}</h1>
             <p class="mt-4 text-2xl font-semibold text-ink-900">
-                {{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}
-                <span class="text-sm font-medium text-ink-500">{{ config('store.currency') }}</span>
+                <x-price :amount="$product->price" />
+                <span class="text-sm font-medium text-ink-500">{{ app(\App\Services\CurrencyService::class)->currentCurrency() }}</span>
             </p>
+            <x-store.currency-disclaimer :amount="$product->price" class="mt-1.5" />
 
             @if ($product->description)
                 <div class="prose prose-ink mt-6 max-w-none text-sm leading-relaxed text-ink-600">
@@ -37,7 +38,7 @@
                     <a href="{{ route('shop.category', $category) }}" class="btn-secondary mt-6 inline-flex px-6 py-3">Back to {{ $category->name }}</a>
                 </div>
             @else
-            <form id="add-to-cart-form" method="POST" action="{{ route('cart.store') }}" class="mt-10 space-y-8">
+            <form id="add-to-cart-form" method="POST" action="{{ route('cart.store') }}" class="mt-10 space-y-8" data-cart-form>
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
 
@@ -138,6 +139,16 @@
                     <a href="{{ route('shop.category', $category) }}" class="btn-secondary px-6 py-3">Back</a>
                 </div>
                 <p id="add-to-cart-hint" class="text-xs text-ink-500">Choose a color and size to add this item to your cart.</p>
+                <p
+                    x-data="{ text: '', ok: true, show: false, timer: null }"
+                    x-show="show"
+                    x-cloak
+                    x-text="text"
+                    :class="ok ? 'text-emerald-700' : 'text-red-600'"
+                    class="text-xs font-semibold"
+                    @cart-updated.window="text = $event.detail.message ?? 'Added to cart.'; ok = true; show = true; clearTimeout(timer); timer = setTimeout(() => { const ref = document.referrer; window.location.href = (ref && ref.startsWith(window.location.origin)) ? ref : '{{ route('shop.index') }}' }, 900)"
+                    @cart-error.window="text = $event.detail.message ?? 'Something went wrong.'; ok = false; show = true; clearTimeout(timer); timer = setTimeout(() => show = false, 4000)"
+                ></p>
             </form>
             @endif
         </div>

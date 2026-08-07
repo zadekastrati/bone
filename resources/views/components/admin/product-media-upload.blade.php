@@ -1,6 +1,6 @@
 @props([
     'inputId' => 'product-media-upload',
-    'label' => 'Upload images or video',
+    'label' => 'Add images or video',
 ])
 
 <div
@@ -60,41 +60,47 @@
             }
         },
     }"
-    {{ $attributes->merge(['class' => 'space-y-3']) }}
+    {{ $attributes->merge(['class' => 'space-y-4']) }}
 >
-    <label for="{{ $inputId }}" class="form-label">{{ $label }}</label>
-    <input
-        x-ref="fileInput"
-        id="{{ $inputId }}"
-        type="file"
-        name="images[]"
-        accept="image/*,video/*,.jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,.ogg,.m4v"
-        multiple
-        class="form-input"
-        @change="addFiles($event)"
-    >
-    <ul class="space-y-2" x-show="previews.length" x-cloak>
+    <div class="group/drop relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-ink-200/90 bg-zinc-50/60 px-6 py-8 text-center transition hover:border-accent-300 hover:bg-accent-50/40">
+        <input
+            x-ref="fileInput"
+            id="{{ $inputId }}"
+            type="file"
+            name="images[]"
+            accept="image/*,video/*,.jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,.ogg,.m4v"
+            multiple
+            class="absolute inset-0 z-10 cursor-pointer opacity-0"
+            @change="addFiles($event)"
+        >
+        <span class="inline-flex size-11 items-center justify-center rounded-full bg-accent-50 text-accent-600 ring-1 ring-accent-100 transition group-hover/drop:bg-accent-100">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3.75 3.75 0 0 1 4.177 3.815 4.5 4.5 0 0 1-1.41 8.775h-11.59Z" />
+            </svg>
+        </span>
+        <p class="text-sm font-semibold text-ink-800">{{ $label }}</p>
+        <p class="text-xs text-ink-500">JPEG, PNG, WebP, or MP4 / WebM / MOV. Click to browse or drop files here.</p>
+    </div>
+
+    <ul class="grid grid-cols-6 gap-3" x-show="previews.length" x-cloak>
         <template x-for="(preview, index) in previews" :key="preview.name + '-' + index">
-            <li class="flex items-center gap-3 rounded-xl border border-ink-200/60 bg-white/80 px-3 py-2">
-                <span class="relative inline-block size-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-ink-200/60" x-show="preview.isVideo">
-                    <video :src="preview.url" class="size-full object-cover" muted playsinline></video>
-                    <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink-950/45" aria-hidden="true">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
-                    </span>
-                </span>
-                <img x-show="!preview.isVideo" :src="preview.url" alt="" class="size-14 rounded-lg object-cover ring-1 ring-ink-200/60">
-                <span class="min-w-0 flex-1 truncate text-sm text-ink-700" x-text="preview.name"></span>
+            <li class="group relative aspect-square overflow-hidden rounded-xl ring-1 ring-ink-200/70">
+                <video :src="preview.url" x-show="preview.isVideo" class="size-full object-cover" muted playsinline></video>
+                <img :src="preview.url" x-show="!preview.isVideo" alt="" class="size-full object-cover">
+                <span class="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink-950/70 to-transparent"></span>
+                <span class="pointer-events-none absolute inset-x-1.5 bottom-1 truncate text-[10px] font-medium text-white" x-text="preview.name"></span>
                 <button
                     type="button"
-                    class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-zinc-500 transition hover:bg-red-50 hover:text-red-700"
+                    class="absolute right-1 top-1 inline-flex size-6 items-center justify-center rounded-full bg-ink-950/60 text-white transition hover:bg-red-600"
                     @click="removeFile(index)"
                     title="Remove file"
                     aria-label="Remove selected file"
                 >
-                    <x-icons.trash class="h-4 w-4" />
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </li>
         </template>
     </ul>
-    <p class="text-xs text-ink-500">JPEG, PNG, WebP, or MP4 / WebM / MOV video. You can add files in multiple steps before saving. The first photo uploaded becomes the catalog thumbnail; change it later when editing.</p>
 </div>

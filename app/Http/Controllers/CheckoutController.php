@@ -6,6 +6,7 @@ use App\Enums\PaymentMethod;
 use App\Http\Requests\Checkout\StoreCheckoutRequest;
 use App\Services\CartService;
 use App\Services\CheckoutService;
+use App\Services\CurrencyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -13,7 +14,8 @@ class CheckoutController extends Controller
 {
     public function __construct(
         private readonly CartService $cart,
-        private readonly CheckoutService $checkout
+        private readonly CheckoutService $checkout,
+        private readonly CurrencyService $currency
     ) {}
 
     public function create(): View|RedirectResponse
@@ -25,12 +27,13 @@ class CheckoutController extends Controller
         $lines = $this->cart->lines();
         $subtotal = $this->cart->subtotal();
         $shippingCountries = config('store.shipping.countries', []);
-        $defaultCountry = config('store.shipping.default_country', 'XK');
+        $defaultCountry = $this->currency->currentCountry();
         $shipping = $this->shippingForCountry($defaultCountry);
         $total = bcadd($subtotal, $shipping, 2);
         $shippingRateMap = collect($shippingCountries)
             ->map(fn (array $c): string => (string) $c['amount'])
             ->all();
+        $displayCurrency = $this->currency->currencyConfig();
 
         return view('shop.checkout', compact(
             'lines',
@@ -39,7 +42,8 @@ class CheckoutController extends Controller
             'total',
             'defaultCountry',
             'shippingCountries',
-            'shippingRateMap'
+            'shippingRateMap',
+            'displayCurrency'
         ));
     }
 
