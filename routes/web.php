@@ -14,6 +14,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
@@ -63,6 +64,24 @@ Route::middleware('auth')->group(function (): void {
 
         return back()->with('status', 'verification-link-sent');
     })->middleware('throttle:6,1')->name('verification.send');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::post('/profile/email/verify', [ProfileController::class, 'verifyEmail'])
+        ->middleware('throttle:10,1')
+        ->name('profile.email.verify');
+    Route::post('/profile/email/resend', [ProfileController::class, 'resendEmailCode'])
+        ->middleware('throttle:3,1')
+        ->name('profile.email.resend');
+    Route::post('/profile/email/cancel', [ProfileController::class, 'cancelEmailChange'])->name('profile.email.cancel');
+    Route::post('/profile/phone/verify', [ProfileController::class, 'verifyPhone'])
+        ->middleware('throttle:10,1')
+        ->name('profile.phone.verify');
+    Route::post('/profile/phone/resend', [ProfileController::class, 'resendPhoneCode'])
+        ->middleware('throttle:3,1')
+        ->name('profile.phone.resend');
+    Route::post('/profile/phone/cancel', [ProfileController::class, 'cancelPhoneChange'])->name('profile.phone.cancel');
 
     Route::middleware('verified')->group(function (): void {
         Route::get('/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
