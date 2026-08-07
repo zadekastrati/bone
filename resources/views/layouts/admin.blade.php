@@ -143,6 +143,62 @@
                         <span class="hidden sm:inline">View storefront</span>
                         <span class="sm:hidden">Shop</span>
                     </a>
+                    <div
+                        class="relative"
+                        x-data="adminNotifications('{{ route('admin.notifications.index') }}', '{{ route('admin.notifications.seen') }}')"
+                        @click.outside="open = false"
+                        @keydown.window.escape="open = false"
+                    >
+                        <button type="button" @click="open = !open"
+                            class="relative inline-flex size-10 items-center justify-center rounded-xl border border-zinc-200/90 bg-zinc-50/85 text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-white"
+                            aria-haspopup="true" :aria-expanded="open" aria-label="Notifications">
+                            <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+                            </svg>
+                            <span
+                                x-show="unreadCount > 0"
+                                x-cloak
+                                x-text="unreadCount > 99 ? '99+' : unreadCount"
+                                class="absolute -right-1 -top-1 flex min-h-[1.15rem] min-w-[1.15rem] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white"
+                            ></span>
+                        </button>
+                        <div x-show="open" x-transition x-cloak
+                            class="absolute right-0 z-40 mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-elevated">
+                            <div class="flex items-center justify-between border-b border-zinc-100 px-4 py-3">
+                                <p class="text-sm font-semibold text-ink-900">Notifications</p>
+                                <svg x-show="loading" x-cloak class="size-4 animate-spin text-ink-400" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                </svg>
+                            </div>
+                            <ul class="max-h-96 divide-y divide-zinc-100 overflow-y-auto">
+                                <template x-for="item in items" :key="item.id">
+                                    <li>
+                                        <a :href="item.url" class="flex items-start gap-3 px-4 py-3 transition hover:bg-zinc-50" :class="item.unread ? 'bg-accent-50/50' : ''">
+                                            <span class="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full"
+                                                :class="item.type === 'order' ? 'bg-emerald-100 text-emerald-700' : 'bg-accent-100 text-accent-700'">
+                                                <template x-if="item.type === 'order'">
+                                                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.25 10.5a3.75 3.75 0 1 1 7.5 0" /></svg>
+                                                </template>
+                                                <template x-if="item.type === 'message'">
+                                                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 7.5v9A2.25 2.25 0 0 1 19.5 18.75h-15A2.25 2.25 0 0 1 2.25 16.5v-9m19.5 0A2.25 2.25 0 0 0 19.5 5.25h-15A2.25 2.25 0 0 0 2.25 7.5m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0l-7.5-4.615a2.25 2.25 0 0 1-1.07-1.916V7.5" /></svg>
+                                                </template>
+                                            </span>
+                                            <span class="min-w-0 flex-1">
+                                                <span class="block truncate text-sm font-semibold text-ink-900" x-text="item.title"></span>
+                                                <span class="block truncate text-xs text-ink-500" x-text="item.subtitle"></span>
+                                                <span class="mt-0.5 block text-[11px] text-ink-400" x-text="item.timestamp"></span>
+                                            </span>
+                                            <span x-show="item.unread" x-cloak class="mt-1.5 size-2 shrink-0 rounded-full bg-accent-600"></span>
+                                        </a>
+                                    </li>
+                                </template>
+                                <li x-show="! loading && items.length === 0" x-cloak class="px-4 py-8 text-center text-sm text-ink-500">
+                                    No notifications yet.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false"
                         @keydown.window.escape="open = false">
                         <button type="button" @click="open = !open"

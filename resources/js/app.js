@@ -204,4 +204,57 @@ Alpine.data('adminLiveSearch', (resultsId) => ({
     },
 }));
 
+/**
+ * Admin header notification bell. Attach via
+ * x-data="adminNotifications(indexUrl, seenUrl)" (both routes passed in from
+ * Blade, mirroring adminLiveSearch above). Polls for new orders/messages so
+ * the badge and dropdown update without a page refresh, on every admin page
+ * since this lives in layouts/admin.blade.php.
+ */
+Alpine.data('adminNotifications', (indexUrl, seenUrl) => ({
+    open: false,
+    loading: false,
+    items: [],
+    unreadCount: 0,
+    _timer: null,
+
+    init() {
+        this.refresh();
+        this._timer = setInterval(() => this.refresh(), 20000);
+        this.$watch('open', (open) => {
+            if (open) {
+                this.markSeen();
+            }
+        });
+    },
+
+    async refresh() {
+        this.loading = true;
+        try {
+            const { data } = await window.axios.get(indexUrl);
+            this.items = data.items;
+            this.unreadCount = data.unread_count;
+        } catch (error) {
+            // Silent — the next poll retries.
+        } finally {
+            this.loading = false;
+        }
+    },
+
+    async markSeen() {
+        if (this.unreadCount === 0) {
+            return;
+        }
+
+        this.unreadCount = 0;
+        this.items = this.items.map((item) => ({ ...item, unread: false }));
+
+        try {
+            await window.axios.post(seenUrl);
+        } catch (error) {
+            // Next poll re-syncs the true state if this failed.
+        }
+    },
+}));
+
 Alpine.start();
