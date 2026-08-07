@@ -37,7 +37,7 @@
                     <a href="{{ route('shop.category', $category) }}" class="btn-secondary mt-6 inline-flex px-6 py-3">Back to {{ $category->name }}</a>
                 </div>
             @else
-            <form id="add-to-cart-form" method="POST" action="{{ route('cart.store') }}" class="mt-10 space-y-8">
+            <form id="add-to-cart-form" method="POST" action="{{ route('cart.store') }}" class="mt-10 space-y-8" data-cart-form>
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
 
@@ -138,6 +138,16 @@
                     <a href="{{ route('shop.category', $category) }}" class="btn-secondary px-6 py-3">Back</a>
                 </div>
                 <p id="add-to-cart-hint" class="text-xs text-ink-500">Choose a color and size to add this item to your cart.</p>
+                <p
+                    x-data="{ text: '', ok: true, show: false, timer: null }"
+                    x-show="show"
+                    x-cloak
+                    x-text="text"
+                    :class="ok ? 'text-emerald-700' : 'text-red-600'"
+                    class="text-xs font-semibold"
+                    @cart-updated.window="text = $event.detail.message ?? 'Added to cart.'; ok = true; show = true; clearTimeout(timer); timer = setTimeout(() => { const ref = document.referrer; window.location.href = (ref && ref.startsWith(window.location.origin)) ? ref : '{{ route('shop.index') }}' }, 900)"
+                    @cart-error.window="text = $event.detail.message ?? 'Something went wrong.'; ok = false; show = true; clearTimeout(timer); timer = setTimeout(() => show = false, 4000)"
+                ></p>
             </form>
             @endif
         </div>
