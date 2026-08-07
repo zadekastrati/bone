@@ -12,7 +12,7 @@
                     <path d="M5 5l14 14" />
                 </svg>
                 <span class="text-[10px] font-bold uppercase leading-none tracking-[0.15em] text-white sm:text-[11px]">
-                    Sold out
+                    {{ __('Sold out') }}
                 </span>
             </span>
         @endif
@@ -23,7 +23,7 @@
                 <img src="{{ $image->url() }}" alt="" class="size-full object-cover transition duration-700 ease-out group-hover/card:scale-[1.03] motion-reduce:group-hover/card:scale-100">
             @endif
         @else
-            <div class="flex size-full items-center justify-center bg-gradient-to-br from-zinc-100 to-accent-200 text-center text-xs font-bold uppercase tracking-mega text-accent-700">Photo soon</div>
+            <div class="flex size-full items-center justify-center bg-gradient-to-br from-zinc-100 to-accent-200 text-center text-xs font-bold uppercase tracking-mega text-accent-700">{{ __('Photo soon') }}</div>
         @endif
         <span class="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-accent-400/15 to-transparent opacity-0 transition duration-300 group-hover/card:opacity-100 motion-reduce:opacity-0"></span>
     </a>

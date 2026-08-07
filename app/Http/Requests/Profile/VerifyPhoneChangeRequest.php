@@ -27,7 +27,7 @@ class VerifyPhoneChangeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'phone_code.regex' => 'Enter the 6-digit code from your email.',
+            'phone_code.regex' => __('Enter the 6-digit code from your email.'),
         ];
     }
 }

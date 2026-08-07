@@ -34,23 +34,24 @@
                 <div class="flex min-w-0 flex-1 items-center gap-2 lg:gap-4">
 
                     <nav class="hidden min-w-0 items-center gap-0.5 lg:flex" aria-label="Primary">
-                        <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
-                        <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
+                        <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">{{ __('Home') }}</a>
+                        <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">{{ __('Shop') }}</a>
                         @auth
-                            <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.*') ? 'nav-link-active' : '' }}">Orders</a>
+                            <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.*') ? 'nav-link-active' : '' }}">{{ __('Orders') }}</a>
                             @if (auth()->user()->isAdmin())
-                                <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">Dashboard</a>
+                                <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">{{ __('Dashboard') }}</a>
                             @endif
                         @endauth
                     </nav>
                 </div>
 
                 <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+                    <x-store.locale-select class="hidden sm:block" />
                     <x-store.country-select class="hidden sm:block" />
 
                     @guest
-                        <a href="{{ route('login') }}" class="btn-ghost-inverse hidden px-3 py-2 sm:inline-flex">Log in</a>
-                        <a href="{{ route('register') }}" class="btn-on-dark hidden px-4 py-2.5 sm:inline-flex">Join</a>
+                        <a href="{{ route('login') }}" class="btn-ghost-inverse hidden px-3 py-2 sm:inline-flex">{{ __('Log in') }}</a>
+                        <a href="{{ route('register') }}" class="btn-on-dark hidden px-4 py-2.5 sm:inline-flex">{{ __('Join') }}</a>
                     @else
                         <div class="relative hidden lg:block" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
                             <button
@@ -82,7 +83,7 @@
                                 </div>
                                 <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-4 py-2 text-sm text-ink-800 transition-colors hover:bg-zinc-100">
                                     <x-icons.user-circle class="size-4 text-ink-500" />
-                                    My profile
+                                    {{ __('My profile') }}
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -90,7 +91,7 @@
                                         <svg class="size-4 text-ink-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H3" />
                                         </svg>
-                                        Log out
+                                        {{ __('Log out') }}
                                     </button>
                                 </form>
                             </div>
@@ -130,7 +131,7 @@
                 <nav class="page-shell flex flex-col gap-0.5 py-4" aria-label="Mobile">
                     <div x-data="{ openSearch: false }" class="mb-1">
                         <button type="button" @click="openSearch = !openSearch; if(openSearch) $nextTick(() => { document.getElementById('store-search-q-drawer').focus(); })" class="nav-link flex w-full items-center justify-between" :aria-expanded="openSearch">
-                            <span>Search products</span>
+                            <span>{{ __('Search products') }}</span>
                             <svg class="size-5 text-ink-500 transition-colors duration-200" :class="{ 'text-ink-900': openSearch }" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197M15.803 15.803A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                             </svg>
@@ -139,21 +140,24 @@
                             <x-store-search-form variant="drawer" />
                         </div>
                     </div>
-                    <x-store.country-select class="mb-2 [&_select]:w-full" />
-                    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
-                    <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
+                    <div class="mb-2 flex gap-2">
+                        <x-store.locale-select class="[&_select]:w-full" />
+                        <x-store.country-select class="[&_select]:w-full" />
+                    </div>
+                    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">{{ __('Home') }}</a>
+                    <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">{{ __('Shop') }}</a>
                     @guest
-                        <a href="{{ route('login') }}" class="nav-link">Log in</a>
-                        <a href="{{ route('register') }}" class="btn-on-dark mt-3 justify-center">Join</a>
+                        <a href="{{ route('login') }}" class="nav-link">{{ __('Log in') }}</a>
+                        <a href="{{ route('register') }}" class="btn-on-dark mt-3 justify-center">{{ __('Join') }}</a>
                     @else
-                        <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'nav-link-active' : '' }}">Profile</a>
-                        <a href="{{ route('orders.index') }}" class="nav-link">Orders</a>
+                        <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'nav-link-active' : '' }}">{{ __('Profile') }}</a>
+                        <a href="{{ route('orders.index') }}" class="nav-link">{{ __('Orders') }}</a>
                         @if (auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">Dashboard</a>
+                            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">{{ __('Dashboard') }}</a>
                         @endif
                         <form method="POST" action="{{ route('logout') }}" class="mt-4 border-t border-zinc-200/80 pt-4">
                             @csrf
-                            <button type="submit" class="btn-outline-light w-full justify-center">Log out</button>
+                            <button type="submit" class="btn-outline-light w-full justify-center">{{ __('Log out') }}</button>
                         </form>
                     @endguest
                 </nav>
@@ -187,7 +191,7 @@
             @endif
             @if ($errors->any())
                 <div class="mb-6 rounded-2xl border border-red-200/60 bg-red-50/95 px-4 py-3.5 text-sm text-red-950 shadow-soft ring-1 ring-red-500/10 backdrop-blur-sm" role="alert">
-                    <p class="text-xs font-bold uppercase tracking-wide text-red-900">Please fix the following</p>
+                    <p class="text-xs font-bold uppercase tracking-wide text-red-900">{{ __('Please fix the following') }}</p>
                     <ul class="mt-2 list-inside list-disc space-y-1 text-pretty">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -232,40 +236,40 @@
                     </div>
                 </div>
                 <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">Shop</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">{{ __('Shop') }}</p>
                     <ul class="mt-5 space-y-3 text-sm">
-                        <li><a href="{{ route('cart.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Bag / cart</a></li>
-                        <li><a href="{{ route('shop.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">All women&apos;s</a></li>
-                        <li><a href="{{ route('shop.index') }}#leggings" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Leggings</a></li>
-                        <li><a href="{{ route('shop.index') }}#bras" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Sports bras</a></li>
-                        <li><a href="{{ route('shop.index') }}#layers" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Layers</a></li>
+                        <li><a href="{{ route('cart.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Bag / cart') }}</a></li>
+                        <li><a href="{{ route('shop.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('All women\'s') }}</a></li>
+                        <li><a href="{{ route('shop.index') }}#leggings" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Leggings') }}</a></li>
+                        <li><a href="{{ route('shop.index') }}#bras" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Sports bras') }}</a></li>
+                        <li><a href="{{ route('shop.index') }}#layers" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Layers') }}</a></li>
                     </ul>
                 </div>
                 <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">Help</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">{{ __('Help') }}</p>
                     <ul class="mt-5 space-y-3 text-sm">
-                        <li><a href="{{ route('about') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">About us</a></li>
-                        <li><a href="{{ route('contact') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Contact us</a></li>
-                        <li><a href="{{ route('terms') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Terms &amp; conditions</a></li>
-                        <li><a href="{{ route('returns') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Returns</a></li>
-                        <li><a href="{{ route('size-guide') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Size guide</a></li>
+                        <li><a href="{{ route('about') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('About us') }}</a></li>
+                        <li><a href="{{ route('contact') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Contact us') }}</a></li>
+                        <li><a href="{{ route('terms') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Terms & conditions') }}</a></li>
+                        <li><a href="{{ route('returns') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Returns') }}</a></li>
+                        <li><a href="{{ route('size-guide') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Size guide') }}</a></li>
                     </ul>
                 </div>
                 <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">Account</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">{{ __('Account') }}</p>
                     <ul class="mt-5 space-y-3 text-sm">
                         @guest
-                            <li><a href="{{ route('login') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Log in</a></li>
-                            <li><a href="{{ route('register') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Create account</a></li>
+                            <li><a href="{{ route('login') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Log in') }}</a></li>
+                            <li><a href="{{ route('register') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Create account') }}</a></li>
                         @else
-                            <li><a href="{{ route('orders.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">Orders</a></li>
+                            <li><a href="{{ route('orders.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Orders') }}</a></li>
                         @endguest
                     </ul>
                 </div>
             </div>
             <div class="border-t border-zinc-200/70 py-7">
                 <div class="page-shell flex flex-col items-center justify-between gap-4 text-center text-[11px] leading-relaxed text-ink-500 sm:flex-row sm:text-left">
-                    <p class="text-balance">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+                    <p class="text-balance">&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('All rights reserved.') }}</p>
                 </div>
             </div>
         </footer>

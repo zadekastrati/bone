@@ -24,12 +24,12 @@
     {{ $attributes->class($formClass) }}
 >
     <label for="{{ $inputId }}" class="sr-only">
-        Search products
+        {{ __('Search products') }}
     </label>
 
     <button
         type="submit"
-        aria-label="Search"
+        aria-label="{{ __('Search') }}"
         class="flex shrink-0 rounded-lg p-1 text-ink-400 transition hover:bg-zinc-100/80 hover:text-accent-700 focus:outline-none focus:ring-0 focus-visible:ring-0"
     >
         <svg
@@ -53,7 +53,7 @@
         name="q"
         id="{{ $inputId }}"
         value="{{ $value }}"
-        placeholder="What are you looking for today?"
+        placeholder="{{ __('What are you looking for today?') }}"
         maxlength="200"
         autocomplete="off"
         class="min-w-0 flex-1 border-0 bg-transparent py-1 text-sm text-ink-800 placeholder:text-ink-400 focus:outline-none focus:ring-0 focus:border-0 focus:shadow-none"

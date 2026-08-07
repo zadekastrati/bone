@@ -41,7 +41,7 @@ class RegisterController extends Controller
 
         $code = $this->registrationOtp->issue($validated['email']);
 
-        Mail::to($validated['email'])->send(new RegisterOtpMail(
+        Mail::to($validated['email'])->locale(app()->getLocale())->send(new RegisterOtpMail(
             code: $code,
             userName: $validated['name'],
             appName: (string) config('app.name'),
@@ -55,7 +55,7 @@ class RegisterController extends Controller
 
         return redirect()
             ->route('register.verify')
-            ->with('success', 'We sent a 6-digit code to your email. Enter it below to finish creating your account.');
+            ->with('success', __('We sent a 6-digit code to your email. Enter it below to finish creating your account.'));
     }
 
     public function showVerify(Request $request): View|RedirectResponse
@@ -69,7 +69,7 @@ class RegisterController extends Controller
         if ($pending === null) {
             return redirect()
                 ->route('register')
-                ->with('error', 'Start registration from the register page first.');
+                ->with('error', __('Start registration from the register page first.'));
         }
 
         return view('auth.register-verify', [
@@ -83,7 +83,7 @@ class RegisterController extends Controller
         if ($pending === null || ! isset($pending['email'], $pending['name'], $pending['password_enc'])) {
             return redirect()
                 ->route('register')
-                ->with('error', 'Session expired. Please register again.');
+                ->with('error', __('Session expired. Please register again.'));
         }
 
         $email = $pending['email'];
@@ -93,12 +93,12 @@ class RegisterController extends Controller
 
             return redirect()
                 ->route('register')
-                ->with('error', 'Your verification code expired. Please start again.');
+                ->with('error', __('Your verification code expired. Please start again.'));
         }
 
         if (! $this->registrationOtp->verify($email, $request->validated('code'))) {
             throw ValidationException::withMessages([
-                'code' => 'Invalid or expired code. Try again or request a new code.',
+                'code' => __('Invalid or expired code. Try again or request a new code.'),
             ]);
         }
 
@@ -108,7 +108,7 @@ class RegisterController extends Controller
 
             return redirect()
                 ->route('login')
-                ->with('error', 'An account with this email already exists. Please log in.');
+                ->with('error', __('An account with this email already exists. Please log in.'));
         }
 
         $this->registrationOtp->forget($email);
@@ -130,7 +130,7 @@ class RegisterController extends Controller
 
         return redirect()
             ->route('home')
-            ->with('success', 'Account created successfully.');
+            ->with('success', __('Account created successfully.'));
     }
 
     public function resend(Request $request): RedirectResponse
@@ -144,13 +144,13 @@ class RegisterController extends Controller
 
         $code = $this->registrationOtp->issue($email);
 
-        Mail::to($email)->send(new RegisterOtpMail(
+        Mail::to($email)->locale(app()->getLocale())->send(new RegisterOtpMail(
             code: $code,
             userName: $pending['name'],
             appName: (string) config('app.name'),
         ));
 
-        return back()->with('success', 'A new code has been sent to your email.');
+        return back()->with('success', __('A new code has been sent to your email.'));
     }
 
     public function cancel(Request $request): RedirectResponse
@@ -164,7 +164,7 @@ class RegisterController extends Controller
 
         return redirect()
             ->route('register')
-            ->with('success', 'Registration cancelled. You can start again anytime.');
+            ->with('success', __('Registration cancelled. You can start again anytime.'));
     }
 
     /**

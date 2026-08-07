@@ -4,9 +4,9 @@
 
 @section('content')
     <nav class="crumbs" aria-label="Breadcrumb">
-        <a href="{{ route('home') }}">Home</a>
+        <a href="{{ route('home') }}">{{ __('Home') }}</a>
         <span class="mx-1.5 text-ink-300" aria-hidden="true">/</span>
-        <a href="{{ route('shop.index') }}">Shop</a>
+        <a href="{{ route('shop.index') }}">{{ __('Shop') }}</a>
         <span class="mx-1.5 text-ink-300" aria-hidden="true">/</span>
         <span class="text-ink-800" aria-current="page">{{ $category->name }}</span>
     </nav>
@@ -22,7 +22,7 @@
             @endforeach
         </ul>
     @else
-        <p class="mt-10 rounded-2xl border border-zinc-200/70 bg-zinc-50/50 px-6 py-12 text-center text-ink-600">No products in this category yet.</p>
+        <p class="mt-10 rounded-2xl border border-zinc-200/70 bg-zinc-50/50 px-6 py-12 text-center text-ink-600">{{ __('No products in this category yet.') }}</p>
     @endif
 
     @if ($products->isNotEmpty())

@@ -25,7 +25,7 @@ class OrderPlacedMail extends Mailable implements ShouldQueueAfterCommit
         $name = (string) config('app.name', 'Store');
 
         return new Envelope(
-            subject: $name.' — Order '.$this->order->order_number.' confirmed',
+            subject: $name.' — '.__('Order :number confirmed', ['number' => $this->order->order_number]),
         );
     }
 

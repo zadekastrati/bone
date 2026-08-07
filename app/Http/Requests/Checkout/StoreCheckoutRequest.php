@@ -42,8 +42,8 @@ class StoreCheckoutRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'shipping_country.in' => 'Choose Kosovo, Albania, or North Macedonia.',
-            'shipping_phone.regex' => 'Enter a valid phone number.',
+            'shipping_country.in' => __('Choose Kosovo, Albania, or North Macedonia.'),
+            'shipping_phone.regex' => __('Enter a valid phone number.'),
         ];
     }
 }

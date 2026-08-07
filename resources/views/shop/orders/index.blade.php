@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'My orders')
+@section('title', __('My orders'))
 
 @section('content')
     <x-page-header
-        title="{{ auth()->user()->isAdmin() ? 'All orders' : 'My orders' }}"
-        subtitle="{{ auth()->user()->isAdmin() ? 'Store-wide list. Customers only see their own orders.' : 'Track purchases and payment status. Bank transfers stay pending until an administrator confirms receipt.' }}"
+        :title="auth()->user()->isAdmin() ? __('All orders') : __('My orders')"
+        :subtitle="auth()->user()->isAdmin() ? __('Store-wide list. Customers only see their own orders.') : __('Track purchases and payment status. Bank transfers stay pending until an administrator confirms receipt.')"
     />
 
     <div class="table-shell mt-10">
@@ -13,11 +13,11 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Order</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Payment</th>
-                        <th>Total</th>
+                        <th>{{ __('Order') }}</th>
+                        <th>{{ __('Date') }}</th>
+                        <th>{{ __('Status') }}</th>
+                        <th>{{ __('Payment') }}</th>
+                        <th>{{ __('Total') }}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -35,12 +35,12 @@
                             </td>
                             <td class="font-semibold text-ink-900"><x-price :amount="$order->total" /></td>
                             <td class="text-right">
-                                <a href="{{ route('orders.show', $order) }}" class="link-brand text-sm">View</a>
+                                <a href="{{ route('orders.show', $order) }}" class="link-brand text-sm">{{ __('View') }}</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="data-table-empty">No orders yet.</td>
+                            <td colspan="6" class="data-table-empty">{{ __('No orders yet.') }}</td>
                         </tr>
                     @endforelse
                 </tbody>
