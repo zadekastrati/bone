@@ -33,7 +33,9 @@ class OrderController extends Controller
             });
         }
 
-        $orders = $query->paginate(20)->withQueryString();
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $orders */
+        $orders = $query->paginate(20);
+        $orders->withQueryString();
 
         if ($request->ajax()) {
             return view('admin.orders.partials.results', compact('orders'));

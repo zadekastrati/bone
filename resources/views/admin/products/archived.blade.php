@@ -22,8 +22,37 @@
             @endif
         </form>
 
-        <div id="products-archived-results" class="transition-opacity" :class="{ 'opacity-50': loading }">
-            @include('admin.products.partials.archived-results')
-        </div>
+        <form
+            method="POST"
+            action="{{ route('admin.products.bulkForceDelete') }}"
+            data-confirm-label="Delete permanently"
+            x-data="{
+                hasSelection: false,
+                selectedCount: 0,
+                refresh() {
+                    const boxes = this.$el.querySelectorAll('.js-select-product:checked');
+                    this.selectedCount = boxes.length;
+                    this.hasSelection = boxes.length > 0;
+                },
+                init() {
+                    new MutationObserver(() => this.refresh()).observe(
+                        document.getElementById('products-archived-results'),
+                        { childList: true, subtree: true }
+                    );
+                },
+            }"
+            @change="refresh()"
+            :data-confirm="`Permanently delete ${selectedCount} selected product(s)? This cannot be undone — their images and videos will be removed too.`"
+        >
+            @csrf
+            @method('DELETE')
+            <div class="mt-4" x-show="hasSelection" x-cloak>
+                <button type="submit" class="btn-danger">Delete Selected Permanently (<span x-text="selectedCount"></span>)</button>
+            </div>
+
+            <div id="products-archived-results" class="transition-opacity" :class="{ 'opacity-50': loading }">
+                @include('admin.products.partials.archived-results')
+            </div>
+        </form>
     </div>
 @endsection

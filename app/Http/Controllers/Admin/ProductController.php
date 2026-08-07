@@ -44,7 +44,9 @@ class ProductController extends Controller
             $query->where('category_id', (int) $request->input('category_id'));
         }
 
-        $products = $query->paginate(20)->withQueryString();
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $products */
+        $products = $query->paginate(20);
+        $products->withQueryString();
 
         if ($request->ajax()) {
             return view('admin.products.partials.results', compact('products'));
@@ -161,7 +163,9 @@ class ProductController extends Controller
             });
         }
 
-        $products = $query->paginate(20)->withQueryString();
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $products */
+        $products = $query->paginate(20);
+        $products->withQueryString();
 
         if ($request->ajax()) {
             return view('admin.products.partials.archived-results', compact('products'));
@@ -192,5 +196,27 @@ class ProductController extends Controller
         $product->forceDelete();
 
         return redirect()->route('admin.products.archived')->with('success', 'Product permanently deleted.');
+    }
+
+    public function bulkForceDelete(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:products,id'],
+        ]);
+
+        $products = Product::onlyTrashed()->whereIn('id', $validated['ids'])->with('images')->get();
+
+        foreach ($products as $product) {
+            $this->authorize('forceDelete', $product);
+
+            foreach ($product->images as $image) {
+                Storage::disk('public')->delete($image->path);
+            }
+
+            $product->forceDelete();
+        }
+
+        return redirect()->route('admin.products.archived')->with('success', 'Selected products permanently deleted.');
     }
 }

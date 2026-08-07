@@ -39,7 +39,7 @@
         <form
             method="POST"
             action="{{ route('admin.products.bulkDestroy') }}"
-            data-confirm-label="Delete"
+            data-confirm-label="Archive"
             x-data="{
                 hasSelection: false,
                 selectedCount: 0,
@@ -56,12 +56,12 @@
                 },
             }"
             @change="refresh()"
-            :data-confirm="`Delete ${selectedCount} selected product(s)? This cannot be undone.`"
+            :data-confirm="`Archive ${selectedCount} selected product(s)? You can restore them later from Archived.`"
         >
             @csrf
             @method('DELETE')
             <div class="mt-4" x-show="hasSelection" x-cloak>
-                <button type="submit" class="btn-danger">Delete Selected (<span x-text="selectedCount"></span>)</button>
+                <button type="submit" class="btn-danger">Archive Selected (<span x-text="selectedCount"></span>)</button>
             </div>
 
             <div id="products-results" class="transition-opacity" :class="{ 'opacity-50': loading }">

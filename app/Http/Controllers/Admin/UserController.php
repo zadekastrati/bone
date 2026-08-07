@@ -26,7 +26,9 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->paginate(15)->withQueryString();
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $users */
+        $users = $query->paginate(15);
+        $users->withQueryString();
 
         if ($request->ajax()) {
             return view('admin.users.partials.results', compact('users'));
