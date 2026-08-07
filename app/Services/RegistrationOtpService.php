@@ -27,6 +27,15 @@ class RegistrationOtpService
         return self::CACHE_PREFIX.'attempts:'.hash('sha256', $this->normalizedEmail($email));
     }
 
+    /**
+     * Whether an unexpired code still exists for this email — the source of
+     * truth for whether a "register_pending" session is still resumable.
+     */
+    public function hasActiveCode(string $email): bool
+    {
+        return Cache::has($this->key($email));
+    }
+
     public function issue(string $email): string
     {
         $code = (string) random_int(100000, 999999);

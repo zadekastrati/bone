@@ -95,7 +95,7 @@ Route::middleware('guest')->group(function (): void {
     Route::get('login', [LoginController::class, 'create'])->name('login');
     Route::post('login', [LoginController::class, 'store'])->middleware('throttle:5,1');
     Route::get('register', [RegisterController::class, 'create'])->name('register');
-    Route::post('register', [RegisterController::class, 'store'])->middleware('throttle:5,1');
+    Route::post('register', [RegisterController::class, 'store'])->middleware('throttle:5,1')->name('register.store');
     Route::get('register/verify', [RegisterController::class, 'showVerify'])->name('register.verify');
     Route::post('register/verify', [RegisterController::class, 'verify'])
         ->middleware('throttle:10,1')
