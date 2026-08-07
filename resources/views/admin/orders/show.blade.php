@@ -9,7 +9,10 @@
         <span class="text-ink-800">{{ $order->order_number }}</span>
     </nav>
 
-    <x-page-header :title="'Order '.$order->order_number" :subtitle="'Customer: '.$order->user->email" />
+    <x-page-header :title="'Order '.$order->order_number" :subtitle="'Customer: '.$order->user->email">
+        <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
+        <x-admin.badge :tone="$order->payment_status->tone()">{{ $order->payment_status->label() }}</x-admin.badge>
+    </x-page-header>
 
     <div class="mt-10 grid gap-10 lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-2">
@@ -74,7 +77,7 @@
         </div>
 
         <aside>
-            <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="admin-form-surface space-y-4">
+            <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="admin-form-surface admin-pro-form space-y-4">
                 @csrf
                 @method('PATCH')
                 <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Admin</h2>

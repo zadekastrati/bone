@@ -11,6 +11,8 @@ class ContactMessageController extends Controller
 {
     public function index(Request $request): View
     {
+        $this->authorize('viewAny', ContactMessage::class);
+
         $query = ContactMessage::query()->latest();
 
         if ($request->filled('q')) {
@@ -24,12 +26,18 @@ class ContactMessageController extends Controller
 
         $messages = $query->paginate(20)->appends($request->query());
 
+        if ($request->ajax()) {
+            return view('admin.messages.partials.results', compact('messages'));
+        }
+
         return view('admin.messages.index', compact('messages'));
     }
 
     public function show(int $id): View
     {
         $message = ContactMessage::query()->findOrFail($id);
+
+        $this->authorize('view', $message);
 
         return view('admin.messages.show', compact('message'));
     }

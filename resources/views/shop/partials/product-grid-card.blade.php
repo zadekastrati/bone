@@ -1,7 +1,6 @@
 @php
     $showCategory = $showCategory ?? true;
-    // Prefer a still image for listing cards; fall back to the first media item.
-    $image = $product->images->first(fn ($m) => ! $m->isVideo()) ?? $product->images->first();
+    $image = $product->thumbnailImage();
 @endphp
 <article class="store-card-interactive group/card overflow-hidden">
     <a href="{{ route('shop.product', [$product->category, $product]) }}" class="relative block aspect-[4/5] overflow-hidden bg-gradient-to-b from-white to-ink-100/80">

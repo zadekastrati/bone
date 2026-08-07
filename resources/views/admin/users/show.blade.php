@@ -10,24 +10,22 @@
                     <h1 class="font-display text-2xl font-bold text-ink-950 sm:text-3xl">{{ $user->name }}</h1>
                     <p class="mt-2 text-ink-600">{{ $user->email }}</p>
                     <p class="mt-4">
-                        <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide {{ $user->role === 'admin' ? 'bg-accent-100 text-accent-900' : 'bg-ink-100 text-ink-800' }}">
-                            {{ $user->role }}
-                        </span>
+                        <x-admin.badge :tone="$user->role === 'admin' ? 'accent' : 'neutral'">{{ $user->role }}</x-admin.badge>
                     </p>
                     <p class="mt-6 text-xs text-ink-500">Joined {{ $user->created_at->format('M j, Y') }}</p>
                 </div>
                 <div class="flex shrink-0 flex-wrap items-center gap-2">
                     <a href="{{ route('admin.users.index') }}" class="btn-secondary py-2 text-sm">Back</a>
                     @can('update', $user)
-                        <a href="{{ route('admin.users.edit', $user) }}" class="btn-primary inline-flex size-10 items-center justify-center p-0" title="Edit user" aria-label="Edit user">
+                        <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex size-10 items-center justify-center rounded-lg text-accent-700 transition hover:bg-accent-50 hover:text-accent-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/30" title="Edit user" aria-label="Edit user">
                             <x-icons.pencil-square class="h-5 w-5" />
                         </a>
                     @endcan
                     @can('delete', $user)
-                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" onsubmit="return confirm('Delete this user? This cannot be undone.');">
+                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" data-confirm="Delete this user? This cannot be undone." data-confirm-label="Delete">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn-danger inline-flex size-10 items-center justify-center p-0" title="Delete user" aria-label="Delete user">
+                            <button type="submit" class="inline-flex size-10 items-center justify-center rounded-lg text-red-600 transition hover:bg-red-50 hover:text-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/30" title="Delete user" aria-label="Delete user">
                                 <x-icons.trash class="h-5 w-5" />
                             </button>
                         </form>

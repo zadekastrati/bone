@@ -36,4 +36,9 @@ class ProductPolicy
     {
         return $user->isAdmin();
     }
+
+    public function forceDelete(User $user, Product $product): bool
+    {
+        return $user->isAdmin();
+    }
 }

@@ -14,6 +14,7 @@ class ProductImage extends Model
         'product_id',
         'path',
         'sort_order',
+        'is_thumbnail',
     ];
 
     /**
@@ -21,6 +22,7 @@ class ProductImage extends Model
      */
     protected $casts = [
         'sort_order' => 'integer',
+        'is_thumbnail' => 'boolean',
     ];
 
     public function product(): BelongsTo

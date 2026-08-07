@@ -18,7 +18,8 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $category = Category::query()->findOrFail((int) $this->route('id'));
+        /** @var Category $category */
+        $category = $this->route('category');
 
         return [
             'name' => ['required', 'string', 'max:255'],

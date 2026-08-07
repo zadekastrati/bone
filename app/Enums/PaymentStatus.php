@@ -16,4 +16,13 @@ enum PaymentStatus: string
             self::Failed => 'Failed',
         };
     }
+
+    public function tone(): string
+    {
+        return match ($this) {
+            self::Pending => 'neutral',
+            self::Paid => 'success',
+            self::Failed => 'danger',
+        };
+    }
 }

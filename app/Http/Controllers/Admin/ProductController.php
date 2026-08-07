@@ -7,17 +7,19 @@ use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\ProductImage;
+use App\Services\ProductMediaService;
 use App\Services\ProductVariantSyncService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
     public function __construct(
-        private readonly ProductVariantSyncService $variantSync
+        private readonly ProductVariantSyncService $variantSync,
+        private readonly ProductMediaService $mediaService,
     ) {}
 
     public function index(Request $request): View
@@ -43,6 +45,11 @@ class ProductController extends Controller
         }
 
         $products = $query->paginate(20)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('admin.products.partials.results', compact('products'));
+        }
+
         $categories = Category::query()->orderBy('sort_order')->orderBy('name')->get();
 
         return view('admin.products.index', compact('products', 'categories'));
@@ -66,29 +73,22 @@ class ProductController extends Controller
             ->all();
         $data['is_active'] = $request->boolean('is_active', true);
 
-        $product = Product::create($data);
+        $product = DB::transaction(function () use ($data, $request): Product {
+            $product = Product::create($data);
 
-        $this->variantSync->sync($product, $request->input('variants', []));
+            $this->variantSync->sync($product, $request->input('variants', []));
 
-        foreach ($request->file('images', []) as $index => $file) {
-            if ($file === null) {
-                continue;
-            }
-            $path = $file->store('products', 'public');
-            $product->images()->create([
-                'path' => $path,
-                'sort_order' => $index,
-            ]);
-        }
+            $this->mediaService->storeUploads($product, $request->file('images', []));
+
+            return $product;
+        });
 
         return redirect()->route('admin.products.index')->with('success', 'Product created.');
     }
 
-    public function edit(int $id): View
+    public function edit(Product $product): View
     {
-        $product = Product::query()
-            ->with(['category', 'images', 'variants'])
-            ->findOrFail($id);
+        $product->load(['category', 'images', 'variants']);
         $this->authorize('update', $product);
 
         $categories = Category::query()->orderBy('sort_order')->orderBy('name')->get();
@@ -96,58 +96,84 @@ class ProductController extends Controller
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
-    public function update(UpdateProductRequest $request, int $id): RedirectResponse
+    public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
-        $product = Product::query()->findOrFail($id);
         $this->authorize('update', $product);
 
         $data = collect($request->validated())
-            ->except(['images', 'variants', 'delete_image_ids'])
+            ->except(['images', 'variants', 'delete_image_ids', 'thumbnail_image_id'])
             ->all();
         $data['is_active'] = $request->boolean('is_active', true);
 
-        $product->update($data);
+        DB::transaction(function () use ($product, $data, $request): void {
+            $product->update($data);
 
-        $this->variantSync->sync($product, $request->input('variants', []));
+            $this->variantSync->sync($product, $request->input('variants', []));
 
-        $deleteIds = $request->input('delete_image_ids', []);
-        if ($deleteIds !== []) {
-            $images = ProductImage::query()
-                ->where('product_id', $product->id)
-                ->whereIn('id', $deleteIds)
-                ->get();
-            foreach ($images as $image) {
-                Storage::disk('public')->delete($image->path);
-                $image->delete();
-            }
-        }
+            $this->mediaService->deleteImages($product, $request->input('delete_image_ids', []));
 
-        $maxSort = (int) $product->images()->max('sort_order');
-        foreach ($request->file('images', []) as $i => $file) {
-            if ($file === null) {
-                continue;
-            }
-            $path = $file->store('products', 'public');
-            $product->images()->create([
-                'path' => $path,
-                'sort_order' => $maxSort + $i + 1,
-            ]);
-        }
+            $maxSort = (int) $product->images()->max('sort_order');
+            $this->mediaService->storeUploads($product, $request->file('images', []), $maxSort + 1);
 
-        return redirect()->route('admin.products.edit', $product->id)->with('success', 'Product updated.');
+            $this->mediaService->setThumbnail($product, $request->input('thumbnail_image_id'));
+        });
+
+        return redirect()->route('admin.products.index')->with('success', 'Product updated.');
     }
 
-    public function destroy(int $id): RedirectResponse
+    public function destroy(Product $product): RedirectResponse
     {
-        $product = Product::query()->with('images')->findOrFail($id);
         $this->authorize('delete', $product);
+
+        $product->delete();
+
+        return redirect()->route('admin.products.index')->with('success', 'Product archived.');
+    }
+
+    public function archived(Request $request): View
+    {
+        $this->authorize('viewAny', Product::class);
+
+        $query = Product::onlyTrashed()->with(['category', 'images'])->withCount('variants')->latest('deleted_at');
+
+        if ($request->filled('q')) {
+            $term = '%'.$request->string('q')->trim().'%';
+            $query->where(function ($q) use ($term): void {
+                $q->where('name', 'like', $term)
+                    ->orWhere('slug', 'like', $term);
+            });
+        }
+
+        $products = $query->paginate(20)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('admin.products.partials.archived-results', compact('products'));
+        }
+
+        return view('admin.products.archived', compact('products'));
+    }
+
+    public function restore(Product $product): RedirectResponse
+    {
+        $this->authorize('restore', $product);
+
+        $product->restore();
+
+        return redirect()->route('admin.products.archived')->with('success', 'Product restored.');
+    }
+
+    public function forceDelete(Product $product): RedirectResponse
+    {
+        $this->authorize('forceDelete', $product);
+
+        $product->load('images');
 
         foreach ($product->images as $image) {
             Storage::disk('public')->delete($image->path);
         }
 
-        $product->delete();
+        $product->forceDelete();
 
-        return redirect()->route('admin.products.index')->with('success', 'Product archived.');
+        return redirect()->route('admin.products.archived')->with('success', 'Product permanently deleted.');
     }
 }

@@ -32,9 +32,6 @@
 
                 {{-- Middle: search + desktop nav share the flexible width so the cart column is never pushed off-screen --}}
                 <div class="flex min-w-0 flex-1 items-center gap-2 lg:gap-4">
-                    @unless (request()->routeIs('shop.index'))
-                        <x-store-search-form variant="header" />
-                    @endunless
 
                     <nav class="hidden min-w-0 items-center gap-0.5 lg:flex" aria-label="Primary">
                         <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
@@ -55,9 +52,6 @@
                     @else
                         <div class="hidden items-center gap-3 lg:flex">
                             <span class="{{ request()->routeIs('home') ? 'max-w-[14rem] text-ink-800' : 'max-w-[9rem] text-ink-500' }} truncate text-xs font-medium" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
-                            @unless (request()->routeIs('home'))
-                                <span class="rounded-full border border-zinc-200/90 bg-white/80 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-600">{{ auth()->user()->role }}</span>
-                            @endunless
                         </div>
                         <form method="POST" action="{{ route('logout') }}" class="hidden lg:inline">
                             @csrf
@@ -239,6 +233,8 @@
 
     {{-- Floating bag: fixed to viewport (all breakpoints), high z-index --}}
     <x-cart-fab :count="$cartService->count()" />
+
+    <x-confirm-modal />
 
     <style>
         [x-cloak] { display: none !important; }

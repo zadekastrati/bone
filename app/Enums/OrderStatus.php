@@ -22,4 +22,15 @@ enum OrderStatus: string
             self::Cancelled => 'Cancelled',
         };
     }
+
+    public function tone(): string
+    {
+        return match ($this) {
+            self::Pending => 'neutral',
+            self::Confirmed, self::Processing => 'accent',
+            self::Shipped => 'warning',
+            self::Delivered => 'success',
+            self::Cancelled => 'danger',
+        };
+    }
 }

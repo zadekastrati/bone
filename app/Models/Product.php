@@ -87,6 +87,27 @@ class Product extends Model
         return $this->images()->first();
     }
 
+    public function thumbnailImage(): ?ProductImage
+    {
+        if ($this->relationLoaded('images')) {
+            $marked = $this->images->firstWhere('is_thumbnail', true);
+            if ($marked !== null && ! $marked->isVideo()) {
+                return $marked;
+            }
+
+            return $this->images->first(fn (ProductImage $image): bool => ! $image->isVideo())
+                ?? $this->images->first();
+        }
+
+        $marked = $this->images()->where('is_thumbnail', true)->first();
+        if ($marked !== null && ! $marked->isVideo()) {
+            return $marked;
+        }
+
+        return $this->images()->get()->first(fn (ProductImage $image): bool => ! $image->isVideo())
+            ?? $this->images()->first();
+    }
+
     /**
      * No variant has stock, or there are no variants (treat as unavailable).
      */

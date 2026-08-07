@@ -8,24 +8,45 @@
         <a href="{{ route('admin.categories.index') }}" class="btn-secondary">Categories</a>
     </x-page-header>
 
-    <form method="POST" action="{{ route('admin.categories.store') }}" class="mt-10 max-w-xl space-y-6">
-        @csrf
-        <div>
-            <label for="name" class="form-label">Name</label>
-            <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-input" required>
-        </div>
-        <div>
-            <label for="slug" class="form-label">Slug <span class="font-normal text-ink-400">(optional)</span></label>
-            <input type="text" name="slug" id="slug" value="{{ old('slug') }}" class="form-input" placeholder="auto from name">
-        </div>
-        <div>
-            <label for="description" class="form-label">Description</label>
-            <textarea name="description" id="description" rows="4" class="form-input">{{ old('description') }}</textarea>
-        </div>
-        <div>
-            <label for="sort_order" class="form-label">Sort order</label>
-            <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order', 0) }}" min="0" class="form-input">
-        </div>
-        <button type="submit" class="btn-primary">Create</button>
-    </form>
+    <div class="mx-auto mt-8 max-w-2xl">
+        <form method="POST" action="{{ route('admin.categories.store') }}" class="admin-pro-form">
+            @csrf
+
+            <x-admin.form-section title="Category" description="Name and slug appear in URLs and navigation.">
+                <div>
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-input @error('name') form-input-error @enderror" required>
+                    @error('name')
+                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label for="slug" class="form-label">Slug <span class="font-normal text-ink-400">(optional)</span></label>
+                    <input type="text" name="slug" id="slug" value="{{ old('slug') }}" placeholder="auto from name" class="form-input @error('slug') form-input-error @enderror">
+                    @error('slug')
+                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="description" id="description" rows="4" class="form-input @error('description') form-input-error @enderror">{{ old('description') }}</textarea>
+                    @error('description')
+                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label for="sort_order" class="form-label">Sort order</label>
+                    <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order', 0) }}" min="0" class="form-input max-w-xs @error('sort_order') form-input-error @enderror">
+                    <p class="mt-2 text-xs text-ink-500">Lower numbers appear first in lists.</p>
+                    @error('sort_order')
+                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </x-admin.form-section>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button type="submit" class="btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
 @endsection

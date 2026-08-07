@@ -40,17 +40,15 @@ class CategoryController extends Controller
         return redirect()->route('admin.categories.index')->with('success', 'Category created.');
     }
 
-    public function edit(int $id): View
+    public function edit(Category $category): View
     {
-        $category = Category::query()->findOrFail($id);
         $this->authorize('update', $category);
 
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(UpdateCategoryRequest $request, int $id): RedirectResponse
+    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        $category = Category::query()->findOrFail($id);
         $this->authorize('update', $category);
 
         $category->update($request->validated());
@@ -58,9 +56,8 @@ class CategoryController extends Controller
         return redirect()->route('admin.categories.index')->with('success', 'Category updated.');
     }
 
-    public function destroy(int $id): RedirectResponse
+    public function destroy(Category $category): RedirectResponse
     {
-        $category = Category::query()->findOrFail($id);
         $this->authorize('delete', $category);
 
         if ($category->products()->exists()) {

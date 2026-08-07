@@ -273,6 +273,44 @@
     }
 
     /**
+     * Status/role badges — one shared pill instead of hand-rolled inline pills per page.
+     */
+    .badge {
+        @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide;
+    }
+
+    .badge-neutral {
+        @apply border-zinc-200/80 bg-zinc-50/80 text-ink-700;
+    }
+
+    .badge-accent {
+        @apply border-accent-200/70 bg-accent-50 text-accent-800;
+    }
+
+    .badge-success {
+        @apply border-emerald-200/70 bg-emerald-50 text-emerald-800;
+    }
+
+    .badge-warning {
+        @apply border-amber-200/70 bg-amber-50 text-amber-800;
+    }
+
+    .badge-danger {
+        @apply border-red-200/70 bg-red-50 text-red-800;
+    }
+
+    /**
+     * Dashboard stat tiles.
+     */
+    .stat-card {
+        @apply admin-panel flex min-h-0 items-start gap-4 p-5 sm:p-6;
+    }
+
+    .stat-card__icon {
+        @apply inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-700 ring-1 ring-accent-100;
+    }
+
+    /**
      * Product admin forms: calmer labels + neutral variant grid (enterprise-style).
      */
     .admin-pro-form .form-input,

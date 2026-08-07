@@ -6,7 +6,7 @@
     <div class="mx-auto mt-8 max-w-xl">
         <x-page-header title="Edit user" :subtitle="$user->name" />
 
-        <form method="POST" action="{{ route('admin.users.update', $user) }}">
+        <form method="POST" action="{{ route('admin.users.update', $user) }}" class="admin-pro-form">
             @csrf
             @method('PUT')
 

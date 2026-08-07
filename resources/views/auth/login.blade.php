@@ -19,11 +19,14 @@
                 @enderror
             </div>
             <div>
-                <label for="password" class="form-label">Password</label>
+                <div class="flex items-center justify-between">
+                    <label for="password" class="form-label">Password</label>
+                    <a href="{{ route('password.reset') }}" class="text-xs font-medium text-accent-700 hover:text-accent-900">Forgot password?</a>
+                </div>
                 <input type="password" name="password" id="password" required autocomplete="current-password" class="form-input">
             </div>
             <div class="flex items-center gap-2">
-                <input type="checkbox" name="remember" id="remember" value="1" class="rounded border-ink-300 text-accent-600 focus:ring-accent-500">
+                <input type="checkbox" name="remember" id="remember" value="1" @checked(old('remember')) class="rounded border-ink-300 text-accent-600 focus:ring-accent-500">
                 <label for="remember" class="text-sm text-ink-600">Remember me</label>
             </div>
             <button type="submit" class="btn-primary w-full py-3">Log in</button>

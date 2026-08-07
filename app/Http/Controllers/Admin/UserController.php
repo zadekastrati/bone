@@ -28,6 +28,10 @@ class UserController extends Controller
 
         $users = $query->paginate(15)->withQueryString();
 
+        if ($request->ajax()) {
+            return view('admin.users.partials.results', compact('users'));
+        }
+
         return view('admin.users.index', compact('users'));
     }
 

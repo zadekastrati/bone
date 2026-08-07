@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
@@ -74,12 +75,15 @@ Route::middleware('auth')->group(function (): void {
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function (): void {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('users', AdminUserController::class);
-        Route::resource('categories', AdminCategoryController::class)
-            ->parameters(['categories' => 'id'])
-            ->except(['show']);
-        Route::resource('products', AdminProductController::class)
-            ->parameters(['products' => 'id'])
-            ->except(['show']);
+        Route::resource('categories', AdminCategoryController::class)->except(['show']);
+        Route::get('products-archived', [AdminProductController::class, 'archived'])->name('products.archived');
+        Route::post('products/{product}/restore', [AdminProductController::class, 'restore'])
+            ->withTrashed()
+            ->name('products.restore');
+        Route::delete('products/{product}/force-delete', [AdminProductController::class, 'forceDelete'])
+            ->withTrashed()
+            ->name('products.forceDelete');
+        Route::resource('products', AdminProductController::class)->except(['show']);
         Route::resource('messages', AdminContactMessageController::class)
             ->parameters(['messages' => 'id'])
             ->only(['index', 'show']);
@@ -100,6 +104,23 @@ Route::middleware('guest')->group(function (): void {
         ->middleware('throttle:3,1')
         ->name('register.resend');
     Route::post('register/cancel', [RegisterController::class, 'cancel'])->name('register.cancel');
+
+    Route::get('forgot-password', [ForgotPasswordController::class, 'create'])->name('password.reset');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'store'])
+        ->middleware('throttle:3,1')
+        ->name('password.reset.send');
+    Route::get('forgot-password/verify', [ForgotPasswordController::class, 'showVerify'])->name('password.reset.verify');
+    Route::post('forgot-password/verify', [ForgotPasswordController::class, 'verify'])
+        ->middleware('throttle:10,1')
+        ->name('password.reset.verify.store');
+    Route::get('forgot-password/new-password', [ForgotPasswordController::class, 'showNewPassword'])->name('password.reset.password');
+    Route::post('forgot-password/new-password', [ForgotPasswordController::class, 'updatePassword'])
+        ->middleware('throttle:10,1')
+        ->name('password.reset.password.store');
+    Route::post('forgot-password/resend', [ForgotPasswordController::class, 'resend'])
+        ->middleware('throttle:3,1')
+        ->name('password.reset.resend');
+    Route::post('forgot-password/cancel', [ForgotPasswordController::class, 'cancel'])->name('password.reset.cancel');
 });
 
 Route::post('logout', [LoginController::class, 'destroy'])

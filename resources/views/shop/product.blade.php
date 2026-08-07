@@ -13,37 +13,7 @@
 
     <div class="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div class="space-y-4">
-            @if ($product->images->isEmpty())
-                <div class="aspect-[4/5] overflow-hidden rounded-3xl bg-gradient-to-br from-zinc-100 to-accent-200 shadow-float">
-                    <div class="flex size-full items-center justify-center text-xs font-bold uppercase tracking-mega text-white/40">Photo soon</div>
-                </div>
-            @else
-                @php $primary = $product->images->first(); @endphp
-                <div class="store-card overflow-hidden bg-ink-100 shadow-elevated">
-                    @if ($primary->isVideo())
-                        <video
-                            src="{{ $primary->url() }}"
-                            class="aspect-[4/5] w-full object-cover"
-                            controls
-                            playsinline
-                            preload="metadata"
-                        ></video>
-                    @else
-                        <img src="{{ $primary->url() }}" alt="" class="aspect-[4/5] w-full object-cover">
-                    @endif
-                </div>
-                @if ($product->images->count() > 1)
-                    <div class="grid grid-cols-4 gap-3">
-                        @foreach ($product->images->skip(1) as $img)
-                            @if ($img->isVideo())
-                                <video src="{{ $img->url() }}" class="aspect-square rounded-xl object-cover ring-1 ring-ink-200/60" muted playsinline preload="metadata"></video>
-                            @else
-                                <img src="{{ $img->url() }}" alt="" class="aspect-square rounded-xl object-cover ring-1 ring-ink-200/60">
-                            @endif
-                        @endforeach
-                    </div>
-                @endif
-            @endif
+            <x-shop.product-media-gallery :product="$product" />
         </div>
 
         <div>

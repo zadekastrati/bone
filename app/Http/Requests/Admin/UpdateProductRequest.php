@@ -19,8 +19,9 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        $productId = (int) $this->route('id');
-        $product = Product::query()->findOrFail($productId);
+        /** @var Product $product */
+        $product = $this->route('product');
+        $productId = $product->id;
 
         return [
             'category_id' => ['required', 'integer', 'exists:categories,id'],
@@ -32,6 +33,7 @@ class UpdateProductRequest extends FormRequest
             'is_active' => ['nullable', 'boolean'],
             'images' => ['nullable', 'array', 'max:12'],
             'images.*' => ['file', 'mimes:jpeg,jpg,png,webp,mp4,webm,mov,ogg,m4v', 'max:102400'],
+            'thumbnail_image_id' => ['nullable', 'integer', Rule::exists('product_images', 'id')->where('product_id', $productId)],
             'delete_image_ids' => ['nullable', 'array', 'max:50'],
             'delete_image_ids.*' => ['integer', Rule::exists('product_images', 'id')->where('product_id', $productId)],
             'variants' => ['required', 'array', 'min:1', 'max:200'],
@@ -79,6 +81,21 @@ class UpdateProductRequest extends FormRequest
                 }
                 if ($query->exists()) {
                     $validator->errors()->add("variants.$i.sku", 'This SKU is already in use.');
+                }
+            }
+
+            $thumbnailId = $this->input('thumbnail_image_id');
+            if ($thumbnailId !== null && $thumbnailId !== '') {
+                /** @var Product $routeProduct */
+                $routeProduct = $this->route('product');
+
+                $image = \App\Models\ProductImage::query()
+                    ->where('product_id', $routeProduct->id)
+                    ->whereKey((int) $thumbnailId)
+                    ->first();
+
+                if ($image !== null && $image->isVideo()) {
+                    $validator->errors()->add('thumbnail_image_id', 'The catalog thumbnail must be a photo, not a video.');
                 }
             }
         });

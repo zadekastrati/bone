@@ -77,4 +77,9 @@ class Order extends Model
     {
         return trim($this->shipping_first_name.' '.$this->shipping_last_name);
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'order_number';
+    }
 }

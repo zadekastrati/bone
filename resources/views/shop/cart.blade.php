@@ -92,7 +92,7 @@
                                 @endif
                             </p>
 
-                            <form method="POST" action="{{ route('cart.destroy', $v->id) }}" onsubmit="return confirm('Remove this item?');">
+                            <form method="POST" action="{{ route('cart.destroy', $v->id) }}" data-confirm="Remove this item?" data-confirm-label="Remove">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-xs font-bold uppercase tracking-[0.2em] text-ink-600 transition hover:text-red-700">

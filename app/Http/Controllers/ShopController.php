@@ -44,6 +44,10 @@ class ShopController extends Controller
                 ->appends($request->query())
             : null;
 
+        if ($request->ajax()) {
+            return view('shop.partials.results', compact('products', 'q', 'searchResults'));
+        }
+
         return view('shop.index', compact('categories', 'products', 'q', 'searchResults'));
     }
 
