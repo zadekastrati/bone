@@ -18,8 +18,13 @@
                     <input type="text" id="name" name="name" class="form-input" value="{{ old('name') }}" required>
                 </div>
                 <div>
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" name="email" class="form-input" value="{{ old('email') }}" required>
+                    <label class="form-label">Email</label>
+                    @auth
+                        <p class="form-input flex items-center bg-zinc-50 text-ink-600">{{ auth()->user()->email }}</p>
+                        <p class="mt-1.5 text-xs text-ink-400">We'll reply to your account email.</p>
+                    @else
+                        <input type="email" id="email" name="email" class="form-input" value="{{ old('email') }}" required>
+                    @endauth
                 </div>
                 <div>
                     <label for="message" class="form-label">Message</label>

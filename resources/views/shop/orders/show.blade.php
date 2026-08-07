@@ -24,7 +24,7 @@
                             </div>
                             <div class="text-right text-sm">
                                 <p class="text-ink-600">× {{ $item->quantity }}</p>
-                                <p class="font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $item->line_total, 2) }}</p>
+                                <p class="font-semibold text-ink-900"><x-price :amount="$item->line_total" /></p>
                             </div>
                         </li>
                     @endforeach
@@ -32,15 +32,15 @@
                 <div class="mt-4 border-t border-ink-200/80 pt-4 text-sm">
                     <div class="flex justify-between text-ink-600">
                         <span>Subtotal</span>
-                        <span>{{ config('store.currency_symbol') }}{{ number_format((float) $order->subtotal, 2) }}</span>
+                        <span><x-price :amount="$order->subtotal" /></span>
                     </div>
                     <div class="mt-2 flex justify-between text-ink-600">
                         <span>Shipping</span>
-                        <span>{{ config('store.currency_symbol') }}{{ number_format((float) $order->shipping_amount, 2) }}</span>
+                        <span><x-price :amount="$order->shipping_amount" /></span>
                     </div>
                     <div class="mt-4 flex justify-between text-base font-bold text-ink-950">
                         <span>Total</span>
-                        <span>{{ config('store.currency_symbol') }}{{ number_format((float) $order->total, 2) }}</span>
+                        <span><x-price :amount="$order->total" /></span>
                     </div>
                 </div>
             </div>

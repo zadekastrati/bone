@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -12,7 +13,9 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CountryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
@@ -32,6 +35,10 @@ Route::view('/size-guide', 'size-guide')->name('size-guide');
 Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('contact.store');
+
+Route::post('/country', [CountryController::class, 'update'])
+    ->middleware('throttle:30,1')
+    ->name('country.update');
 
 Route::prefix('shop')->name('shop.')->group(function (): void {
     Route::get('/', [ShopController::class, 'index'])->name('index');
@@ -63,6 +70,24 @@ Route::middleware('auth')->group(function (): void {
         return back()->with('status', 'verification-link-sent');
     })->middleware('throttle:6,1')->name('verification.send');
 
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::post('/profile/email/verify', [ProfileController::class, 'verifyEmail'])
+        ->middleware('throttle:10,1')
+        ->name('profile.email.verify');
+    Route::post('/profile/email/resend', [ProfileController::class, 'resendEmailCode'])
+        ->middleware('throttle:3,1')
+        ->name('profile.email.resend');
+    Route::post('/profile/email/cancel', [ProfileController::class, 'cancelEmailChange'])->name('profile.email.cancel');
+    Route::post('/profile/phone/verify', [ProfileController::class, 'verifyPhone'])
+        ->middleware('throttle:10,1')
+        ->name('profile.phone.verify');
+    Route::post('/profile/phone/resend', [ProfileController::class, 'resendPhoneCode'])
+        ->middleware('throttle:3,1')
+        ->name('profile.phone.resend');
+    Route::post('/profile/phone/cancel', [ProfileController::class, 'cancelPhoneChange'])->name('profile.phone.cancel');
+
     Route::middleware('verified')->group(function (): void {
         Route::get('/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
         Route::post('/checkout', [CheckoutController::class, 'store'])
@@ -74,6 +99,8 @@ Route::middleware('auth')->group(function (): void {
 
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function (): void {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
+        Route::post('notifications/seen', [AdminNotificationController::class, 'markSeen'])->name('notifications.seen');
         Route::resource('users', AdminUserController::class);
         Route::resource('categories', AdminCategoryController::class)->except(['show']);
         Route::get('products-archived', [AdminProductController::class, 'archived'])->name('products.archived');
@@ -96,7 +123,7 @@ Route::middleware('guest')->group(function (): void {
     Route::get('login', [LoginController::class, 'create'])->name('login');
     Route::post('login', [LoginController::class, 'store'])->middleware('throttle:5,1');
     Route::get('register', [RegisterController::class, 'create'])->name('register');
-    Route::post('register', [RegisterController::class, 'store'])->middleware('throttle:5,1');
+    Route::post('register', [RegisterController::class, 'store'])->middleware('throttle:5,1')->name('register.store');
     Route::get('register/verify', [RegisterController::class, 'showVerify'])->name('register.verify');
     Route::post('register/verify', [RegisterController::class, 'verify'])
         ->middleware('throttle:10,1')

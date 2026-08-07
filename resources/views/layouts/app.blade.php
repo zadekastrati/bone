@@ -46,17 +46,55 @@
                 </div>
 
                 <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+                    <x-store.country-select class="hidden sm:block" />
+
                     @guest
                         <a href="{{ route('login') }}" class="btn-ghost-inverse hidden px-3 py-2 sm:inline-flex">Log in</a>
                         <a href="{{ route('register') }}" class="btn-on-dark hidden px-4 py-2.5 sm:inline-flex">Join</a>
                     @else
-                        <div class="hidden items-center gap-3 lg:flex">
-                            <span class="{{ request()->routeIs('home') ? 'max-w-[14rem] text-ink-800' : 'max-w-[9rem] text-ink-500' }} truncate text-xs font-medium" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
+                        <div class="relative hidden lg:block" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+                            <button
+                                type="button"
+                                @click="open = !open"
+                                :aria-expanded="open"
+                                class="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-xs font-medium text-ink-700 transition-colors hover:bg-zinc-200/50 hover:text-ink-900"
+                            >
+                                <span class="flex size-8 items-center justify-center rounded-full bg-ink-900 text-[11px] font-semibold uppercase text-white">
+                                    {{ Str::substr(auth()->user()->name, 0, 1) }}
+                                </span>
+                                <span class="max-w-[9rem] truncate">{{ auth()->user()->name }}</span>
+                                <x-icons.chevron-down class="size-4 text-ink-500 transition-transform" x-bind:class="{ 'rotate-180': open }" />
+                            </button>
+
+                            <div
+                                x-show="open"
+                                x-cloak
+                                x-transition:enter="transition ease-out duration-150"
+                                x-transition:enter-start="opacity-0 -translate-y-1"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-100"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 -translate-y-1"
+                                class="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-2xl border border-zinc-200/80 bg-white py-1.5 shadow-soft ring-1 ring-ink-950/5"
+                            >
+                                <div class="truncate border-b border-zinc-100 px-4 py-2 text-xs text-ink-500" title="{{ auth()->user()->email }}">
+                                    {{ auth()->user()->email }}
+                                </div>
+                                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-4 py-2 text-sm text-ink-800 transition-colors hover:bg-zinc-100">
+                                    <x-icons.user-circle class="size-4 text-ink-500" />
+                                    My profile
+                                </a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="flex w-full items-center gap-2.5 px-4 py-2 text-left text-sm text-ink-800 transition-colors hover:bg-zinc-100">
+                                        <svg class="size-4 text-ink-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H3" />
+                                        </svg>
+                                        Log out
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        <form method="POST" action="{{ route('logout') }}" class="hidden lg:inline">
-                            @csrf
-                            <button type="submit" class="btn-outline-light px-4 py-2 text-[10px]">Log out</button>
-                        </form>
                     @endguest
 
                     <button
@@ -101,12 +139,14 @@
                             <x-store-search-form variant="drawer" />
                         </div>
                     </div>
+                    <x-store.country-select class="mb-2 [&_select]:w-full" />
                     <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'nav-link-active' : '' }}">Home</a>
                     <a href="{{ route('shop.index') }}" class="nav-link {{ request()->routeIs('shop.*') ? 'nav-link-active' : '' }}">Shop</a>
                     @guest
                         <a href="{{ route('login') }}" class="nav-link">Log in</a>
                         <a href="{{ route('register') }}" class="btn-on-dark mt-3 justify-center">Join</a>
                     @else
+                        <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'nav-link-active' : '' }}">Profile</a>
                         <a href="{{ route('orders.index') }}" class="nav-link">Orders</a>
                         @if (auth()->user()->isAdmin())
                             <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">Dashboard</a>

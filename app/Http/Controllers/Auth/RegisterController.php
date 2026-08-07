@@ -24,7 +24,11 @@ class RegisterController extends Controller
 
     public function create(Request $request): View|RedirectResponse
     {
-        if ($request->session()->has('register_pending')) {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+
+        if ($this->activePending($request) !== null) {
             return redirect()->route('register.verify');
         }
 
@@ -56,13 +60,17 @@ class RegisterController extends Controller
 
     public function showVerify(Request $request): View|RedirectResponse
     {
-        if (! $request->session()->has('register_pending')) {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+
+        $pending = $this->activePending($request);
+
+        if ($pending === null) {
             return redirect()
                 ->route('register')
                 ->with('error', 'Start registration from the register page first.');
         }
-
-        $pending = $request->session()->get('register_pending');
 
         return view('auth.register-verify', [
             'emailMasked' => $this->maskEmail($pending['email']),
@@ -79,6 +87,14 @@ class RegisterController extends Controller
         }
 
         $email = $pending['email'];
+
+        if (! $this->registrationOtp->hasActiveCode($email)) {
+            $request->session()->forget('register_pending');
+
+            return redirect()
+                ->route('register')
+                ->with('error', 'Your verification code expired. Please start again.');
+        }
 
         if (! $this->registrationOtp->verify($email, $request->validated('code'))) {
             throw ValidationException::withMessages([
@@ -149,6 +165,30 @@ class RegisterController extends Controller
         return redirect()
             ->route('register')
             ->with('success', 'Registration cancelled. You can start again anytime.');
+    }
+
+    /**
+     * The pending registration payload, or null if there isn't one or its
+     * code has expired — clearing the stale session state either way so a
+     * user who left and came back lands on the start page, not verify.
+     *
+     * @return array{name: string, email: string, password_enc: string}|null
+     */
+    private function activePending(Request $request): ?array
+    {
+        $pending = $request->session()->get('register_pending');
+
+        if ($pending === null || ! isset($pending['email'])) {
+            return null;
+        }
+
+        if (! $this->registrationOtp->hasActiveCode($pending['email'])) {
+            $request->session()->forget('register_pending');
+
+            return null;
+        }
+
+        return $pending;
     }
 
     private function maskEmail(string $email): string

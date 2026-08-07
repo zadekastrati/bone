@@ -6,14 +6,12 @@
     <a href="{{ route('shop.product', [$product->category, $product]) }}" class="relative block aspect-[4/5] overflow-hidden bg-gradient-to-b from-white to-ink-100/80">
         @if ($product->isSoldOut())
             {{-- Top-left on the image: visible while browsing shop (no click needed) --}}
-            <span class="pointer-events-none absolute left-2 top-2 z-20 inline-flex items-center gap-1.5 rounded-full bg-red-600 px-2 py-1.5 pl-2 shadow-md sm:left-3 sm:top-3 sm:gap-2 sm:px-2.5 sm:py-2 sm:pl-2.5" aria-hidden="true">
-                <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/95 text-red-600 shadow-sm sm:size-6">
-                    <svg class="size-3.5 sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="9" />
-                        <path d="M5 5l14 14" />
-                    </svg>
-                </span>
-                <span class="pr-2 text-[11px] font-semibold italic leading-none tracking-wide text-black sm:text-xs">
+            <span class="pointer-events-none absolute left-2 top-2 z-20 inline-flex items-center gap-1.5 rounded-full bg-ink-950/90 px-3 py-1.5 shadow-soft backdrop-blur-sm sm:left-3 sm:top-3" aria-hidden="true">
+                <svg class="size-3 shrink-0 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M5 5l14 14" />
+                </svg>
+                <span class="text-[10px] font-bold uppercase leading-none tracking-[0.15em] text-white sm:text-[11px]">
                     Sold out
                 </span>
             </span>
@@ -37,7 +35,7 @@
             <a href="{{ route('shop.product', [$product->category, $product]) }}" class="transition hover:text-accent-600">{{ $product->name }}</a>
         </h3>
         <p class="pt-2 font-display text-lg font-semibold tabular-nums tracking-tight text-ink-950">
-            {{ config('store.currency_symbol') }}{{ number_format((float) $product->price, 2) }}
+            <x-price :amount="$product->price" />
         </p>
     </div>
 </article>

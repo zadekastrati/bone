@@ -33,7 +33,7 @@
                                 {{ $order->payment_method->label() }}
                                 <span class="mt-0.5 block text-xs text-ink-400">{{ $order->payment_status->label() }}</span>
                             </td>
-                            <td class="font-semibold text-ink-900">{{ config('store.currency_symbol') }}{{ number_format((float) $order->total, 2) }}</td>
+                            <td class="font-semibold text-ink-900"><x-price :amount="$order->total" /></td>
                             <td class="text-right">
                                 <a href="{{ route('orders.show', $order) }}" class="link-brand text-sm">View</a>
                             </td>
