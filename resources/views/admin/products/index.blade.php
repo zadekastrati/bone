@@ -36,8 +36,37 @@
             @endif
         </form>
 
-        <div id="products-results" class="transition-opacity" :class="{ 'opacity-50': loading }">
-            @include('admin.products.partials.results')
-        </div>
+        <form
+            method="POST"
+            action="{{ route('admin.products.bulkDestroy') }}"
+            data-confirm-label="Delete"
+            x-data="{
+                hasSelection: false,
+                selectedCount: 0,
+                refresh() {
+                    const boxes = this.$el.querySelectorAll('.js-select-product:checked');
+                    this.selectedCount = boxes.length;
+                    this.hasSelection = boxes.length > 0;
+                },
+                init() {
+                    new MutationObserver(() => this.refresh()).observe(
+                        document.getElementById('products-results'),
+                        { childList: true, subtree: true }
+                    );
+                },
+            }"
+            @change="refresh()"
+            :data-confirm="`Delete ${selectedCount} selected product(s)? This cannot be undone.`"
+        >
+            @csrf
+            @method('DELETE')
+            <div class="mt-4" x-show="hasSelection" x-cloak>
+                <button type="submit" class="btn-danger">Delete Selected (<span x-text="selectedCount"></span>)</button>
+            </div>
+
+            <div id="products-results" class="transition-opacity" :class="{ 'opacity-50': loading }">
+                @include('admin.products.partials.results')
+            </div>
+        </form>
     </div>
 @endsection
