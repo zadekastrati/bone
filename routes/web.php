@@ -110,6 +110,7 @@ Route::middleware('auth')->group(function (): void {
         Route::delete('products/{product}/force-delete', [AdminProductController::class, 'forceDelete'])
             ->withTrashed()
             ->name('products.forceDelete');
+        Route::delete('products/bulk-delete', [AdminProductController::class, 'bulkDestroy'])->name('products.bulkDestroy');
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::resource('messages', AdminContactMessageController::class)
             ->parameters(['messages' => 'id'])
