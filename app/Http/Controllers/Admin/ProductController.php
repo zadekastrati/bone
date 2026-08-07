@@ -130,6 +130,23 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Product archived.');
     }
 
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:products,id'],
+        ]);
+
+        $products = Product::whereIn('id', $validated['ids'])->get();
+
+        foreach ($products as $product) {
+            $this->authorize('delete', $product);
+            $product->delete();
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Selected products archived.');
+    }
+
     public function archived(Request $request): View
     {
         $this->authorize('viewAny', Product::class);

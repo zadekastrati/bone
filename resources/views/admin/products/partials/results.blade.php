@@ -55,6 +55,7 @@
             <table class="data-table data-table--admin">
                 <thead>
                     <tr>
+                        <th class="w-10"><span class="sr-only">Select</span></th>
                         <th></th>
                         <th>Product</th>
                         <th>Category</th>
@@ -70,6 +71,9 @@
                             class="cursor-pointer transition hover:bg-slate-50"
                             @click="openDetail(products[{{ $loop->index }}])"
                         >
+                            <td class="w-10" @click.stop>
+                                <input type="checkbox" name="ids[]" value="{{ $product->id }}" class="js-select-product" aria-label="Select {{ $product->name }}">
+                            </td>
                             <td class="w-24">
                                 @php $thumb = $product->thumbnailImage(); @endphp
                                 @if ($thumb && ! $thumb->isVideo())
@@ -112,7 +116,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="data-table-empty text-ink-500">No products match.</td>
+                            <td colspan="8" class="data-table-empty text-ink-500">No products match.</td>
                         </tr>
                     @endforelse
                 </tbody>
