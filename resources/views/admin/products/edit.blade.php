@@ -22,109 +22,113 @@
         method="POST"
         action="{{ route('admin.products.update', $product) }}"
         enctype="multipart/form-data"
-        class="admin-pro-form mx-auto mt-8 max-w-4xl space-y-6"
+        class="admin-pro-form w-full space-y-6"
         x-data="{ rows: @js($variantRows), addRow() { this.rows.push({ id: null, color: '', size: '', sku: '', stock_quantity: '0', color_hex: '' }); }, removeRow(i) { this.rows.splice(i, 1); } }"
     >
         @csrf
         @method('PUT')
 
-        <x-admin.form-section title="Product information" variant="minimal">
-            <div class="grid gap-6 sm:grid-cols-2">
-                <div class="sm:col-span-2">
-                    <label for="category_id" class="form-label">Category</label>
-                    <select name="category_id" id="category_id" class="form-select @error('category_id') form-input-error @enderror" required>
-                        @foreach ($categories as $cat)
-                            <option value="{{ $cat->id }}" @selected(old('category_id', $product->category_id) == $cat->id)>{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('category_id')
-                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="sm:col-span-2">
+        <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-2 lg:items-start">
+        <x-admin.form-section title="Product information" variant="minimal" class="self-start">
+            <div class="space-y-6">
+                <div>
                     <label for="name" class="form-label">Name</label>
                     <input type="text" name="name" id="name" value="{{ old('name', $product->name) }}" class="form-input @error('name') form-input-error @enderror" required autocomplete="off">
                     @error('name')
                         <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-                <div class="sm:col-span-2">
-                    <label for="slug" class="form-label">URL slug</label>
-                    <input type="text" name="slug" id="slug" value="{{ old('slug', $product->slug) }}" class="form-input font-mono text-sm @error('slug') form-input-error @enderror" required autocomplete="off">
-                    @error('slug')
-                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div>
-                    <label for="style_code" class="form-label">Style code</label>
-                    <input type="text" name="style_code" id="style_code" value="{{ old('style_code', $product->style_code) }}" class="form-input font-mono text-sm @error('style_code') form-input-error @enderror" autocomplete="off">
-                    <p class="mt-2 text-xs text-zinc-500">Product style code is shared across all sizes and colors. If blank, variant SKUs will only be used when entered.</p>
-                    @error('style_code')
-                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="sm:col-span-2">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea name="description" id="description" rows="6" class="form-input @error('description') form-input-error @enderror">{{ old('description', $product->description) }}</textarea>
-                    @error('description')
-                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div>
-                    <label for="price" class="form-label">Price</label>
-                    <div class="relative mt-1.5">
-                        <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-sm text-zinc-500">$</span>
-                        <input type="number" name="price" id="price" value="{{ old('price', $product->price) }}" step="0.01" min="0" class="form-input pl-8 @error('price') form-input-error @enderror" required>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div>
+                        <label for="category_id" class="form-label">Category</label>
+                        <select name="category_id" id="category_id" class="form-select @error('category_id') form-input-error @enderror" required>
+                            @foreach ($categories as $cat)
+                                <option value="{{ $cat->id }}" @selected(old('category_id', $product->category_id) == $cat->id)>{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('category_id')
+                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('price')
+                    <div>
+                        <label for="price" class="form-label">Price</label>
+                        <div class="relative mt-1.5">
+                            <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-sm text-zinc-500">{{ config('store.currency_symbol') }}</span>
+                            <input type="number" name="price" id="price" value="{{ old('price', $product->price) }}" step="0.01" min="0" class="form-input pl-8 @error('price') form-input-error @enderror" required>
+                        </div>
+                        @error('price')
+                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div>
+                        <label for="slug" class="form-label">URL slug</label>
+                        <input type="text" name="slug" id="slug" value="{{ old('slug', $product->slug) }}" class="form-input font-mono text-sm @error('slug') form-input-error @enderror" required autocomplete="off">
+                        @error('slug')
+                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="style_code" class="form-label">Style code</label>
+                        <input type="text" name="style_code" id="style_code" value="{{ old('style_code', $product->style_code) }}" class="form-input font-mono text-sm @error('style_code') form-input-error @enderror" autocomplete="off">
+                        @error('style_code')
+                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <p class="-mt-4 text-xs text-zinc-500 sm:col-span-2">Style code is shared across all sizes and colors. If blank, variant SKUs are used when entered.</p>
+                </div>
+                <div>
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="description" id="description" rows="5" class="form-input @error('description') form-input-error @enderror">{{ old('description', $product->description) }}</textarea>
+                    @error('description')
                         <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
 
-            <fieldset class="space-y-4 rounded-3xl border border-ink-200/60 bg-white/95 p-6 shadow-soft">
-                <legend class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">Media</legend>
+            <div class="space-y-4 border-t border-zinc-200 pt-6">
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-900">Media</h3>
+                    <p class="mt-1 text-sm text-zinc-500">Photos and video shown on the storefront. Hover a tile to set the catalog thumbnail or remove it.</p>
+                </div>
 
                 @if ($product->images->isNotEmpty())
-                    <div class="space-y-3">
-                        <p class="text-xs font-bold uppercase tracking-mega text-ink-500">Existing files</p>
-                        <ul class="space-y-3">
+                    <div class="space-y-2">
+                        <div class="grid grid-cols-6 gap-3">
                             @foreach ($product->images as $img)
-                                <li class="flex flex-wrap items-center gap-3 rounded-xl border border-ink-200/60 bg-white/80 px-3 py-2">
+                                <div class="group relative aspect-square overflow-hidden rounded-xl ring-1 ring-ink-200/70">
                                     @if ($img->isVideo())
-                                        <span class="relative inline-block size-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-ink-200/60">
-                                            <video src="{{ $img->url() }}" class="size-full object-cover" muted playsinline></video>
-                                            <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink-950/45" aria-hidden="true">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
-                                            </span>
+                                        <video src="{{ $img->url() }}" class="size-full object-cover" muted playsinline preload="metadata"></video>
+                                        <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink-950/35" aria-hidden="true">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
                                         </span>
                                     @else
-                                        <img src="{{ $img->url() }}" alt="" class="size-14 rounded-lg object-cover ring-1 ring-ink-200/60">
+                                        <img src="{{ $img->url() }}" alt="" class="size-full object-cover">
                                     @endif
 
-                                    <div class="min-w-0 flex-1 space-y-2">
-                                        <p class="truncate font-mono text-xs text-ink-500">{{ \Illuminate\Support\Str::afterLast($img->path, '/') }}</p>
-                                        <div class="flex flex-wrap items-center gap-4 text-sm">
-                                            @if (! $img->isVideo())
-                                                <label class="inline-flex items-center gap-2 text-ink-700">
-                                                    <input
-                                                        type="radio"
-                                                        name="thumbnail_image_id"
-                                                        value="{{ $img->id }}"
-                                                        @checked(old('thumbnail_image_id', $product->images->firstWhere('is_thumbnail', true)?->id) == $img->id)
-                                                    >
-                                                    Catalog thumbnail
-                                                </label>
-                                            @endif
-                                            <label class="inline-flex items-center gap-2 text-red-700">
-                                                <input type="checkbox" name="delete_image_ids[]" value="{{ $img->id }}">
-                                                Delete
-                                            </label>
-                                        </div>
-                                    </div>
-                                </li>
+                                    <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent opacity-0 transition group-hover:opacity-100"></span>
+
+                                    @unless ($img->isVideo())
+                                        <label class="absolute left-1.5 top-1.5 inline-flex cursor-pointer items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-ink-700 opacity-0 shadow-sm ring-1 ring-ink-200/70 transition group-hover:opacity-100 has-[:checked]:opacity-100 has-[:checked]:bg-accent-600 has-[:checked]:text-white has-[:checked]:ring-accent-600">
+                                            <input
+                                                type="radio"
+                                                name="thumbnail_image_id"
+                                                value="{{ $img->id }}"
+                                                class="sr-only"
+                                                @checked(old('thumbnail_image_id', $product->images->firstWhere('is_thumbnail', true)?->id) == $img->id)
+                                            >
+                                            Thumb
+                                        </label>
+                                    @endunless
+
+                                    <label class="absolute right-1.5 top-1.5 inline-flex size-6 cursor-pointer items-center justify-center rounded-full bg-ink-950/60 text-white opacity-0 shadow-sm transition hover:bg-red-600 group-hover:opacity-100 has-[:checked]:opacity-100 has-[:checked]:bg-red-600">
+                                        <input type="checkbox" name="delete_image_ids[]" value="{{ $img->id }}" class="sr-only">
+                                        <x-icons.trash class="h-3.5 w-3.5" />
+                                    </label>
+                                </div>
                             @endforeach
-                        </ul>
+                        </div>
                         @error('thumbnail_image_id')
                             <p class="text-xs text-red-600">{{ $message }}</p>
                         @enderror
@@ -132,12 +136,13 @@
                 @endif
 
                 <x-admin.product-media-upload input-id="product-media-upload-edit" label="Add images or video" />
-            </fieldset>
+            </div>
         </x-admin.form-section>
 
-        <x-admin.form-section title="Variants" description="Each row is a sellable SKU. Stock is per variant." variant="minimal" flush>
+        <x-admin.form-section title="Variants" description="Each row is a sellable SKU. Stock is per variant." variant="minimal" flush class="self-start">
             <x-slot name="actions">
-                <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-800 shadow-sm transition hover:bg-zinc-50" @click="addRow()">
+                <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-800 shadow-sm transition hover:border-accent-300 hover:bg-accent-50" @click="addRow()">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                     Add variant
                 </button>
             </x-slot>
@@ -155,7 +160,7 @@
                     </thead>
                     <tbody>
                         <template x-for="(row, i) in rows" :key="row.id ?? ('n-' + i)">
-                            <tr class="align-top">
+                            <tr class="align-top transition-colors hover:bg-accent-50/50" :class="i % 2 === 1 ? 'bg-zinc-50/60' : 'bg-white'">
                                 <td>
                                     <template x-if="row.id">
                                         <input type="hidden" :name="'variants[' + i + '][id]'" :value="row.id">
@@ -163,7 +168,13 @@
                                     <input type="text" :name="'variants[' + i + '][color]'" x-model="row.color" class="form-input py-2 text-sm" required>
                                 </td>
                                 <td>
-                                    <input type="text" :name="'variants[' + i + '][color_hex]'" x-model="row.color_hex" class="form-input py-2 font-mono text-sm" placeholder="#000000">
+                                    <div class="relative">
+                                        <span
+                                            class="pointer-events-none absolute inset-y-0 left-3 my-auto size-3.5 shrink-0 rounded-full border border-zinc-300"
+                                            :style="`background-color: ${row.color_hex || '#e4e4e7'}`"
+                                        ></span>
+                                        <input type="text" :name="'variants[' + i + '][color_hex]'" x-model="row.color_hex" class="form-input py-2 pl-8 font-mono text-sm" placeholder="#000000">
+                                    </div>
                                 </td>
                                 <td>
                                     <input type="text" :name="'variants[' + i + '][size]'" x-model="row.size" class="form-input py-2 text-sm" required>
@@ -188,6 +199,7 @@
                 Deleting a row removes that variant. Completed orders still show the variant details from when they were placed.
             </p>
         </x-admin.form-section>
+        </div>
 
         <div class="flex flex-col-reverse gap-3 border-t border-zinc-200 pt-6 sm:flex-row sm:justify-end">
             <button type="submit" class="btn-primary px-8 py-2.5 font-medium">Save changes</button>

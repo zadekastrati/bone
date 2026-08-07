@@ -26,7 +26,7 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $query = Product::query()->with(['category', 'images'])->withCount('variants')->latest();
+        $query = Product::query()->with(['category', 'images', 'variants'])->withCount('variants')->latest();
 
         if ($request->boolean('inactive')) {
             $query->where('is_active', false);
@@ -134,7 +134,7 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $query = Product::onlyTrashed()->with(['category', 'images'])->withCount('variants')->latest('deleted_at');
+        $query = Product::onlyTrashed()->with(['category', 'images', 'variants'])->withCount('variants')->latest('deleted_at');
 
         if ($request->filled('q')) {
             $term = '%'.$request->string('q')->trim().'%';
