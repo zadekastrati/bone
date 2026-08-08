@@ -253,7 +253,23 @@
                         </svg>
                     </button>
                 </div>
-                <form x-ref="passwordForm" method="POST" action="{{ route('profile.password.update') }}" class="mt-6 space-y-6">
+                <form
+                    x-ref="passwordForm"
+                    method="POST"
+                    action="{{ route('profile.password.update') }}"
+                    class="mt-6 space-y-6"
+                    x-data="{
+                        password: '',
+                        submitBlocked: false,
+                        get hasMinLength() { return this.password.length >= 8; },
+                        get hasUpper() { return /[A-Z]/.test(this.password); },
+                        get hasLower() { return /[a-z]/.test(this.password); },
+                        get hasNumber() { return /[0-9]/.test(this.password); },
+                        get hasSymbol() { return /[^A-Za-z0-9]/.test(this.password); },
+                        get isValid() { return this.hasMinLength && this.hasUpper && this.hasLower && this.hasNumber && this.hasSymbol; },
+                    }"
+                    @submit="if (! isValid) { $event.preventDefault(); submitBlocked = true; } else { submitBlocked = false; }"
+                >
                     @csrf
                     @method('PUT')
                     <div>
@@ -265,10 +281,16 @@
                     </div>
                     <div>
                         <label for="password" class="form-label">{{ __('New password') }}</label>
-                        <input type="password" id="password" name="password" class="form-input" autocomplete="new-password" required>
-                        @error('password')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                        @enderror
+                        <input type="password" id="password" name="password" x-model="password" class="form-input" autocomplete="new-password" required>
+                        <x-password-requirements />
+                        @if ($errors->has('password'))
+                            <ul class="mt-1 space-y-0.5 text-xs text-red-600">
+                                @foreach ($errors->get('password') as $message)
+                                    <li>{{ $message }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        <p class="mt-1 text-xs text-red-600" x-show="submitBlocked && ! isValid" x-cloak>{{ __('Please meet all password requirements above.') }}</p>
                     </div>
                     <div>
                         <label for="password_confirmation" class="form-label">{{ __('Confirm new password') }}</label>
