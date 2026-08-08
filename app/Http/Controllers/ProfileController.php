@@ -74,7 +74,8 @@ class ProfileController extends Controller
         $phoneNeedsVerification = $newPhone !== null && $newPhone !== '' && $newPhone !== $oldPhone;
 
         $user->update([
-            'name' => $validated['name'],
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
             // Clearing the number, or leaving it unchanged, applies right away.
             // Setting a new one is deferred until it's verified below.
             'phone' => $phoneNeedsVerification ? $oldPhone : $newPhone,
