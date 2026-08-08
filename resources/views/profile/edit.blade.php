@@ -164,15 +164,21 @@
                 @else
                     <ul class="divide-y divide-zinc-200/70">
                         @foreach ($orders as $order)
+                            @php
+                                $thumb = $order->items->first()?->variant?->product?->thumbnailImage();
+                            @endphp
                             <li>
-                                <a href="{{ route('orders.show', $order) }}" class="flex items-center justify-between gap-4 px-8 py-4 transition hover:bg-zinc-50">
-                                    <div class="min-w-0">
-                                        <p class="truncate font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</p>
-                                        <p class="mt-0.5 text-xs text-ink-500">{{ $order->created_at->format('M j, Y') }} · {{ trans_choice(':count item|:count items', $order->items_count, ['count' => $order->items_count]) }}</p>
-                                    </div>
-                                    <div class="flex shrink-0 items-center gap-3">
-                                        <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
-                                        <span class="font-display text-sm font-semibold tabular-nums text-ink-950"><x-price :amount="$order->total" /></span>
+                                <a href="{{ route('orders.show', $order) }}" class="flex items-center gap-4 px-8 py-4 transition hover:bg-zinc-50">
+                                    <x-product-image-thumb :path="$thumb?->path" size="cartRow" class="shrink-0" />
+                                    <div class="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                                        <div class="min-w-0">
+                                            <p class="truncate font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</p>
+                                            <p class="mt-0.5 text-xs text-ink-500">{{ $order->created_at->format('M j, Y') }} · {{ trans_choice(':count item|:count items', $order->items_count, ['count' => $order->items_count]) }}</p>
+                                        </div>
+                                        <div class="flex shrink-0 items-center gap-3">
+                                            <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
+                                            <span class="font-display text-sm font-semibold tabular-nums text-ink-950"><x-price :amount="$order->total" /></span>
+                                        </div>
                                     </div>
                                 </a>
                             </li>
