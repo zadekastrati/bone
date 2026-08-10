@@ -22,7 +22,7 @@
                 </div>
                 <div class="sm:col-span-2">
                     <dt class="text-xs font-semibold uppercase tracking-wide text-ink-500">Received</dt>
-                    <dd class="mt-2 text-sm text-ink-700">{{ $message->created_at->format('M j, Y H:i') }}</dd>
+                    <dd class="mt-2 text-sm text-ink-700">{{ $message->created_at->copy()->timezone(config('store.display_timezone'))->format('M j, Y H:i') }}</dd>
                 </div>
                 <div class="sm:col-span-2">
                     <dt class="text-xs font-semibold uppercase tracking-wide text-ink-500">Message</dt>
