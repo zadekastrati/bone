@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -53,6 +54,20 @@ class Product extends Model
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class);
+    }
+
+    /**
+     * Order line items across all of this product's variants — used to
+     * rank products by purchase popularity (Product -> ProductVariant -> OrderItem).
+     */
+    public function orderItems(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            OrderItem::class,
+            ProductVariant::class,
+            'product_id',
+            'product_variant_id',
+        );
     }
 
     /**

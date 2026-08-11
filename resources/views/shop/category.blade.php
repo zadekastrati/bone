@@ -13,6 +13,25 @@
 
     <x-page-header :title="$category->name" :subtitle="$category->description" />
 
+    <form method="GET" action="{{ route('shop.category', $category) }}" class="mt-6 flex justify-end">
+        <div class="w-full sm:w-64">
+            <label for="category-sort" class="sr-only">{{ __('Sort by') }}</label>
+            <select
+                name="sort"
+                id="category-sort"
+                class="form-select w-full"
+                aria-label="{{ __('Sort by') }}"
+                onchange="this.form.requestSubmit()"
+            >
+                <option value="newest" @selected($sort === 'newest')>{{ __('Newest First') }}</option>
+                <option value="oldest" @selected($sort === 'oldest')>{{ __('Oldest First') }}</option>
+                <option value="price_asc" @selected($sort === 'price_asc')>{{ __('Price: Low to High') }}</option>
+                <option value="price_desc" @selected($sort === 'price_desc')>{{ __('Price: High to Low') }}</option>
+                <option value="popularity" @selected($sort === 'popularity')>{{ __('Popularity') }}</option>
+            </select>
+        </div>
+    </form>
+
     @if ($products->isNotEmpty())
         <ul class="mt-10 grid list-none gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
             @foreach ($products as $product)
