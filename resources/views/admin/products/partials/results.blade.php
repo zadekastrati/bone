@@ -72,7 +72,7 @@
                             @click="openDetail(products[{{ $loop->index }}])"
                         >
                             <td class="w-10" @click.stop>
-                                <input type="checkbox" name="ids[]" value="{{ $product->id }}" class="js-select-product" aria-label="Select {{ $product->name }}">
+                                <input type="checkbox" name="ids[]" value="{{ $product->id }}" form="products-bulk-delete-form" class="js-select-product" aria-label="Select {{ $product->name }}">
                             </td>
                             <td class="w-24">
                                 @php $thumb = $product->thumbnailImage(); @endphp

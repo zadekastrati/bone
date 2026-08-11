@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Services\ProductMediaService;
 use App\Services\ProductVariantSyncService;
 use Illuminate\Http\RedirectResponse;
@@ -121,6 +122,18 @@ class ProductController extends Controller
         });
 
         return redirect()->route('admin.products.index')->with('success', 'Product updated.');
+    }
+
+    public function destroyImage(Product $product, ProductImage $image): View
+    {
+        $this->authorize('update', $product);
+        abort_unless($image->product_id === $product->id, 404);
+
+        $this->mediaService->deleteImages($product, [$image->id]);
+
+        return view('admin.products.partials.image-gallery', [
+            'product' => $product->refresh()->load('images'),
+        ]);
     }
 
     public function destroy(Product $product): RedirectResponse

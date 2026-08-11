@@ -22,10 +22,7 @@
             @endif
         </form>
 
-        <form
-            method="POST"
-            action="{{ route('admin.products.bulkForceDelete') }}"
-            data-confirm-label="Delete permanently"
+        <div
             x-data="{
                 hasSelection: false,
                 selectedCount: 0,
@@ -42,17 +39,32 @@
                 },
             }"
             @change="refresh()"
-            :data-confirm="`Permanently delete ${selectedCount} selected product(s)? This cannot be undone — their images and videos will be removed too.`"
         >
-            @csrf
-            @method('DELETE')
-            <div class="mt-4" x-show="hasSelection" x-cloak>
-                <button type="submit" class="btn-danger">Delete Selected Permanently (<span x-text="selectedCount"></span>)</button>
-            </div>
+            {{--
+                This form does NOT wrap #products-archived-results — nesting a
+                <form> inside another <form> is invalid HTML and browsers silently
+                drop the inner one, which was mis-submitting every per-row Restore/
+                Delete-permanently button to this bulk route instead (see the
+                `form` attribute on the checkboxes below, which associates them
+                with this form despite living outside it).
+            --}}
+            <form
+                id="products-archived-bulk-delete-form"
+                method="POST"
+                action="{{ route('admin.products.bulkForceDelete') }}"
+                data-confirm-label="Delete permanently"
+                :data-confirm="`Permanently delete ${selectedCount} selected product(s)? This cannot be undone — their images and videos will be removed too.`"
+            >
+                @csrf
+                @method('DELETE')
+                <div class="mt-4" x-show="hasSelection" x-cloak>
+                    <button type="submit" class="btn-danger">Delete Selected Permanently (<span x-text="selectedCount"></span>)</button>
+                </div>
+            </form>
 
             <div id="products-archived-results" class="transition-opacity" :class="{ 'opacity-50': loading }">
                 @include('admin.products.partials.archived-results')
             </div>
-        </form>
+        </div>
     </div>
 @endsection
