@@ -94,8 +94,6 @@
                 </div>
 
                 @include('admin.products.partials.image-gallery')
-
-                <x-admin.product-media-upload input-id="product-media-upload-edit" label="Add images or video" />
             </div>
         </x-admin.form-section>
 
@@ -165,4 +163,6 @@
             <button type="submit" class="btn-primary px-8 py-2.5 font-medium">Save changes</button>
         </div>
     </form>
+
+    @include('admin.products.partials.image-delete-forms')
 @endsection

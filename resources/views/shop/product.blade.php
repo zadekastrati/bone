@@ -13,7 +13,7 @@
 
     <div class="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div class="space-y-4">
-            <x-shop.product-media-gallery :product="$product" />
+            <x-shop.product-media-gallery :product="$product" :images-by-color="$imagesByColor" :default-color="$defaultColor" />
         </div>
 
         <div>
@@ -200,6 +200,8 @@
                 });
 
                 updateBar();
+
+                window.dispatchEvent(new CustomEvent('product-color-selected', { detail: { color: color } }));
             }
 
             function updateBar() {

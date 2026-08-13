@@ -19,7 +19,7 @@
 <body @class([
     'flex min-h-full flex-col font-sans text-base leading-relaxed text-ink-900 antialiased',
     'bg-white' => request()->routeIs('cart.index'),
-    'bg-page-mesh' => ! request()->routeIs('cart.index'),
+    'bg-page-mesh bg-fixed' => ! request()->routeIs('cart.index'),
 ])>
     <div class="flex min-h-full flex-1 flex-col" x-data="{ mobileOpen: false }" @keydown.window.escape="mobileOpen = false">
         <x-store-promo-bar />
