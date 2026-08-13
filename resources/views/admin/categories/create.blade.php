@@ -9,7 +9,7 @@
     </x-page-header>
 
     <div class="mx-auto mt-8 max-w-2xl">
-        <form method="POST" action="{{ route('admin.categories.store') }}" class="admin-pro-form">
+        <form method="POST" action="{{ route('admin.categories.store') }}" class="admin-pro-form" enctype="multipart/form-data">
             @csrf
 
             <x-admin.form-section title="Category" description="Name and slug appear in URLs and navigation.">
@@ -31,6 +31,14 @@
                     <label for="description" class="form-label">Description</label>
                     <textarea name="description" id="description" rows="4" class="form-input @error('description') form-input-error @enderror">{{ old('description') }}</textarea>
                     @error('description')
+                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label for="image" class="form-label">Category image</label>
+                    <input type="file" name="image" id="image" accept="image/jpeg,image/png,image/webp" class="form-input @error('image') form-input-error @enderror">
+                    <p class="mt-2 text-xs text-ink-500">Shown as the background photo for this category on the homepage.</p>
+                    @error('image')
                         <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
