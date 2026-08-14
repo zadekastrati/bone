@@ -61,7 +61,7 @@
                                 value="{{ $line['quantity'] }}"
                                 min="0"
                                 max="99"
-                                onchange="this.form.requestSubmit()"
+                                data-qty-live
                                 class="w-16 rounded-lg border border-zinc-200/90 bg-white px-2 py-1.5 text-center text-sm tabular-nums text-ink-900 shadow-sm focus:border-accent-400 focus:outline-none focus:ring-2 focus:ring-accent-400/20"
                             >
                             <button type="submit" class="sr-only">{{ __('Update') }}</button>

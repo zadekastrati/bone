@@ -88,6 +88,49 @@ document.addEventListener('submit', async (event) => {
 });
 
 /**
+ * Cart quantity inputs (data-qty-live, see shop/partials/cart-body.blade.php)
+ * auto-submit their form so the line/subtotal price stays live instead of
+ * waiting for the whole form to be submitted by hand. Two triggers, both
+ * idempotent so it's safe for both to fire for the same edit:
+ *  - "change" is the reliable, browser-native trigger (blur after typing,
+ *    or clicking the number input's spinner arrows) and always fires.
+ *  - the debounced "input" listener additionally catches the case where the
+ *    field never blurs (e.g. the user reads the result without tabbing
+ *    away), so the total still updates a moment after typing stops.
+ */
+function submitQtyForm(input) {
+    if (! (input instanceof HTMLInputElement) || ! input.hasAttribute('data-qty-live')) {
+        return;
+    }
+
+    if (input.value !== '' && input.reportValidity()) {
+        input.form?.requestSubmit();
+    }
+}
+
+const qtyLiveTimers = new WeakMap();
+
+document.addEventListener('input', (event) => {
+    const input = event.target;
+    if (! (input instanceof HTMLInputElement) || ! input.hasAttribute('data-qty-live')) {
+        return;
+    }
+
+    clearTimeout(qtyLiveTimers.get(input));
+    qtyLiveTimers.set(input, setTimeout(() => submitQtyForm(input), 500));
+});
+
+document.addEventListener('change', (event) => {
+    const input = event.target;
+    if (! (input instanceof HTMLInputElement) || ! input.hasAttribute('data-qty-live')) {
+        return;
+    }
+
+    clearTimeout(qtyLiveTimers.get(input));
+    submitQtyForm(input);
+});
+
+/**
  * Any <form data-confirm="Message?"> submits through the styled confirm
  * modal (see resources/views/components/confirm-modal.blade.php) instead of
  * the native browser confirm(). Optional data-confirm-label sets the button
@@ -198,6 +241,43 @@ Alpine.data('adminLiveSearch', (resultsId) => ({
             if (error.name !== 'AbortError') {
                 throw error;
             }
+        } finally {
+            this.loading = false;
+        }
+    },
+}));
+
+/**
+ * Expandable order-detail rows on the admin orders index (see
+ * admin/orders/partials/results.blade.php). Each order's <tbody> gets its own
+ * scope; the detail fragment (items, customer info, quick actions) is fetched
+ * once on first expand and cached, so re-toggling never re-hits the server.
+ * Works after an adminLiveSearch swap too, since Alpine auto-initializes
+ * x-data on any element added to the DOM.
+ */
+Alpine.data('orderRow', (detailsUrl) => ({
+    open: false,
+    loading: false,
+    loaded: false,
+
+    async toggle() {
+        this.open = ! this.open;
+        if (this.open && ! this.loaded) {
+            await this.load();
+        }
+    },
+
+    async load() {
+        this.loading = true;
+        try {
+            const response = await fetch(detailsUrl, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            this.$refs.detail.innerHTML = await response.text();
+            this.loaded = true;
+        } catch (error) {
+            this.$refs.detail.innerHTML = '<p class="px-6 py-8 text-sm text-red-600">Could not load order details. Please try again.</p>';
+            this.loaded = true;
         } finally {
             this.loading = false;
         }
