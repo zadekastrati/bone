@@ -27,7 +27,8 @@ class OrderController extends Controller
             $query->where(function ($q) use ($term): void {
                 $q->where('order_number', 'like', $term)
                     ->orWhereHas('user', function ($uq) use ($term): void {
-                        $uq->where('name', 'like', $term)
+                        $uq->where('first_name', 'like', $term)
+                            ->orWhere('last_name', 'like', $term)
                             ->orWhere('email', 'like', $term);
                     });
             });

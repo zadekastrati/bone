@@ -1,5 +1,6 @@
 @props([
     'inputId' => 'product-media-upload',
+    'inputName' => 'images[]',
     'label' => 'Add images or video',
 ])
 
@@ -67,7 +68,7 @@
             x-ref="fileInput"
             id="{{ $inputId }}"
             type="file"
-            name="images[]"
+            name="{{ $inputName }}"
             accept="image/*,video/*,.jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,.ogg,.m4v"
             multiple
             class="absolute inset-0 z-10 cursor-pointer opacity-0"

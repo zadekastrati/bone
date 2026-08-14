@@ -26,9 +26,8 @@
 
         <aside class="admin-layout__sidebar" :class="{ 'is-open': sidebarOpen }">
             <div class="flex h-14 shrink-0 items-center gap-2 border-b border-zinc-200/80 bg-zinc-50/80 px-4 lg:h-16">
-                <a href="{{ route('home') }}" @click="sidebarOpen = false"
-                    class="font-display text-lg font-bold uppercase tracking-mega text-ink-900">
-                    {{ config('app.name') }}
+                <a href="{{ route('home') }}" @click="sidebarOpen = false" class="shrink-0">
+                    <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" class="h-5 w-auto lg:h-6">
                 </a>
                 <span
                     class="rounded-md bg-accent-200/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-800 ring-1 ring-zinc-300/50">Admin</span>

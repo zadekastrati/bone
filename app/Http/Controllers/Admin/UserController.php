@@ -21,7 +21,8 @@ class UserController extends Controller
         if ($request->filled('q')) {
             $term = '%'.$request->string('q')->trim().'%';
             $query->where(function ($q) use ($term): void {
-                $q->where('name', 'like', $term)
+                $q->where('first_name', 'like', $term)
+                    ->orWhere('last_name', 'like', $term)
                     ->orWhere('email', 'like', $term);
             });
         }

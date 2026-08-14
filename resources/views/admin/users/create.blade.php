@@ -10,12 +10,21 @@
             @csrf
 
             <x-admin.form-section title="Account" description="Set name, email, password, and role.">
-                <div>
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" required class="form-input @error('name') form-input-error @enderror">
-                    @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                <div class="grid gap-5 sm:grid-cols-2 sm:gap-6">
+                    <div>
+                        <label for="first_name" class="form-label">First name</label>
+                        <input type="text" name="first_name" id="first_name" value="{{ old('first_name') }}" required class="form-input @error('first_name') form-input-error @enderror">
+                        @error('first_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="last_name" class="form-label">Last name</label>
+                        <input type="text" name="last_name" id="last_name" value="{{ old('last_name') }}" required class="form-input @error('last_name') form-input-error @enderror">
+                        @error('last_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
                 <div>
                     <label for="email" class="form-label">Email</label>

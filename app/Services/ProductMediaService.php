@@ -12,9 +12,13 @@ class ProductMediaService
     /**
      * @param  list<UploadedFile|null>  $files
      */
-    public function storeUploads(Product $product, array $files, int $startSortOrder = 0): void
+    public function storeUploads(Product $product, array $files, ?string $color = null): void
     {
-        $sortOrder = $startSortOrder;
+        if ($files === []) {
+            return;
+        }
+
+        $sortOrder = (int) $product->images()->max('sort_order') + 1;
 
         foreach ($files as $file) {
             if ($file === null || ! $file->isValid()) {
@@ -23,6 +27,7 @@ class ProductMediaService
 
             $path = $file->store('products', 'public');
             $product->images()->create([
+                'color' => $color,
                 'path' => $path,
                 'sort_order' => $sortOrder,
             ]);
@@ -52,6 +57,41 @@ class ProductMediaService
         }
 
         $this->ensureThumbnail($product);
+    }
+
+    /**
+     * Persist a new drag-and-drop order for one color's images. Only images
+     * that both belong to the product AND match $color are touched, so this
+     * can never reassign an image to a different color or move it out of
+     * its section — it only reorders within it.
+     *
+     * @param  list<int|string>  $orderedIds
+     */
+    public function reorderImages(Product $product, ?string $color, array $orderedIds): void
+    {
+        $images = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('color', $color)
+            ->whereIn('id', $orderedIds)
+            ->get()
+            ->keyBy(fn (ProductImage $image): string => (string) $image->id);
+
+        if ($images->isEmpty()) {
+            return;
+        }
+
+        $baseSortOrder = $images->min('sort_order');
+
+        $position = 0;
+        foreach ($orderedIds as $id) {
+            $image = $images->get((string) $id);
+            if ($image === null) {
+                continue;
+            }
+
+            $image->update(['sort_order' => $baseSortOrder + $position]);
+            $position++;
+        }
     }
 
     public function setThumbnail(Product $product, mixed $imageId): void
