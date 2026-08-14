@@ -27,7 +27,7 @@ class VerifyEmailChangeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'code.regex' => 'Enter the 6-digit code from your email.',
+            'code.regex' => __('Enter the 6-digit code from your email.'),
         ];
     }
 }

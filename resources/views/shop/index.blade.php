@@ -1,34 +1,34 @@
 @extends('layouts.app')
 
-@section('title', $q !== '' ? 'Search' : 'Shop')
+@section('title', $q !== '' ? __('Search') : __('Shop'))
 
 @section('content')
     @php
         $isSearch = $q !== '' && $searchResults !== null;
         $products = $products ?? null;
-        $pageSubtitle = 'Search or browse by category — every product shows colors and sizes before checkout.';
+        $pageSubtitle = __('Search or browse by category — every product shows colors and sizes before checkout.');
         if ($isSearch) {
-            $pageSubtitle = $searchResults->total().' '.($searchResults->total() === 1 ? 'result' : 'results').' for “'.e($q).'”.';
+            $pageSubtitle = trans_choice(':count result for “:query”.|:count results for “:query”.', $searchResults->total(), ['count' => $searchResults->total(), 'query' => e($q)]);
         } elseif ($products !== null) {
-            $pageSubtitle = $products->total().' '.($products->total() === 1 ? 'product' : 'products').' available.';
+            $pageSubtitle = trans_choice(':count product available.|:count products available.', $products->total(), ['count' => $products->total()]);
         }
     @endphp
 
     <nav class="crumbs mb-6" aria-label="Breadcrumb">
-        <a href="{{ route('home') }}">Home</a>
+        <a href="{{ route('home') }}">{{ __('Home') }}</a>
         <span class="mx-1.5 text-ink-300" aria-hidden="true">/</span>
         @if ($isSearch)
-            <a href="{{ route('shop.index') }}">Shop</a>
+            <a href="{{ route('shop.index') }}">{{ __('Shop') }}</a>
             <span class="mx-1.5 text-ink-300" aria-hidden="true">/</span>
-            <span class="text-ink-800" aria-current="page">Search</span>
+            <span class="text-ink-800" aria-current="page">{{ __('Search') }}</span>
         @else
-            <span class="text-ink-800" aria-current="page">Shop</span>
+            <span class="text-ink-800" aria-current="page">{{ __('Shop') }}</span>
         @endif
     </nav>
 
-    <x-page-header :title="$isSearch ? 'Search results' : 'Shop'" :subtitle="$pageSubtitle">
+    <x-page-header :title="$isSearch ? __('Search results') : __('Shop')" :subtitle="$pageSubtitle">
         @auth
-            <a href="{{ route('orders.index') }}" class="btn-secondary">My orders</a>
+            <a href="{{ route('orders.index') }}" class="btn-secondary">{{ __('My orders') }}</a>
         @endauth
     </x-page-header>
 
@@ -42,17 +42,17 @@
             @if (! $isSearch)
                 <p class="text-sm text-ink-600">
                     <span class="font-semibold tabular-nums text-ink-900">{{ $categories->count() }}</span>
-                    {{ $categories->count() === 1 ? 'category' : 'categories' }}
+                    {{ trans_choice('category|categories', $categories->count()) }}
                     @if ($products !== null && $products->total() > 0)
                         <span class="text-ink-400"> · </span>
-                        <span class="font-semibold tabular-nums text-ink-900">{{ $products->total() }}</span> products
+                        <span class="font-semibold tabular-nums text-ink-900">{{ $products->total() }}</span> {{ trans_choice('product|products', $products->total()) }}
                     @endif
                 </p>
             @endif
             @if ($isSearch)
-                <a href="{{ route('shop.index') }}" class="btn-secondary whitespace-nowrap">Clear search</a>
+                <a href="{{ route('shop.index') }}" class="btn-secondary whitespace-nowrap">{{ __('Clear search') }}</a>
             @elseif ($products !== null && $products->total() > 0)
-                <a href="#products" class="btn-ghost whitespace-nowrap px-4 py-2 text-[11px]">Browse products</a>
+                <a href="#products" class="btn-ghost whitespace-nowrap px-4 py-2 text-[11px]">{{ __('Browse products') }}</a>
             @endif
             {{-- Categories dropdown --}}
             <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false" @click.outside="open = false">
@@ -62,7 +62,7 @@
                     aria-haspopup="true"
                     class="btn-ghost inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 text-[11px]"
                 >
-                    Categories
+                    {{ __('Categories') }}
                     <svg
                         class="h-3 w-3 transition-transform duration-200"
                         :class="{ 'rotate-180': open }"
@@ -97,7 +97,7 @@
                                 <span class="text-xs text-ink-400 tabular-nums">{{ $cat->active_products_count }}</span>
                             </a>
                         @empty
-                            <p class="px-4 py-3 text-sm text-ink-500">No categories yet.</p>
+                            <p class="px-4 py-3 text-sm text-ink-500">{{ __('No categories yet.') }}</p>
                         @endforelse
                     </div>
                 </div>

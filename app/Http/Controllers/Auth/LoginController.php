@@ -28,7 +28,7 @@ class LoginController extends Controller
 
         if ($user === null || ! Hash::check($password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'email' => __('These credentials do not match our records.'),
             ]);
         }
 
@@ -41,7 +41,7 @@ class LoginController extends Controller
 
         return redirect()
             ->intended($home)
-            ->with('success', 'Welcome back.');
+            ->with('success', __('Welcome back.'));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -51,6 +51,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home')->with('success', 'You have been logged out.');
+        return redirect()->route('home')->with('success', __('You have been logged out.'));
     }
 }

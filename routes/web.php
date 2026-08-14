@@ -14,9 +14,11 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
+use App\Models\Category;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,7 +26,12 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
 
 Route::get('/', function () {
-    return view('welcome');
+    $categories = Category::query()
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
+
+    return view('welcome', compact('categories'));
 })->name('home');
 
 Route::view('/about', 'about')->name('about');
@@ -39,6 +46,10 @@ Route::post('/contact', [ContactController::class, 'store'])
 Route::post('/country', [CountryController::class, 'update'])
     ->middleware('throttle:30,1')
     ->name('country.update');
+
+Route::post('/locale', [LocaleController::class, 'update'])
+    ->middleware('throttle:30,1')
+    ->name('locale.update');
 
 Route::prefix('shop')->name('shop.')->group(function (): void {
     Route::get('/', [ShopController::class, 'index'])->name('index');
@@ -110,6 +121,10 @@ Route::middleware('auth')->group(function (): void {
         Route::delete('products/{product}/force-delete', [AdminProductController::class, 'forceDelete'])
             ->withTrashed()
             ->name('products.forceDelete');
+        Route::delete('products/bulk-delete', [AdminProductController::class, 'bulkDestroy'])->name('products.bulkDestroy');
+        Route::delete('products/bulk-force-delete', [AdminProductController::class, 'bulkForceDelete'])->name('products.bulkForceDelete');
+        Route::delete('products/{product}/images/{image}', [AdminProductController::class, 'destroyImage'])->name('products.images.destroy');
+        Route::post('products/{product}/images/reorder', [AdminProductController::class, 'reorderImages'])->name('products.images.reorder');
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::resource('messages', AdminContactMessageController::class)
             ->parameters(['messages' => 'id'])

@@ -5,9 +5,9 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.25 10.5a3.75 3.75 0 1 1 7.5 0" />
             </svg>
         </div>
-        <p class="font-display mt-6 text-xl font-bold uppercase tracking-wide text-ink-950">Your bag is empty</p>
-        <p class="mt-2 max-w-sm text-sm text-ink-600 text-pretty">Add pieces from the shop — they&apos;ll show up here with size and colour.</p>
-        <a href="{{ route('shop.index') }}" class="btn-primary mt-8 inline-flex px-10">Continue shopping</a>
+        <p class="font-display mt-6 text-xl font-bold uppercase tracking-wide text-ink-950">{{ __('Your bag is empty') }}</p>
+        <p class="mt-2 max-w-sm text-sm text-ink-600 text-pretty">{{ __('Add pieces from the shop — they\'ll show up here with size and colour.') }}</p>
+        <a href="{{ route('shop.index') }}" class="btn-primary mt-8 inline-flex px-10">{{ __('Continue shopping') }}</a>
     </div>
 @else
     {{-- One column width for lines + checkout (aligned); wider than max-w-3xl --}}
@@ -40,12 +40,12 @@
                         </p>
                         <p class="font-display text-sm font-semibold tabular-nums text-ink-950">
                             <x-price :amount="$p->price" />
-                            <span class="text-xs font-normal text-ink-500">each</span>
+                            <span class="text-xs font-normal text-ink-500">{{ __('each') }}</span>
                         </p>
                         @if ($v->stock_quantity < 1)
-                            <p class="text-[11px] font-bold uppercase tracking-wide text-amber-800">Sold out — no stock left</p>
+                            <p class="text-[11px] font-bold uppercase tracking-wide text-amber-800">{{ __('Sold out — no stock left') }}</p>
                         @elseif (! $v->isInStock((int) $line['quantity']))
-                            <p class="text-[11px] font-semibold text-amber-800">Only {{ $v->stock_quantity }} left — reduce quantity</p>
+                            <p class="text-[11px] font-semibold text-amber-800">{{ __('Only :count left — reduce quantity', ['count' => $v->stock_quantity]) }}</p>
                         @endif
                     </div>
 
@@ -53,7 +53,7 @@
                         <form method="POST" action="{{ route('cart.update', $v->id) }}" class="flex flex-wrap items-center gap-2 sm:justify-end" data-cart-form>
                             @csrf
                             @method('PATCH')
-                            <label class="text-xs font-semibold uppercase tracking-wider text-ink-500" for="qty-{{ $v->id }}">Qty</label>
+                            <label class="text-xs font-semibold uppercase tracking-wider text-ink-500" for="qty-{{ $v->id }}">{{ __('Qty') }}</label>
                             <input
                                 id="qty-{{ $v->id }}"
                                 type="number"
@@ -64,21 +64,21 @@
                                 onchange="this.form.requestSubmit()"
                                 class="w-16 rounded-lg border border-zinc-200/90 bg-white px-2 py-1.5 text-center text-sm tabular-nums text-ink-900 shadow-sm focus:border-accent-400 focus:outline-none focus:ring-2 focus:ring-accent-400/20"
                             >
-                            <button type="submit" class="sr-only">Update</button>
+                            <button type="submit" class="sr-only">{{ __('Update') }}</button>
                         </form>
 
                         <p class="font-display text-base font-semibold tabular-nums text-ink-950">
                             <x-price :amount="$line['line_total']" />
                             @if ($line['quantity'] > 1)
-                                <span class="block text-xs font-normal text-ink-500">line total</span>
+                                <span class="block text-xs font-normal text-ink-500">{{ __('line total') }}</span>
                             @endif
                         </p>
 
-                        <form method="POST" action="{{ route('cart.destroy', $v->id) }}" data-confirm="Remove this item?" data-confirm-label="Remove" data-cart-form>
+                        <form method="POST" action="{{ route('cart.destroy', $v->id) }}" data-confirm="{{ __('Remove this item?') }}" data-confirm-label="{{ __('Remove') }}" data-cart-form>
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-xs font-bold uppercase tracking-[0.2em] text-ink-600 transition hover:text-red-700">
-                                Delete
+                                {{ __('Delete') }}
                             </button>
                         </form>
                     </div>
@@ -89,25 +89,25 @@
 
         <div class="surface-muted mt-12 flex w-full flex-col gap-4">
             <div class="flex flex-col items-end gap-2 sm:flex-row sm:items-baseline sm:justify-end sm:gap-4">
-                <span class="text-sm font-medium text-ink-600">Subtotal</span>
+                <span class="text-sm font-medium text-ink-600">{{ __('Subtotal') }}</span>
                 <span class="font-display text-2xl font-semibold tabular-nums text-ink-950"><x-price :amount="$subtotal" /></span>
             </div>
             <x-store.currency-disclaimer :amount="$subtotal" class="text-right" />
             @guest
-                <p class="text-right text-sm text-ink-600">Log in or register to enter shipping details and place your order.</p>
+                <p class="text-right text-sm text-ink-600">{{ __('Log in or register to enter shipping details and place your order.') }}</p>
                 <div class="flex flex-wrap justify-end gap-3">
-                    <a href="{{ route('login') }}" class="btn-primary">Log in</a>
-                    <a href="{{ route('register') }}" class="btn-secondary">Register</a>
+                    <a href="{{ route('login') }}" class="btn-primary">{{ __('Log in') }}</a>
+                    <a href="{{ route('register') }}" class="btn-secondary">{{ __('Register') }}</a>
                 </div>
             @else
                 @if (auth()->user()->hasVerifiedEmail())
                     <div class="flex justify-end">
-                        <a href="{{ route('checkout.create') }}" class="btn-primary min-w-[14rem] px-10 py-3 text-center">Proceed to checkout</a>
+                        <a href="{{ route('checkout.create') }}" class="btn-primary min-w-[14rem] px-10 py-3 text-center">{{ __('Proceed to checkout') }}</a>
                     </div>
                 @else
-                    <p class="text-right text-sm text-ink-600">Confirm your email address before you can place an order.</p>
+                    <p class="text-right text-sm text-ink-600">{{ __('Confirm your email address before you can place an order.') }}</p>
                     <div class="flex justify-end">
-                        <a href="{{ route('verification.notice') }}" class="btn-primary px-10 py-3">Verify email</a>
+                        <a href="{{ route('verification.notice') }}" class="btn-primary px-10 py-3">{{ __('Verify email') }}</a>
                     </div>
                 @endif
             @endguest

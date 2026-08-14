@@ -21,7 +21,7 @@ class EmailChangedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->appName.' — This is your new account email',
+            subject: $this->appName.' — '.__('This is your new account email'),
         );
     }
 

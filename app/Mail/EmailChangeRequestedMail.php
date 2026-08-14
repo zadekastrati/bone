@@ -22,7 +22,7 @@ class EmailChangeRequestedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->appName.' — Your account email is being changed',
+            subject: $this->appName.' — '.__('Your account email is being changed'),
         );
     }
 

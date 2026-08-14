@@ -19,11 +19,13 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'phone',
         'country',
         'currency',
+        'locale',
         'password',
         'role',
     ];
@@ -48,6 +50,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'notifications_seen_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Full name, computed from first_name/last_name — kept for the many
+     * call sites (mail greetings, navbar, dropdowns) that only need a
+     * single display string rather than the two fields separately.
+     */
+    public function getNameAttribute(): string
+    {
+        return trim($this->first_name.' '.$this->last_name);
+    }
 
     public function isAdmin(): bool
     {

@@ -93,6 +93,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Available Locales
+    |--------------------------------------------------------------------------
+    |
+    | Locales the storefront language selector offers, mapped to their
+    | display name. English text lives inline in the Blade/PHP source and
+    | doubles as the translation key, so it needs no lang file of its own —
+    | only non-default locales need a resources/lang/{code}.json file.
+    */
+
+    'available_locales' => [
+        'en' => 'English',
+        'sq' => 'Shqip',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Fallback Locale
     |--------------------------------------------------------------------------
     |

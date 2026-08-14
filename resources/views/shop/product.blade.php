@@ -4,7 +4,7 @@
 
 @section('content')
     <nav class="crumbs" aria-label="Breadcrumb">
-        <a href="{{ route('shop.index') }}">Shop</a>
+        <a href="{{ route('shop.index') }}">{{ __('Shop') }}</a>
         <span class="mx-1.5 text-ink-300">/</span>
         <a href="{{ route('shop.category', $category) }}">{{ $category->name }}</a>
         <span class="mx-1.5 text-ink-300">/</span>
@@ -13,7 +13,7 @@
 
     <div class="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div class="space-y-4">
-            <x-shop.product-media-gallery :product="$product" />
+            <x-shop.product-media-gallery :product="$product" :images-by-color="$imagesByColor" :default-color="$defaultColor" />
         </div>
 
         <div>
@@ -33,9 +33,9 @@
 
             @if ($product->isSoldOut())
                 <div class="mt-10 rounded-2xl border border-zinc-200/80 bg-zinc-100/80 px-5 py-6 text-center">
-                    <p class="font-display text-sm font-bold uppercase tracking-[0.2em] text-ink-800">Sold out</p>
-                    <p class="mt-2 text-sm text-ink-600">This product is not available right now. Try another size or colour on other items, or check back later.</p>
-                    <a href="{{ route('shop.category', $category) }}" class="btn-secondary mt-6 inline-flex px-6 py-3">Back to {{ $category->name }}</a>
+                    <p class="font-display text-sm font-bold uppercase tracking-[0.2em] text-ink-800">{{ __('Sold out') }}</p>
+                    <p class="mt-2 text-sm text-ink-600">{{ __('This product is not available right now. Try another size or colour on other items, or check back later.') }}</p>
+                    <a href="{{ route('shop.category', $category) }}" class="btn-secondary mt-6 inline-flex px-6 py-3">{{ __('Back to :category', ['category' => $category->name]) }}</a>
                 </div>
             @else
             <form id="add-to-cart-form" method="POST" action="{{ route('cart.store') }}" class="mt-10 space-y-8" data-cart-form>
@@ -43,7 +43,7 @@
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
 
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-mega text-ink-500">Color <span class="text-red-600">*</span></p>
+                    <p class="text-[10px] font-bold uppercase tracking-mega text-ink-500">{{ __('Color') }} <span class="text-red-600">*</span></p>
                     <div class="mt-3 flex flex-wrap gap-2">
                         @foreach ($product->availableColors() as $c)
                             <label class="inline-flex cursor-pointer items-center gap-2 rounded-2xl border border-ink-200/80 bg-white px-4 py-2 text-sm font-medium shadow-sm transition has-[:checked]:border-accent-500 has-[:checked]:ring-2 has-[:checked]:ring-accent-500/30">
@@ -68,12 +68,14 @@
                 </div>
 
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-mega text-ink-500">Size <span class="text-red-600">*</span></p>
-                    <p id="pick-color-hint" class="mt-2 text-xs text-ink-500">Select a color first, then choose a size.</p>
+                    <p class="text-[10px] font-bold uppercase tracking-mega text-ink-500">{{ __('Size') }} <span class="text-red-600">*</span></p>
+                    <p id="pick-color-hint" class="mt-2 text-xs text-ink-500">{{ __('Select a color first, then choose a size.') }}</p>
 
                     @forelse ($variantsByColor as $colorName => $group)
                         @php
-                            $sizeList = $group->pluck('size')->unique()->sort()->values();
+                            $sizeList = $group->pluck('size')->unique()
+                                ->sortBy(fn ($sz) => \App\Models\ProductVariant::sizeSortKey($sz))
+                                ->values();
                         @endphp
                         <fieldset
                             class="product-size-panel mt-3 border-0 p-0"
@@ -81,7 +83,7 @@
                             disabled
                             hidden
                         >
-                            <legend class="sr-only">Sizes for {{ $colorName }}</legend>
+                            <legend class="sr-only">{{ __('Sizes for :color', ['color' => $colorName]) }}</legend>
                             <div class="flex flex-wrap gap-2">
                                 @foreach ($sizeList as $sz)
                                     @php
@@ -102,21 +104,21 @@
                             </div>
                         </fieldset>
                     @empty
-                        <p class="mt-2 text-sm text-amber-800">This product has no size variants yet.</p>
+                        <p class="mt-2 text-sm text-amber-800">{{ __('This product has no size variants yet.') }}</p>
                     @endforelse
 
                     <p id="product-stock-line" class="mt-2 hidden text-xs text-ink-600">
-                        <span class="font-semibold">In stock:</span>
+                        <span class="font-semibold">{{ __('In stock:') }}</span>
                         <span data-stock-val>0</span>
                     </p>
-                    <p id="product-oos-line" class="mt-2 hidden text-xs text-amber-800">This combination is out of stock.</p>
+                    <p id="product-oos-line" class="mt-2 hidden text-xs text-amber-800">{{ __('This combination is out of stock.') }}</p>
                     @error('size')
                         <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="quantity" class="text-[10px] font-bold uppercase tracking-mega text-ink-500">Quantity</label>
+                    <label for="quantity" class="text-[10px] font-bold uppercase tracking-mega text-ink-500">{{ __('Quantity') }}</label>
                     <input
                         type="number"
                         name="quantity"
@@ -134,11 +136,11 @@
 
                 <div class="flex flex-wrap gap-3">
                     <button type="submit" id="add-to-cart-submit" class="btn-primary px-8 py-3 opacity-40" disabled>
-                        Add to cart
+                        {{ __('Add to cart') }}
                     </button>
-                    <a href="{{ route('shop.category', $category) }}" class="btn-secondary px-6 py-3">Back</a>
+                    <a href="{{ route('shop.category', $category) }}" class="btn-secondary px-6 py-3">{{ __('Back') }}</a>
                 </div>
-                <p id="add-to-cart-hint" class="text-xs text-ink-500">Choose a color and size to add this item to your cart.</p>
+                <p id="add-to-cart-hint" class="text-xs text-ink-500">{{ __('Choose a color and size to add this item to your cart.') }}</p>
                 <p
                     x-data="{ text: '', ok: true, show: false, timer: null }"
                     x-show="show"
@@ -146,8 +148,8 @@
                     x-text="text"
                     :class="ok ? 'text-emerald-700' : 'text-red-600'"
                     class="text-xs font-semibold"
-                    @cart-updated.window="text = $event.detail.message ?? 'Added to cart.'; ok = true; show = true; clearTimeout(timer); timer = setTimeout(() => { const ref = document.referrer; window.location.href = (ref && ref.startsWith(window.location.origin)) ? ref : '{{ route('shop.index') }}' }, 900)"
-                    @cart-error.window="text = $event.detail.message ?? 'Something went wrong.'; ok = false; show = true; clearTimeout(timer); timer = setTimeout(() => show = false, 4000)"
+                    @cart-updated.window="text = $event.detail.message ?? '{{ __('Added to cart.') }}'; ok = true; show = true; clearTimeout(timer); timer = setTimeout(() => { const ref = document.referrer; window.location.href = (ref && ref.startsWith(window.location.origin)) ? ref : '{{ route('shop.index') }}' }, 900)"
+                    @cart-error.window="text = $event.detail.message ?? '{{ __('Something went wrong.') }}'; ok = false; show = true; clearTimeout(timer); timer = setTimeout(() => show = false, 4000)"
                 ></p>
             </form>
             @endif
@@ -200,6 +202,8 @@
                 });
 
                 updateBar();
+
+                window.dispatchEvent(new CustomEvent('product-color-selected', { detail: { color: color } }));
             }
 
             function updateBar() {

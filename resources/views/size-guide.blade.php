@@ -1,24 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Size Guide')
+@section('title', __('Size Guide'))
 
 @section('content')
     <div class="mx-auto max-w-4xl py-12">
-        <h1 class="heading-page mb-8 text-center" id="size-guide-heading">Size Guide</h1>
+        <h1 class="heading-page mb-8 text-center" id="size-guide-heading">{{ __('Size Guide') }}</h1>
 
         <div class="panel p-8 sm:p-12" aria-labelledby="size-guide-heading">
             <p class="text-sm text-ink-600">
-                Use this quick guide to choose your fit. If you are between sizes, size up for comfort or size down for a more compressive fit.
+                {{ __('Use this quick guide to choose your fit. If you are between sizes, size up for comfort or size down for a more compressive fit.') }}
             </p>
 
             <div class="mt-8 overflow-x-auto">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Size</th>
-                            <th>Bust (in)</th>
-                            <th>Waist (in)</th>
-                            <th>Hips (in)</th>
+                            <th>{{ __('Size') }}</th>
+                            <th>{{ __('Bust (in)') }}</th>
+                            <th>{{ __('Waist (in)') }}</th>
+                            <th>{{ __('Hips (in)') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,9 +57,7 @@
             </div>
 
             <p class="mt-6 text-sm text-ink-600">
-                Need help choosing? Reach out from our
-                <a href="{{ route('contact') }}" class="font-medium text-accent-700 hover:text-accent-600">Contact Us</a>
-                page and include your usual brand/size for recommendations.
+                {!! __('Need help choosing? Reach out from our :link page and include your usual brand/size for recommendations.', ['link' => '<a href="'.route('contact').'" class="font-medium text-accent-700 hover:text-accent-600">'.__('Contact Us').'</a>']) !!}
             </p>
         </div>
     </div>
