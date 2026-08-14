@@ -173,15 +173,21 @@
                 @else
                     <ul class="divide-y divide-zinc-200/70">
                         @foreach ($orders as $order)
+                            @php
+                                $thumb = $order->items->first()?->variant?->product?->thumbnailImage();
+                            @endphp
                             <li>
-                                <a href="{{ route('orders.show', $order) }}" class="flex items-center justify-between gap-4 px-8 py-4 transition hover:bg-zinc-50">
-                                    <div class="min-w-0">
-                                        <p class="truncate font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</p>
-                                        <p class="mt-0.5 text-xs text-ink-500">{{ $order->created_at->format('M j, Y') }} · {{ trans_choice(':count item|:count items', $order->items_count, ['count' => $order->items_count]) }}</p>
-                                    </div>
-                                    <div class="flex shrink-0 items-center gap-3">
-                                        <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
-                                        <span class="font-display text-sm font-semibold tabular-nums text-ink-950"><x-price :amount="$order->total" /></span>
+                                <a href="{{ route('orders.show', $order) }}" class="flex items-center gap-4 px-8 py-4 transition hover:bg-zinc-50">
+                                    <x-product-image-thumb :path="$thumb?->path" size="cartRow" class="shrink-0" />
+                                    <div class="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                                        <div class="min-w-0">
+                                            <p class="truncate font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</p>
+                                            <p class="mt-0.5 text-xs text-ink-500">{{ $order->created_at->format('M j, Y') }} · {{ trans_choice(':count item|:count items', $order->items_count, ['count' => $order->items_count]) }}</p>
+                                        </div>
+                                        <div class="flex shrink-0 items-center gap-3">
+                                            <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
+                                            <span class="font-display text-sm font-semibold tabular-nums text-ink-950"><x-price :amount="$order->total" /></span>
+                                        </div>
                                     </div>
                                 </a>
                             </li>
@@ -262,7 +268,23 @@
                         </svg>
                     </button>
                 </div>
-                <form x-ref="passwordForm" method="POST" action="{{ route('profile.password.update') }}" class="mt-6 space-y-6">
+                <form
+                    x-ref="passwordForm"
+                    method="POST"
+                    action="{{ route('profile.password.update') }}"
+                    class="mt-6 space-y-6"
+                    x-data="{
+                        password: '',
+                        submitBlocked: false,
+                        get hasMinLength() { return this.password.length >= 8; },
+                        get hasUpper() { return /[A-Z]/.test(this.password); },
+                        get hasLower() { return /[a-z]/.test(this.password); },
+                        get hasNumber() { return /[0-9]/.test(this.password); },
+                        get hasSymbol() { return /[^A-Za-z0-9]/.test(this.password); },
+                        get isValid() { return this.hasMinLength && this.hasUpper && this.hasLower && this.hasNumber && this.hasSymbol; },
+                    }"
+                    @submit="if (! isValid) { $event.preventDefault(); submitBlocked = true; } else { submitBlocked = false; }"
+                >
                     @csrf
                     @method('PUT')
                     <div>
@@ -274,10 +296,16 @@
                     </div>
                     <div>
                         <label for="password" class="form-label">{{ __('New password') }}</label>
-                        <input type="password" id="password" name="password" class="form-input" autocomplete="new-password" required>
-                        @error('password')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                        @enderror
+                        <input type="password" id="password" name="password" x-model="password" class="form-input" autocomplete="new-password" required>
+                        <x-password-requirements />
+                        @if ($errors->has('password'))
+                            <ul class="mt-1 space-y-0.5 text-xs text-red-600">
+                                @foreach ($errors->get('password') as $message)
+                                    <li>{{ $message }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        <p class="mt-1 text-xs text-red-600" x-show="submitBlocked && ! isValid" x-cloak>{{ __('Please meet all password requirements above.') }}</p>
                     </div>
                     <div>
                         <label for="password_confirmation" class="form-label">{{ __('Confirm new password') }}</label>
