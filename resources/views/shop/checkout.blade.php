@@ -150,7 +150,7 @@
                         @php
                             $v = $line['variant'];
                             $product = $v->product;
-                            $thumb = $product->images->first();
+                            $thumb = $product->thumbnailImage();
                         @endphp
                         <li class="flex items-start justify-between gap-4">
                             <span class="flex min-w-0 items-start gap-3">
