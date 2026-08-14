@@ -73,7 +73,9 @@
 
                     @forelse ($variantsByColor as $colorName => $group)
                         @php
-                            $sizeList = $group->pluck('size')->unique()->sort()->values();
+                            $sizeList = $group->pluck('size')->unique()
+                                ->sortBy(fn ($sz) => \App\Models\ProductVariant::sizeSortKey($sz))
+                                ->values();
                         @endphp
                         <fieldset
                             class="product-size-panel mt-3 border-0 p-0"

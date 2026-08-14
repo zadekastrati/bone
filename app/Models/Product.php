@@ -203,9 +203,9 @@ class Product extends Model
     {
         return $this->variants()
             ->where('color', $color)
-            ->orderBy('size')
             ->pluck('size')
             ->unique()
+            ->sortBy(fn (string $size) => ProductVariant::sizeSortKey($size))
             ->values()
             ->all();
     }
