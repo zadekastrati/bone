@@ -12,7 +12,10 @@ class OrderController extends Controller
     {
         $this->authorize('viewAny', Order::class);
 
-        $query = Order::query()->withCount('items')->latest();
+        $query = Order::query()
+            ->withCount('items')
+            ->with(['items.variant.product' => fn ($q) => $q->withTrashed()->with('images')])
+            ->latest();
 
         if (! $request->user()->isAdmin()) {
             $query->where('user_id', $request->user()->id);
@@ -29,7 +32,10 @@ class OrderController extends Controller
     {
         $this->authorize('view', $order);
 
-        $order->load(['items', 'user']);
+        $order->load([
+            'items.variant.product' => fn ($q) => $q->withTrashed()->with('images'),
+            'user',
+        ]);
 
         return view('shop.orders.show', compact('order'));
     }

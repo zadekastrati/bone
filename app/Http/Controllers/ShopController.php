@@ -88,7 +88,12 @@ class ShopController extends Controller
             fn ($v) => [$v->color.'|'.$v->size => $v->stock_quantity]
         );
 
-        return view('shop.product', compact('category', 'product', 'variantsByColor', 'stockByKey'));
+        $imagesByColor = collect($product->availableColors())
+            ->mapWithKeys(fn ($c) => [$c['name'] => $product->imagesForColor($c['name'])]);
+
+        $defaultColor = $product->defaultColor();
+
+        return view('shop.product', compact('category', 'product', 'variantsByColor', 'stockByKey', 'imagesByColor', 'defaultColor'));
     }
 
     private function resolveSort(Request $request): string

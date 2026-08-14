@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -158,15 +159,71 @@ class Product extends Model
             ->all();
     }
 
+    /**
+     * The color the storefront gallery should show before the shopper picks
+     * one: "Black" if the product has it, otherwise the darkest available
+     * color by hex luminance, otherwise just the first color alphabetically.
+     * Null when the product has no colors at all.
+     */
+    public function defaultColor(): ?string
+    {
+        $colors = $this->availableColors();
+
+        if ($colors === []) {
+            return null;
+        }
+
+        $black = collect($colors)->first(fn (array $c): bool => mb_strtolower($c['name']) === 'black');
+        if ($black !== null) {
+            return $black['name'];
+        }
+
+        $withHex = collect($colors)->filter(fn (array $c): bool => $c['hex'] !== null);
+        if ($withHex->isNotEmpty()) {
+            return $withHex->sortBy(fn (array $c): float => self::hexLuminance($c['hex']))->first()['name'];
+        }
+
+        return $colors[0]['name'];
+    }
+
+    private static function hexLuminance(string $hex): float
+    {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) !== 6) {
+            return 255.0;
+        }
+
+        [$r, $g, $b] = array_map(fn (string $h): int => hexdec($h), str_split($hex, 2));
+
+        return 0.299 * $r + 0.587 * $g + 0.114 * $b;
+    }
+
     /** @return list<string> */
     public function availableSizesForColor(string $color): array
     {
         return $this->variants()
             ->where('color', $color)
-            ->orderBy('size')
             ->pluck('size')
             ->unique()
+            ->sortBy(fn (string $size) => ProductVariant::sizeSortKey($size))
             ->values()
             ->all();
+    }
+
+    /**
+     * Images tagged for the given color. Falls back to the product's
+     * unassigned (shared) images when that color has none of its own —
+     * this keeps existing products, whose images have no color yet,
+     * showing the same photos for every color as before.
+     *
+     * @return Collection<int, ProductImage>
+     */
+    public function imagesForColor(string $color): Collection
+    {
+        $images = $this->relationLoaded('images') ? $this->images : $this->images()->get();
+
+        $colorImages = $images->where('color', $color)->values();
+
+        return $colorImages->isNotEmpty() ? $colorImages : $images->whereNull('color')->values();
     }
 }
