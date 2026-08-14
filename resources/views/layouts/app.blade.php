@@ -19,7 +19,7 @@
 <body @class([
     'flex min-h-full flex-col font-sans text-base leading-relaxed text-ink-900 antialiased',
     'bg-white' => request()->routeIs('cart.index'),
-    'bg-page-mesh' => ! request()->routeIs('cart.index'),
+    'bg-page-mesh bg-local' => ! request()->routeIs('cart.index'),
 ])>
     <div class="flex min-h-full flex-1 flex-col" x-data="{ mobileOpen: false }" @keydown.window.escape="mobileOpen = false">
         <x-store-promo-bar />
@@ -211,7 +211,7 @@
             </div>
         @endif
 
-        <footer class="mt-auto border-t border-zinc-200/80 bg-gradient-to-b from-zinc-100/90 via-zinc-50 to-zinc-50 text-ink-800">
+        <footer class="mt-auto border-t border-zinc-200/80 bg-gradient-to-b from-zinc-100 via-zinc-50 to-zinc-50 text-ink-800">
             <div class="page-shell grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-20">
                 <div class="sm:col-span-2 lg:col-span-1">
                     <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" class="h-5 w-auto lg:h-6">

@@ -18,6 +18,7 @@ use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
+use App\Models\Category;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,7 +26,12 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
 
 Route::get('/', function () {
-    return view('welcome');
+    $categories = Category::query()
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
+
+    return view('welcome', compact('categories'));
 })->name('home');
 
 Route::view('/about', 'about')->name('about');
@@ -118,6 +124,7 @@ Route::middleware('auth')->group(function (): void {
         Route::delete('products/bulk-delete', [AdminProductController::class, 'bulkDestroy'])->name('products.bulkDestroy');
         Route::delete('products/bulk-force-delete', [AdminProductController::class, 'bulkForceDelete'])->name('products.bulkForceDelete');
         Route::delete('products/{product}/images/{image}', [AdminProductController::class, 'destroyImage'])->name('products.images.destroy');
+        Route::post('products/{product}/images/reorder', [AdminProductController::class, 'reorderImages'])->name('products.images.reorder');
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::resource('messages', AdminContactMessageController::class)
             ->parameters(['messages' => 'id'])
