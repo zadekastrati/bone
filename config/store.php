@@ -2,6 +2,15 @@
 
 return [
 
+    /*
+    | All timestamps are stored in the database as UTC (app.timezone stays
+    | 'UTC' so writes are consistent). This is the timezone used to convert
+    | them for display. Kosovo, Albania, and North Macedonia — the only
+    | supported shipping destinations — all observe the same CET/CEST
+    | offset, so a single store-wide zone is correct for every user/admin.
+    */
+    'display_timezone' => env('STORE_DISPLAY_TIMEZONE', 'Europe/Tirane'),
+
     'currency' => env('STORE_CURRENCY', 'EUR'),
     'currency_symbol' => env('STORE_CURRENCY_SYMBOL', '€'),
 

@@ -43,12 +43,13 @@ class RegisterController extends Controller
 
         Mail::to($validated['email'])->locale(app()->getLocale())->send(new RegisterOtpMail(
             code: $code,
-            userName: $validated['name'],
+            userName: trim($validated['first_name'].' '.$validated['last_name']),
             appName: (string) config('app.name'),
         ));
 
         $request->session()->put('register_pending', [
-            'name' => $validated['name'],
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
             'email' => $validated['email'],
             'password_enc' => Crypt::encryptString($validated['password']),
         ]);
@@ -80,7 +81,7 @@ class RegisterController extends Controller
     public function verify(VerifyOtpCodeRequest $request): RedirectResponse
     {
         $pending = $request->session()->get('register_pending');
-        if ($pending === null || ! isset($pending['email'], $pending['name'], $pending['password_enc'])) {
+        if ($pending === null || ! isset($pending['email'], $pending['first_name'], $pending['last_name'], $pending['password_enc'])) {
             return redirect()
                 ->route('register')
                 ->with('error', __('Session expired. Please register again.'));
@@ -116,7 +117,8 @@ class RegisterController extends Controller
         $password = Crypt::decryptString($pending['password_enc']);
 
         $user = User::create([
-            'name' => $pending['name'],
+            'first_name' => $pending['first_name'],
+            'last_name' => $pending['last_name'],
             'email' => $email,
             'password' => $password,
             'role' => 'user',
@@ -136,7 +138,7 @@ class RegisterController extends Controller
     public function resend(Request $request): RedirectResponse
     {
         $pending = $request->session()->get('register_pending');
-        if ($pending === null || ! isset($pending['email'], $pending['name'])) {
+        if ($pending === null || ! isset($pending['email'], $pending['first_name'], $pending['last_name'])) {
             return redirect()->route('register');
         }
 
@@ -146,7 +148,7 @@ class RegisterController extends Controller
 
         Mail::to($email)->locale(app()->getLocale())->send(new RegisterOtpMail(
             code: $code,
-            userName: $pending['name'],
+            userName: trim($pending['first_name'].' '.$pending['last_name']),
             appName: (string) config('app.name'),
         ));
 
@@ -172,7 +174,7 @@ class RegisterController extends Controller
      * code has expired — clearing the stale session state either way so a
      * user who left and came back lands on the start page, not verify.
      *
-     * @return array{name: string, email: string, password_enc: string}|null
+     * @return array{first_name: string, last_name: string, email: string, password_enc: string}|null
      */
     private function activePending(Request $request): ?array
     {

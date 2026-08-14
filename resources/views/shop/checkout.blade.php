@@ -4,9 +4,8 @@
 
 @section('content')
     @php
-        $accountNameParts = preg_split('/\s+/u', trim((string) auth()->user()->name), 2, PREG_SPLIT_NO_EMPTY);
-        $defaultFirst = old('shipping_first_name', $accountNameParts[0] ?? '');
-        $defaultLast = old('shipping_last_name', $accountNameParts[1] ?? '');
+        $defaultFirst = old('shipping_first_name', auth()->user()->first_name ?? '');
+        $defaultLast = old('shipping_last_name', auth()->user()->last_name ?? '');
     @endphp
     <x-page-header :title="__('Checkout')" :subtitle="__('Enter shipping details and choose bank transfer or cash on delivery. You will see bank instructions after you place the order if you choose transfer.')" />
 

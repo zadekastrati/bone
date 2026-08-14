@@ -66,12 +66,21 @@
                 <form method="POST" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
                     @csrf
                     @method('PATCH')
-                    <div>
-                        <label for="name" class="form-label">{{ __('Name') }}</label>
-                        <input type="text" id="name" name="name" class="form-input" value="{{ old('name', $user->name) }}" required>
-                        @error('name')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                        @enderror
+                    <div class="grid gap-5 sm:grid-cols-2">
+                        <div>
+                            <label for="first_name" class="form-label">{{ __('First name') }}</label>
+                            <input type="text" id="first_name" name="first_name" class="form-input" value="{{ old('first_name', $user->first_name) }}" required>
+                            @error('first_name')
+                                <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="last_name" class="form-label">{{ __('Last name') }}</label>
+                            <input type="text" id="last_name" name="last_name" class="form-input" value="{{ old('last_name', $user->last_name) }}" required>
+                            @error('last_name')
+                                <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                     <div>
                         <label for="email" class="form-label">{{ __('Email') }}</label>
@@ -259,7 +268,23 @@
                         </svg>
                     </button>
                 </div>
-                <form x-ref="passwordForm" method="POST" action="{{ route('profile.password.update') }}" class="mt-6 space-y-6">
+                <form
+                    x-ref="passwordForm"
+                    method="POST"
+                    action="{{ route('profile.password.update') }}"
+                    class="mt-6 space-y-6"
+                    x-data="{
+                        password: '',
+                        submitBlocked: false,
+                        get hasMinLength() { return this.password.length >= 8; },
+                        get hasUpper() { return /[A-Z]/.test(this.password); },
+                        get hasLower() { return /[a-z]/.test(this.password); },
+                        get hasNumber() { return /[0-9]/.test(this.password); },
+                        get hasSymbol() { return /[^A-Za-z0-9]/.test(this.password); },
+                        get isValid() { return this.hasMinLength && this.hasUpper && this.hasLower && this.hasNumber && this.hasSymbol; },
+                    }"
+                    @submit="if (! isValid) { $event.preventDefault(); submitBlocked = true; } else { submitBlocked = false; }"
+                >
                     @csrf
                     @method('PUT')
                     <div>
@@ -271,10 +296,16 @@
                     </div>
                     <div>
                         <label for="password" class="form-label">{{ __('New password') }}</label>
-                        <input type="password" id="password" name="password" class="form-input" autocomplete="new-password" required>
-                        @error('password')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                        @enderror
+                        <input type="password" id="password" name="password" x-model="password" class="form-input" autocomplete="new-password" required>
+                        <x-password-requirements />
+                        @if ($errors->has('password'))
+                            <ul class="mt-1 space-y-0.5 text-xs text-red-600">
+                                @foreach ($errors->get('password') as $message)
+                                    <li>{{ $message }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        <p class="mt-1 text-xs text-red-600" x-show="submitBlocked && ! isValid" x-cloak>{{ __('Please meet all password requirements above.') }}</p>
                     </div>
                     <div>
                         <label for="password_confirmation" class="form-label">{{ __('Confirm new password') }}</label>
