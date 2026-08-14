@@ -19,15 +19,15 @@
 <body @class([
     'flex min-h-full flex-col font-sans text-base leading-relaxed text-ink-900 antialiased',
     'bg-white' => request()->routeIs('cart.index'),
-    'bg-page-mesh' => ! request()->routeIs('cart.index'),
+    'bg-page-mesh bg-local' => ! request()->routeIs('cart.index'),
 ])>
     <div class="flex min-h-full flex-1 flex-col" x-data="{ mobileOpen: false }" @keydown.window.escape="mobileOpen = false">
         <x-store-promo-bar />
 
         <header class="sticky top-0 z-50 border-b border-zinc-200/80 bg-gradient-to-b from-zinc-50/95 to-zinc-100/80 text-ink-900 shadow-[0_8px_30px_-12px_rgba(94,82,74,0.14)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-zinc-50/90">
             <div class="page-shell flex h-14 min-w-0 items-center gap-2 sm:gap-3 lg:h-[4.25rem] lg:gap-4">
-                <a href="{{ route('home') }}" class="font-display min-w-0 shrink truncate text-lg font-bold uppercase tracking-mega text-ink-900 transition-opacity hover:opacity-80 lg:max-w-none lg:text-xl">
-                    {{ config('app.name') }}
+                <a href="{{ route('home') }}" class="shrink-0 transition-opacity hover:opacity-80">
+                    <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" class="h-5 w-auto lg:h-6">
                 </a>
 
                 {{-- Middle: search + desktop nav share the flexible width so the cart column is never pushed off-screen --}}
@@ -211,10 +211,10 @@
             </div>
         @endif
 
-        <footer class="mt-auto border-t border-zinc-200/80 bg-gradient-to-b from-zinc-100/90 via-zinc-50 to-zinc-50 text-ink-800">
+        <footer class="mt-auto border-t border-zinc-200/80 bg-gradient-to-b from-zinc-100 via-zinc-50 to-zinc-50 text-ink-800">
             <div class="page-shell grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-20">
                 <div class="sm:col-span-2 lg:col-span-1">
-                    <p class="font-display text-lg font-bold uppercase tracking-mega text-ink-900">{{ config('app.name') }}</p>
+                    <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" class="h-5 w-auto lg:h-6">
                     <p class="mt-4 flex items-center gap-2 text-pretty text-sm text-ink-600">
                         <i class="fas fa-envelope"></i>
                         bone@example.com
