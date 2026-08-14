@@ -13,7 +13,7 @@
 
     <div class="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div class="space-y-4">
-            <x-shop.product-media-gallery :product="$product" />
+            <x-shop.product-media-gallery :product="$product" :images-by-color="$imagesByColor" :default-color="$defaultColor" />
         </div>
 
         <div>
@@ -73,7 +73,9 @@
 
                     @forelse ($variantsByColor as $colorName => $group)
                         @php
-                            $sizeList = $group->pluck('size')->unique()->sort()->values();
+                            $sizeList = $group->pluck('size')->unique()
+                                ->sortBy(fn ($sz) => \App\Models\ProductVariant::sizeSortKey($sz))
+                                ->values();
                         @endphp
                         <fieldset
                             class="product-size-panel mt-3 border-0 p-0"
@@ -200,6 +202,8 @@
                 });
 
                 updateBar();
+
+                window.dispatchEvent(new CustomEvent('product-color-selected', { detail: { color: color } }));
             }
 
             function updateBar() {

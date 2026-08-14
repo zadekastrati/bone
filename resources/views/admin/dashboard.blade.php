@@ -96,7 +96,7 @@
                             <td class="font-medium text-ink-800">{{ $message->name }}</td>
                             <td><a href="mailto:{{ $message->email }}" class="text-ink-700 hover:text-accent-700">{{ $message->email }}</a></td>
                             <td class="max-w-[30rem] text-sm text-ink-600">{{ \Illuminate\Support\Str::limit($message->message, 140) }}</td>
-                            <td class="text-xs text-ink-500">{{ $message->created_at->format('M d, Y H:i') }}</td>
+                            <td class="text-xs text-ink-500">{{ $message->created_at->copy()->timezone(config('store.display_timezone'))->format('M d, Y H:i') }}</td>
                             <td class="text-right">
                                 <a href="{{ route('admin.messages.show', $message->id) }}" class="admin-action-link">Open</a>
                             </td>

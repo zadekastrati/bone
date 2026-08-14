@@ -22,7 +22,7 @@ class DashboardController extends Controller
             ->sum('total');
 
         $recentOrders = Order::query()
-            ->with(['user:id,name,email'])
+            ->with(['user:id,first_name,last_name,email'])
             ->latest()
             ->limit(8)
             ->get();
