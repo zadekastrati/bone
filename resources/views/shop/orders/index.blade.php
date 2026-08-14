@@ -13,6 +13,7 @@
             <table class="data-table">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>{{ __('Order') }}</th>
                         <th>{{ __('Date') }}</th>
                         <th>{{ __('Status') }}</th>
@@ -23,7 +24,11 @@
                 </thead>
                 <tbody>
                     @forelse ($orders as $order)
+                        @php
+                            $thumb = $order->items->first()?->variant?->product?->thumbnailImage();
+                        @endphp
                         <tr>
+                            <td class="w-20"><x-product-image-thumb :path="$thumb?->path" size="cartRow" /></td>
                             <td class="font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</td>
                             <td class="text-ink-600">{{ $order->created_at->format('M j, Y') }}</td>
                             <td>
@@ -40,7 +45,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="data-table-empty">{{ __('No orders yet.') }}</td>
+                            <td colspan="7" class="data-table-empty">{{ __('No orders yet.') }}</td>
                         </tr>
                     @endforelse
                 </tbody>
