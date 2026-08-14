@@ -21,7 +21,7 @@ class PasswordChangedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->appName.' — Your password was changed',
+            subject: $this->appName.' — '.__('Your password was changed'),
         );
     }
 

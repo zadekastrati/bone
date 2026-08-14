@@ -257,4 +257,73 @@ Alpine.data('adminNotifications', (indexUrl, seenUrl) => ({
     },
 }));
 
+/**
+ * Drag-and-drop reordering for the admin product-edit image galleries (see
+ * admin/products/partials/image-gallery-grid.blade.php). Each color's photos
+ * sit in their own <div data-sortable-images data-reorder-url data-color>
+ * grid; each tile is draggable="true" with data-image-id. Dragging only
+ * reorders within the grid it started in — dragover/drop bail out unless the
+ * pointer is still over that same source grid, so a photo can never hop into
+ * another color's section this way. On drop, the tile's new position in the
+ * DOM is read back out and posted as the new order for that color.
+ */
+let draggingImageId = null;
+let draggingSourceGrid = null;
+
+document.addEventListener('dragstart', (event) => {
+    const tile = event.target.closest('[data-image-id]');
+    const grid = tile ? tile.closest('[data-sortable-images]') : null;
+    if (! tile || ! grid) {
+        return;
+    }
+
+    draggingImageId = tile.dataset.imageId;
+    draggingSourceGrid = grid;
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', draggingImageId);
+    tile.classList.add('opacity-50');
+});
+
+document.addEventListener('dragend', (event) => {
+    const tile = event.target.closest('[data-image-id]');
+    if (tile) {
+        tile.classList.remove('opacity-50');
+    }
+    draggingImageId = null;
+    draggingSourceGrid = null;
+});
+
+document.addEventListener('dragover', (event) => {
+    const grid = event.target.closest('[data-sortable-images]');
+    if (! grid || grid !== draggingSourceGrid) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const dragging = grid.querySelector(`[data-image-id="${draggingImageId}"]`);
+    const target = event.target.closest('[data-image-id]');
+    if (! dragging || ! target || target === dragging || ! grid.contains(target)) {
+        return;
+    }
+
+    const rect = target.getBoundingClientRect();
+    const after = (event.clientX - rect.left) > rect.width / 2;
+    target.parentElement.insertBefore(dragging, after ? target.nextSibling : target);
+});
+
+document.addEventListener('drop', (event) => {
+    const grid = event.target.closest('[data-sortable-images]');
+    if (! grid || grid !== draggingSourceGrid) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const ids = Array.from(grid.querySelectorAll('[data-image-id]')).map((el) => el.dataset.imageId);
+
+    axios.post(grid.dataset.reorderUrl, { color: grid.dataset.color || null, ids })
+        .catch(() => { alert('Failed to save the new photo order. Please try again.'); });
+});
+
 Alpine.start();

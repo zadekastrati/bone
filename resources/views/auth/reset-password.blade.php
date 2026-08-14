@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Enter your code')
+@section('title', __('Enter your code'))
 
 @section('content')
     <div class="mx-auto max-w-md">
         <div class="text-center">
-            <h1 class="font-display text-2xl font-bold text-ink-950 sm:text-3xl">Enter your code</h1>
+            <h1 class="font-display text-2xl font-bold text-ink-950 sm:text-3xl">{{ __('Enter your code') }}</h1>
             <p class="text-muted mt-2">
-                We sent a 6-digit code to <span class="font-medium text-ink-800">{{ $emailMasked }}</span>. Enter it below to continue.
+                {!! __('We sent a 6-digit code to :email. Enter it below to continue.', ['email' => '<span class="font-medium text-ink-800">'.e($emailMasked).'</span>']) !!}
             </p>
         </div>
 
         <form method="POST" action="{{ route('password.reset.verify.store') }}" class="panel mt-8 space-y-5">
             @csrf
             <div>
-                <label for="code" class="form-label">Verification code</label>
+                <label for="code" class="form-label">{{ __('Verification code') }}</label>
                 <input
                     type="text"
                     name="code"
@@ -33,18 +33,18 @@
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
-            <button type="submit" class="btn-primary w-full py-3">Verify code</button>
+            <button type="submit" class="btn-primary w-full py-3">{{ __('Verify code') }}</button>
         </form>
 
         <form method="POST" action="{{ route('password.reset.resend') }}" class="mt-4 text-center">
             @csrf
-            <button type="submit" class="text-sm font-medium text-accent-700 hover:text-accent-900">Resend code</button>
+            <button type="submit" class="text-sm font-medium text-accent-700 hover:text-accent-900">{{ __('Resend code') }}</button>
         </form>
 
         <form method="POST" action="{{ route('password.reset.cancel') }}" class="mt-8 text-center">
             @csrf
             <button type="submit" class="text-sm font-medium text-ink-600 underline decoration-ink-300 underline-offset-2 hover:text-ink-900">
-                Cancel and start over
+                {{ __('Cancel and start over') }}
             </button>
         </form>
     </div>

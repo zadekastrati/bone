@@ -4,14 +4,33 @@
 
 @section('content')
     <nav class="crumbs" aria-label="Breadcrumb">
-        <a href="{{ route('home') }}">Home</a>
+        <a href="{{ route('home') }}">{{ __('Home') }}</a>
         <span class="mx-1.5 text-ink-300" aria-hidden="true">/</span>
-        <a href="{{ route('shop.index') }}">Shop</a>
+        <a href="{{ route('shop.index') }}">{{ __('Shop') }}</a>
         <span class="mx-1.5 text-ink-300" aria-hidden="true">/</span>
         <span class="text-ink-800" aria-current="page">{{ $category->name }}</span>
     </nav>
 
     <x-page-header :title="$category->name" :subtitle="$category->description" />
+
+    <form method="GET" action="{{ route('shop.category', $category) }}" class="mt-6 flex justify-end">
+        <div class="w-full sm:w-64">
+            <label for="category-sort" class="sr-only">{{ __('Sort by') }}</label>
+            <select
+                name="sort"
+                id="category-sort"
+                class="form-select w-full"
+                aria-label="{{ __('Sort by') }}"
+                onchange="this.form.requestSubmit()"
+            >
+                <option value="newest" @selected($sort === 'newest')>{{ __('Newest First') }}</option>
+                <option value="oldest" @selected($sort === 'oldest')>{{ __('Oldest First') }}</option>
+                <option value="price_asc" @selected($sort === 'price_asc')>{{ __('Price: Low to High') }}</option>
+                <option value="price_desc" @selected($sort === 'price_desc')>{{ __('Price: High to Low') }}</option>
+                <option value="popularity" @selected($sort === 'popularity')>{{ __('Popularity') }}</option>
+            </select>
+        </div>
+    </form>
 
     @if ($products->isNotEmpty())
         <ul class="mt-10 grid list-none gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
@@ -22,7 +41,7 @@
             @endforeach
         </ul>
     @else
-        <p class="mt-10 rounded-2xl border border-zinc-200/70 bg-zinc-50/50 px-6 py-12 text-center text-ink-600">No products in this category yet.</p>
+        <p class="mt-10 rounded-2xl border border-zinc-200/70 bg-zinc-50/50 px-6 py-12 text-center text-ink-600">{{ __('No products in this category yet.') }}</p>
     @endif
 
     @if ($products->isNotEmpty())

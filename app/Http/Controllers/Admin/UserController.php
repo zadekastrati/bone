@@ -21,12 +21,15 @@ class UserController extends Controller
         if ($request->filled('q')) {
             $term = '%'.$request->string('q')->trim().'%';
             $query->where(function ($q) use ($term): void {
-                $q->where('name', 'like', $term)
+                $q->where('first_name', 'like', $term)
+                    ->orWhere('last_name', 'like', $term)
                     ->orWhere('email', 'like', $term);
             });
         }
 
-        $users = $query->paginate(15)->withQueryString();
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $users */
+        $users = $query->paginate(15);
+        $users->withQueryString();
 
         if ($request->ajax()) {
             return view('admin.users.partials.results', compact('users'));

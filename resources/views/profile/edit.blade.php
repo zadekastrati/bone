@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'My Profile')
+@section('title', __('My Profile'))
 
 @section('content')
-    <x-page-header title="My Profile" subtitle="Manage your personal details, password, and see your recent activity." />
+    <x-page-header :title="__('My Profile')" :subtitle="__('Manage your personal details, password, and see your recent activity.')" />
 
     @php
         $hasPasswordErrors = $errors->has('current_password') || $errors->has('password');
@@ -24,21 +24,21 @@
                 <svg class="size-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                 </svg>
-                Personal info
+                {{ __('Personal info') }}
             </button>
             <button type="button" @click="tab = 'security'" class="admin-sidebar-link shrink-0 lg:w-full" :class="tab === 'security' ? 'admin-sidebar-link-active' : ''">
                 <svg class="size-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                 </svg>
-                Security
+                {{ __('Security') }}
             </button>
             <button type="button" @click="tab = 'orders'" class="admin-sidebar-link shrink-0 lg:w-full" :class="tab === 'orders' ? 'admin-sidebar-link-active' : ''">
                 <x-icons.archive-box class="size-5 shrink-0" />
-                Orders
+                {{ __('Orders') }}
             </button>
             <button type="button" @click="tab = 'cart'" class="admin-sidebar-link shrink-0 lg:w-full" :class="tab === 'cart' ? 'admin-sidebar-link-active' : ''">
                 <x-icons.shopping-bag class="size-5 shrink-0" />
-                Cart
+                {{ __('Cart') }}
             </button>
         </nav>
 
@@ -46,18 +46,18 @@
         <div class="min-w-0">
             {{-- Personal info --}}
             <div x-show="tab === 'info'" x-cloak class="panel p-8">
-                <h2 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">Personal details</h2>
+                <h2 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">{{ __('Personal details') }}</h2>
 
                 @if ($pendingEmail)
                     <div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-amber-50 px-4 py-3">
                         <p class="text-sm text-amber-900">
-                            Verification pending for <strong>{{ $pendingEmail }}</strong> — enter the code we emailed you to confirm the change.
+                            {!! __('Verification pending for :email — enter the code we emailed you to confirm the change.', ['email' => '<strong>'.e($pendingEmail).'</strong>']) !!}
                         </p>
                         <div class="flex shrink-0 items-center gap-3">
-                            <button type="button" @click="emailModalOpen = true" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">Verify now</button>
+                            <button type="button" @click="emailModalOpen = true" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">{{ __('Verify now') }}</button>
                             <form method="POST" action="{{ route('profile.email.cancel') }}">
                                 @csrf
-                                <button type="submit" class="text-xs font-bold uppercase tracking-wide text-ink-500 hover:underline">Cancel</button>
+                                <button type="submit" class="text-xs font-bold uppercase tracking-wide text-ink-500 hover:underline">{{ __('Cancel') }}</button>
                             </form>
                         </div>
                     </div>
@@ -66,22 +66,31 @@
                 <form method="POST" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
                     @csrf
                     @method('PATCH')
-                    <div>
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" id="name" name="name" class="form-input" value="{{ old('name', $user->name) }}" required>
-                        @error('name')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                        @enderror
+                    <div class="grid gap-5 sm:grid-cols-2">
+                        <div>
+                            <label for="first_name" class="form-label">{{ __('First name') }}</label>
+                            <input type="text" id="first_name" name="first_name" class="form-input" value="{{ old('first_name', $user->first_name) }}" required>
+                            @error('first_name')
+                                <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="last_name" class="form-label">{{ __('Last name') }}</label>
+                            <input type="text" id="last_name" name="last_name" class="form-input" value="{{ old('last_name', $user->last_name) }}" required>
+                            @error('last_name')
+                                <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                     <div>
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">{{ __('Email') }}</label>
                         <input type="email" id="email" name="email" class="form-input" value="{{ old('email', $user->email) }}" required>
                         @error('email')
                             <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="phone" class="form-label">Phone <span class="font-normal text-ink-400">(optional)</span></label>
+                        <label for="phone" class="form-label">{{ __('Phone') }} <span class="font-normal text-ink-400">({{ __('optional') }})</span></label>
                         <input type="tel" id="phone" name="phone" class="form-input" value="{{ old('phone', $user->phone) }}" placeholder="+383 44 123 456">
                         @error('phone')
                             <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
@@ -90,26 +99,44 @@
                         @if ($pendingPhone)
                             <div class="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-amber-50 px-4 py-3">
                                 <p class="text-sm text-amber-900">
-                                    Verification pending for <strong>{{ $pendingPhone }}</strong> — enter the code we emailed you to confirm it.
+                                    {!! __('Verification pending for :phone — enter the code we emailed you to confirm it.', ['phone' => '<strong>'.e($pendingPhone).'</strong>']) !!}
                                 </p>
                                 <div class="flex shrink-0 items-center gap-3">
-                                    <button type="button" @click="phoneModalOpen = true" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">Verify now</button>
+                                    <button type="button" @click="phoneModalOpen = true" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">{{ __('Verify now') }}</button>
                                     <form method="POST" action="{{ route('profile.phone.cancel') }}">
                                         @csrf
-                                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-ink-500 hover:underline">Cancel</button>
+                                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-ink-500 hover:underline">{{ __('Cancel') }}</button>
                                     </form>
                                 </div>
                             </div>
                         @endif
                     </div>
                     <div class="pt-2">
-                        <button type="submit" class="btn-primary px-8 py-3 text-sm">Save changes</button>
+                        <button type="submit" class="btn-primary px-8 py-3 text-sm">{{ __('Save changes') }}</button>
                     </div>
                 </form>
 
                 <div class="mt-8 border-t border-zinc-200/70 pt-6">
-                    <label for="country" class="form-label">Country &amp; currency</label>
-                    <p class="text-xs text-ink-500">Prices across the site are shown in this currency. All prices are set in EUR — other currencies are converted for display only, and you're always charged the EUR amount.</p>
+                    <label for="locale" class="form-label">{{ __('Language') }}</label>
+                    <p class="text-xs text-ink-500">{{ __('The site is shown to you in this language.') }}</p>
+                    <form method="POST" action="{{ route('locale.update') }}" class="mt-2 max-w-xs">
+                        @csrf
+                        <select
+                            name="locale"
+                            id="locale"
+                            onchange="this.form.requestSubmit()"
+                            class="form-select w-full"
+                        >
+                            @foreach (config('app.available_locales', ['en' => 'English']) as $code => $label)
+                                <option value="{{ $code }}" {{ app()->getLocale() === $code ? 'selected' : '' }}>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+
+                <div class="mt-6 border-t border-zinc-200/70 pt-6">
+                    <label for="country" class="form-label">{{ __('Country & currency') }}</label>
+                    <p class="text-xs text-ink-500">{{ __('Prices across the site are shown in this currency. All prices are set in EUR — other currencies are converted for display only, and you\'re always charged the EUR amount.') }}</p>
                     <form method="POST" action="{{ route('country.update') }}" class="mt-2 max-w-xs">
                         @csrf
                         <select
@@ -120,7 +147,7 @@
                         >
                             @foreach ($countries as $code => $info)
                                 <option value="{{ $code }}" {{ $currentCountry === $code ? 'selected' : '' }}>
-                                    {{ $info['label'] }} ({{ $info['currency'] }})
+                                    {{ __($info['label']) }} ({{ $info['currency'] }})
                                 </option>
                             @endforeach
                         </select>
@@ -130,19 +157,19 @@
 
             {{-- Security --}}
             <div x-show="tab === 'security'" x-cloak class="panel p-8">
-                <h2 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">Security</h2>
-                <p class="mt-2 max-w-md text-sm text-ink-500">Your password was last changed when you set it up or last updated it. Change it any time — you'll need your current password.</p>
-                <button type="button" @click="$refs.passwordForm.reset(); passwordModalOpen = true" class="btn-primary mt-6 px-8 py-3 text-sm">Change password</button>
+                <h2 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">{{ __('Security') }}</h2>
+                <p class="mt-2 max-w-md text-sm text-ink-500">{{ __('Your password was last changed when you set it up or last updated it. Change it any time — you\'ll need your current password.') }}</p>
+                <button type="button" @click="$refs.passwordForm.reset(); passwordModalOpen = true" class="btn-primary mt-6 px-8 py-3 text-sm">{{ __('Change password') }}</button>
             </div>
 
             {{-- Orders --}}
             <div x-show="tab === 'orders'" x-cloak class="panel overflow-hidden p-0">
                 <div class="flex items-center justify-between border-b border-zinc-200/70 px-8 py-6">
-                    <h2 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">Recent orders</h2>
-                    <a href="{{ route('orders.index') }}" class="link-brand text-sm">View all</a>
+                    <h2 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">{{ __('Recent orders') }}</h2>
+                    <a href="{{ route('orders.index') }}" class="link-brand text-sm">{{ __('View all') }}</a>
                 </div>
                 @if ($orders->isEmpty())
-                    <p class="px-8 py-10 text-center text-sm text-ink-500">You haven't placed any orders yet.</p>
+                    <p class="px-8 py-10 text-center text-sm text-ink-500">{{ __('You haven\'t placed any orders yet.') }}</p>
                 @else
                     <ul class="divide-y divide-zinc-200/70">
                         @foreach ($orders as $order)
@@ -150,7 +177,7 @@
                                 <a href="{{ route('orders.show', $order) }}" class="flex items-center justify-between gap-4 px-8 py-4 transition hover:bg-zinc-50">
                                     <div class="min-w-0">
                                         <p class="truncate font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</p>
-                                        <p class="mt-0.5 text-xs text-ink-500">{{ $order->created_at->format('M j, Y') }} · {{ $order->items_count }} {{ \Illuminate\Support\Str::plural('item', $order->items_count) }}</p>
+                                        <p class="mt-0.5 text-xs text-ink-500">{{ $order->created_at->format('M j, Y') }} · {{ trans_choice(':count item|:count items', $order->items_count, ['count' => $order->items_count]) }}</p>
                                     </div>
                                     <div class="flex shrink-0 items-center gap-3">
                                         <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
@@ -166,11 +193,11 @@
             {{-- Cart --}}
             <div x-show="tab === 'cart'" x-cloak class="panel overflow-hidden p-0">
                 <div class="flex items-center justify-between border-b border-zinc-200/70 px-8 py-6">
-                    <h2 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">In your cart</h2>
-                    <a href="{{ route('cart.index') }}" class="link-brand text-sm">View cart</a>
+                    <h2 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">{{ __('In your cart') }}</h2>
+                    <a href="{{ route('cart.index') }}" class="link-brand text-sm">{{ __('View cart') }}</a>
                 </div>
                 @if ($cartLines->isEmpty())
-                    <p class="px-8 py-10 text-center text-sm text-ink-500">Your cart is empty.</p>
+                    <p class="px-8 py-10 text-center text-sm text-ink-500">{{ __('Your cart is empty.') }}</p>
                 @else
                     <ul class="divide-y divide-zinc-200/70">
                         @foreach ($cartLines as $line)
@@ -183,14 +210,14 @@
                                 <x-product-image-thumb :path="$thumb?->path" size="cartRow" />
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate text-sm font-semibold text-ink-900">{{ $p->name }}</p>
-                                    <p class="text-xs text-ink-500">{{ $v->size }} · {{ $v->color }} · Qty {{ $line['quantity'] }}</p>
+                                    <p class="text-xs text-ink-500">{{ $v->size }} · {{ $v->color }} · {{ __('Qty') }} {{ $line['quantity'] }}</p>
                                 </div>
                                 <span class="shrink-0 font-display text-sm font-semibold tabular-nums text-ink-950"><x-price :amount="$line['line_total']" /></span>
                             </li>
                         @endforeach
                     </ul>
                     <div class="flex items-center justify-between border-t border-zinc-200/70 px-8 py-4">
-                        <span class="text-sm font-medium text-ink-600">Subtotal</span>
+                        <span class="text-sm font-medium text-ink-600">{{ __('Subtotal') }}</span>
                         <span class="font-display text-base font-semibold tabular-nums text-ink-950"><x-price :amount="$cartSubtotal" /></span>
                     </div>
                 @endif
@@ -228,35 +255,57 @@
                 @click.stop
             >
                 <div class="flex items-center justify-between">
-                    <h3 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">Change password</h3>
-                    <button type="button" @click="passwordModalOpen = false; $refs.passwordForm.reset()" class="inline-flex size-9 items-center justify-center rounded-xl text-ink-500 transition hover:bg-zinc-100 hover:text-ink-900" aria-label="Close">
+                    <h3 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">{{ __('Change password') }}</h3>
+                    <button type="button" @click="passwordModalOpen = false; $refs.passwordForm.reset()" class="inline-flex size-9 items-center justify-center rounded-xl text-ink-500 transition hover:bg-zinc-100 hover:text-ink-900" aria-label="{{ __('Close') }}">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
-                <form x-ref="passwordForm" method="POST" action="{{ route('profile.password.update') }}" class="mt-6 space-y-6">
+                <form
+                    x-ref="passwordForm"
+                    method="POST"
+                    action="{{ route('profile.password.update') }}"
+                    class="mt-6 space-y-6"
+                    x-data="{
+                        password: '',
+                        submitBlocked: false,
+                        get hasMinLength() { return this.password.length >= 8; },
+                        get hasUpper() { return /[A-Z]/.test(this.password); },
+                        get hasLower() { return /[a-z]/.test(this.password); },
+                        get hasNumber() { return /[0-9]/.test(this.password); },
+                        get hasSymbol() { return /[^A-Za-z0-9]/.test(this.password); },
+                        get isValid() { return this.hasMinLength && this.hasUpper && this.hasLower && this.hasNumber && this.hasSymbol; },
+                    }"
+                    @submit="if (! isValid) { $event.preventDefault(); submitBlocked = true; } else { submitBlocked = false; }"
+                >
                     @csrf
                     @method('PUT')
                     <div>
-                        <label for="current_password" class="form-label">Current password</label>
+                        <label for="current_password" class="form-label">{{ __('Current password') }}</label>
                         <input type="password" id="current_password" name="current_password" class="form-input" autocomplete="current-password" required>
                         @error('current_password')
                             <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="password" class="form-label">New password</label>
-                        <input type="password" id="password" name="password" class="form-input" autocomplete="new-password" required>
-                        @error('password')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-                        @enderror
+                        <label for="password" class="form-label">{{ __('New password') }}</label>
+                        <input type="password" id="password" name="password" x-model="password" class="form-input" autocomplete="new-password" required>
+                        <x-password-requirements />
+                        @if ($errors->has('password'))
+                            <ul class="mt-1 space-y-0.5 text-xs text-red-600">
+                                @foreach ($errors->get('password') as $message)
+                                    <li>{{ $message }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        <p class="mt-1 text-xs text-red-600" x-show="submitBlocked && ! isValid" x-cloak>{{ __('Please meet all password requirements above.') }}</p>
                     </div>
                     <div>
-                        <label for="password_confirmation" class="form-label">Confirm new password</label>
+                        <label for="password_confirmation" class="form-label">{{ __('Confirm new password') }}</label>
                         <input type="password" id="password_confirmation" name="password_confirmation" class="form-input" autocomplete="new-password" required>
                     </div>
-                    <button type="submit" class="btn-primary w-full py-3 text-sm">Update password</button>
+                    <button type="submit" class="btn-primary w-full py-3 text-sm">{{ __('Update password') }}</button>
                 </form>
             </div>
         </div>
@@ -292,35 +341,35 @@
                 @click.stop
             >
                 <div class="flex items-center justify-between">
-                    <h3 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">Verify new email</h3>
-                    <button type="button" @click="emailModalOpen = false" class="inline-flex size-9 items-center justify-center rounded-xl text-ink-500 transition hover:bg-zinc-100 hover:text-ink-900" aria-label="Close">
+                    <h3 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">{{ __('Verify new email') }}</h3>
+                    <button type="button" @click="emailModalOpen = false" class="inline-flex size-9 items-center justify-center rounded-xl text-ink-500 transition hover:bg-zinc-100 hover:text-ink-900" aria-label="{{ __('Close') }}">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
                 @if ($pendingEmail)
-                    <p class="mt-2 text-sm text-ink-500">Enter the 6-digit code we sent to <strong>{{ $pendingEmail }}</strong>.</p>
+                    <p class="mt-2 text-sm text-ink-500">{!! __('Enter the 6-digit code we sent to :email.', ['email' => '<strong>'.e($pendingEmail).'</strong>']) !!}</p>
                 @endif
                 <form method="POST" action="{{ route('profile.email.verify') }}" class="mt-6 space-y-6">
                     @csrf
                     <div>
-                        <label for="email_code" class="form-label">Verification code</label>
+                        <label for="email_code" class="form-label">{{ __('Verification code') }}</label>
                         <input type="text" id="email_code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" class="form-input text-center font-mono text-lg tracking-[0.5em]" required autofocus>
                         @error('code')
                             <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                    <button type="submit" class="btn-primary w-full py-3 text-sm">Confirm change</button>
+                    <button type="submit" class="btn-primary w-full py-3 text-sm">{{ __('Confirm change') }}</button>
                 </form>
                 <div class="mt-4 flex items-center justify-between">
                     <form method="POST" action="{{ route('profile.email.resend') }}">
                         @csrf
-                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">Resend code</button>
+                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">{{ __('Resend code') }}</button>
                     </form>
                     <form method="POST" action="{{ route('profile.email.cancel') }}">
                         @csrf
-                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-ink-500 hover:underline">Cancel change</button>
+                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-ink-500 hover:underline">{{ __('Cancel change') }}</button>
                     </form>
                 </div>
             </div>
@@ -357,35 +406,35 @@
                 @click.stop
             >
                 <div class="flex items-center justify-between">
-                    <h3 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">Verify phone number</h3>
-                    <button type="button" @click="phoneModalOpen = false" class="inline-flex size-9 items-center justify-center rounded-xl text-ink-500 transition hover:bg-zinc-100 hover:text-ink-900" aria-label="Close">
+                    <h3 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">{{ __('Verify phone number') }}</h3>
+                    <button type="button" @click="phoneModalOpen = false" class="inline-flex size-9 items-center justify-center rounded-xl text-ink-500 transition hover:bg-zinc-100 hover:text-ink-900" aria-label="{{ __('Close') }}">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
                 @if ($pendingPhone)
-                    <p class="mt-2 text-sm text-ink-500">Enter the 6-digit code we emailed you to confirm <strong>{{ $pendingPhone }}</strong>.</p>
+                    <p class="mt-2 text-sm text-ink-500">{!! __('Enter the 6-digit code we emailed you to confirm :phone.', ['phone' => '<strong>'.e($pendingPhone).'</strong>']) !!}</p>
                 @endif
                 <form method="POST" action="{{ route('profile.phone.verify') }}" class="mt-6 space-y-6">
                     @csrf
                     <div>
-                        <label for="phone_code" class="form-label">Verification code</label>
+                        <label for="phone_code" class="form-label">{{ __('Verification code') }}</label>
                         <input type="text" id="phone_code" name="phone_code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" class="form-input text-center font-mono text-lg tracking-[0.5em]" required autofocus>
                         @error('phone_code')
                             <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                    <button type="submit" class="btn-primary w-full py-3 text-sm">Confirm phone number</button>
+                    <button type="submit" class="btn-primary w-full py-3 text-sm">{{ __('Confirm phone number') }}</button>
                 </form>
                 <div class="mt-4 flex items-center justify-between">
                     <form method="POST" action="{{ route('profile.phone.resend') }}">
                         @csrf
-                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">Resend code</button>
+                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">{{ __('Resend code') }}</button>
                     </form>
                     <form method="POST" action="{{ route('profile.phone.cancel') }}">
                         @csrf
-                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-ink-500 hover:underline">Cancel change</button>
+                        <button type="submit" class="text-xs font-bold uppercase tracking-wide text-ink-500 hover:underline">{{ __('Cancel change') }}</button>
                     </form>
                 </div>
             </div>

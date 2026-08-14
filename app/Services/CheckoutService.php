@@ -39,7 +39,7 @@ class CheckoutService
     {
         $lines = $this->cart->lines();
         if ($lines->isEmpty()) {
-            throw new \InvalidArgumentException('Your cart is empty.');
+            throw new \InvalidArgumentException(__('Your cart is empty.'));
         }
 
         $order = DB::transaction(function () use ($user, $data, $lines) {
@@ -86,17 +86,21 @@ class CheckoutService
                 $variantId = $line['variant']->id;
                 $variant = $lockedVariants->get($variantId);
                 if ($variant === null) {
-                    throw new \RuntimeException('A product in your cart is no longer available.');
+                    throw new \RuntimeException(__('A product in your cart is no longer available.'));
                 }
 
                 $qty = $line['quantity'];
 
                 if (! $variant->product->is_active || $variant->product->trashed()) {
-                    throw new \RuntimeException('A product in your cart is no longer available.');
+                    throw new \RuntimeException(__('A product in your cart is no longer available.'));
                 }
 
                 if (! $variant->isInStock($qty)) {
-                    throw new \RuntimeException('Insufficient stock for '.$variant->product->name.' ('.$variant->color.' / '.$variant->size.').');
+                    throw new \RuntimeException(__('Insufficient stock for :product (:color / :size).', [
+                        'product' => $variant->product->name,
+                        'color' => $variant->color,
+                        'size' => $variant->size,
+                    ]));
                 }
 
                 $unit = (string) $variant->product->price;
@@ -123,7 +127,7 @@ class CheckoutService
         });
 
         try {
-            Mail::to($user->email)->send(new OrderPlacedMail($order));
+            Mail::to($user->email)->locale($user->locale ?? app()->getLocale())->send(new OrderPlacedMail($order));
         } catch (\Throwable $e) {
             Log::error('Order confirmation email failed', [
                 'order_id' => $order->id,
@@ -141,7 +145,7 @@ class CheckoutService
         $countries = config('store.shipping.countries', []);
 
         if (! isset($countries[$code])) {
-            throw new \InvalidArgumentException('Invalid shipping country.');
+            throw new \InvalidArgumentException(__('Invalid shipping country.'));
         }
 
         return (string) $countries[$code]['amount'];

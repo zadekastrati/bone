@@ -30,7 +30,7 @@ class CartController extends Controller
         $variant = $request->variant();
 
         if (! $variant->isInStock((int) $request->validated('quantity'))) {
-            $message = 'Not enough stock for this variant.';
+            $message = __('Not enough stock for this variant.');
 
             return $request->wantsJson()
                 ? response()->json(['message' => $message], 422)
@@ -43,17 +43,17 @@ class CartController extends Controller
             return response()->json([
                 'count' => $this->cart->count(),
                 'subtotal' => $this->cart->subtotal(),
-                'message' => 'Added to cart.',
+                'message' => __('Added to cart.'),
             ]);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Added to cart.');
+        return redirect()->route('cart.index')->with('success', __('Added to cart.'));
     }
 
     public function update(UpdateCartItemRequest $request, int $variant): RedirectResponse|JsonResponse
     {
         if (! array_key_exists($variant, $this->cart->contents())) {
-            $message = 'That item is not in your cart.';
+            $message = __('That item is not in your cart.');
 
             return $request->wantsJson()
                 ? response()->json(['message' => $message], 422)
@@ -63,7 +63,7 @@ class CartController extends Controller
         $model = ProductVariant::query()->with('product')->findOrFail($variant);
 
         if (! $model->product->is_active || $model->product->trashed()) {
-            $message = 'This product is no longer available.';
+            $message = __('This product is no longer available.');
 
             return $request->wantsJson()
                 ? response()->json(['message' => $message], 422)
@@ -72,7 +72,7 @@ class CartController extends Controller
 
         $qty = (int) $request->validated('quantity');
         if ($qty > 0 && ! $model->isInStock($qty)) {
-            $message = 'Not enough stock for this item.';
+            $message = __('Not enough stock for this item.');
 
             return $request->wantsJson()
                 ? response()->json(['message' => $message], 422)
@@ -81,14 +81,14 @@ class CartController extends Controller
 
         $this->cart->update($variant, $qty);
 
-        return $this->cartResponse($request, 'Cart updated.');
+        return $this->cartResponse($request, __('Cart updated.'));
     }
 
     public function destroy(Request $request, int $variant): RedirectResponse|JsonResponse
     {
         $this->cart->remove($variant);
 
-        return $this->cartResponse($request, 'Item removed.');
+        return $this->cartResponse($request, __('Item removed.'));
     }
 
     private function cartResponse(Request $request, string $message): RedirectResponse|JsonResponse

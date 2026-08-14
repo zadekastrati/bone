@@ -23,7 +23,8 @@ class UpdateUserRequest extends FormRequest
         $userId = $routeUser instanceof User ? $routeUser->getKey() : $routeUser;
 
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'min:2', 'max:100'],
+            'last_name' => ['required', 'string', 'min:2', 'max:100'],
             'email' => [
                 'required',
                 'string',

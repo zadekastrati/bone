@@ -18,7 +18,9 @@ class OrderController extends Controller
             $query->where('user_id', $request->user()->id);
         }
 
-        $orders = $query->paginate(20)->withQueryString();
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $orders */
+        $orders = $query->paginate(20);
+        $orders->withQueryString();
 
         return view('shop.orders.index', compact('orders'));
     }

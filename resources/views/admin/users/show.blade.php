@@ -8,6 +8,12 @@
             <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                 <div class="min-w-0">
                     <h1 class="font-display text-2xl font-bold text-ink-950 sm:text-3xl">{{ $user->name }}</h1>
+                    <dl class="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-ink-600 sm:max-w-xs">
+                        <dt class="text-ink-400">First name</dt>
+                        <dd>{{ $user->first_name }}</dd>
+                        <dt class="text-ink-400">Last name</dt>
+                        <dd>{{ $user->last_name }}</dd>
+                    </dl>
                     <p class="mt-2 text-ink-600">{{ $user->email }}</p>
                     <p class="mt-4">
                         <x-admin.badge :tone="$user->role === 'admin' ? 'accent' : 'neutral'">{{ $user->role }}</x-admin.badge>

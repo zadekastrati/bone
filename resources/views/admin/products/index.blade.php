@@ -36,10 +36,7 @@
             @endif
         </form>
 
-        <form
-            method="POST"
-            action="{{ route('admin.products.bulkDestroy') }}"
-            data-confirm-label="Delete"
+        <div
             x-data="{
                 hasSelection: false,
                 selectedCount: 0,
@@ -56,17 +53,31 @@
                 },
             }"
             @change="refresh()"
-            :data-confirm="`Delete ${selectedCount} selected product(s)? This cannot be undone.`"
         >
-            @csrf
-            @method('DELETE')
-            <div class="mt-4" x-show="hasSelection" x-cloak>
-                <button type="submit" class="btn-danger">Delete Selected (<span x-text="selectedCount"></span>)</button>
-            </div>
+            {{--
+                This form does NOT wrap #products-results — nesting a <form> inside
+                another <form> is invalid HTML and browsers silently drop the inner
+                one, which was mis-submitting every per-row Archive button to this
+                bulk route instead (see the `form` attribute on the checkboxes below,
+                which associates them with this form despite living outside it).
+            --}}
+            <form
+                id="products-bulk-delete-form"
+                method="POST"
+                action="{{ route('admin.products.bulkDestroy') }}"
+                data-confirm-label="Archive"
+                :data-confirm="`Archive ${selectedCount} selected product(s)? You can restore them later from Archived.`"
+            >
+                @csrf
+                @method('DELETE')
+                <div class="mt-4" x-show="hasSelection" x-cloak>
+                    <button type="submit" class="btn-danger">Archive Selected (<span x-text="selectedCount"></span>)</button>
+                </div>
+            </form>
 
             <div id="products-results" class="transition-opacity" :class="{ 'opacity-50': loading }">
                 @include('admin.products.partials.results')
             </div>
-        </form>
+        </div>
     </div>
 @endsection
