@@ -21,7 +21,7 @@ class CheckoutController extends Controller
     public function create(): View|RedirectResponse
     {
         if ($this->cart->lines()->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('cart.index')->with('error', __('Your cart is empty.'));
         }
 
         $lines = $this->cart->lines();
@@ -50,7 +50,7 @@ class CheckoutController extends Controller
     public function store(StoreCheckoutRequest $request): RedirectResponse
     {
         if ($this->cart->lines()->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('cart.index')->with('error', __('Your cart is empty.'));
         }
 
         $validated = $request->validated();
@@ -67,7 +67,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', $e->getMessage());
         }
 
-        return redirect()->route('orders.show', $order)->with('success', 'Order placed successfully. Thank you.');
+        return redirect()->route('orders.show', $order)->with('success', __('Order placed successfully. Thank you.'));
     }
 
     private function shippingForCountry(string $countryCode): string

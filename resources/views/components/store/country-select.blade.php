@@ -17,7 +17,7 @@
     >
         @foreach ($currency->countries() as $code => $info)
             <option value="{{ $code }}" {{ $current === $code ? 'selected' : '' }}>
-                {{ $info['label'] }} ({{ $info['currency'] }})
+                {{ __($info['label']) }} ({{ $info['currency'] }})
             </option>
         @endforeach
     </select>

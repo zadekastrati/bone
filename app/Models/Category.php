@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Category extends Model
 {
@@ -11,6 +12,7 @@ class Category extends Model
         'name',
         'slug',
         'description',
+        'image_path',
         'sort_order',
     ];
 
@@ -34,5 +36,12 @@ class Category extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function imageUrl(): ?string
+    {
+        return $this->image_path !== null
+            ? Storage::disk('public')->url($this->image_path)
+            : null;
     }
 }

@@ -21,7 +21,7 @@ class RegisterOtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->appName.' — Confirm your email',
+            subject: $this->appName.' — '.__('Confirm your email'),
         );
     }
 

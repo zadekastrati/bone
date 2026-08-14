@@ -40,7 +40,7 @@ class ForgotPasswordController extends Controller
         if ($user !== null) {
             $code = $this->passwordResetOtp->issue($email);
 
-            Mail::to($email)->send(new PasswordResetOtpMail(
+            Mail::to($email)->locale(app()->getLocale())->send(new PasswordResetOtpMail(
                 code: $code,
                 userName: $user->name,
                 appName: (string) config('app.name'),
@@ -54,7 +54,7 @@ class ForgotPasswordController extends Controller
 
         return redirect()
             ->route('password.reset.verify')
-            ->with('success', 'If an account exists for that email, we\'ve sent a 6-digit code. Enter it below to continue.');
+            ->with('success', __('If an account exists for that email, we\'ve sent a 6-digit code. Enter it below to continue.'));
     }
 
     public function showVerify(Request $request): View|RedirectResponse
@@ -62,7 +62,7 @@ class ForgotPasswordController extends Controller
         if (! $request->session()->has('password_reset_pending')) {
             return redirect()
                 ->route('password.reset')
-                ->with('error', 'Start a password reset from the previous page first.');
+                ->with('error', __('Start a password reset from the previous page first.'));
         }
 
         $pending = $request->session()->get('password_reset_pending');
@@ -78,14 +78,14 @@ class ForgotPasswordController extends Controller
         if ($pending === null || ! isset($pending['email'])) {
             return redirect()
                 ->route('password.reset')
-                ->with('error', 'Session expired. Please start again.');
+                ->with('error', __('Session expired. Please start again.'));
         }
 
         $email = $pending['email'];
 
         if (! $this->passwordResetOtp->verify($email, $request->validated('code'))) {
             throw ValidationException::withMessages([
-                'code' => 'Invalid or expired code. Try again or request a new code.',
+                'code' => __('Invalid or expired code. Try again or request a new code.'),
             ]);
         }
 
@@ -98,7 +98,7 @@ class ForgotPasswordController extends Controller
 
         return redirect()
             ->route('password.reset.password')
-            ->with('success', 'Code verified. Choose a new password.');
+            ->with('success', __('Code verified. Choose a new password.'));
     }
 
     public function showNewPassword(Request $request): View|RedirectResponse
@@ -107,7 +107,7 @@ class ForgotPasswordController extends Controller
         if ($pending === null || empty($pending['verified'])) {
             return redirect()
                 ->route('password.reset')
-                ->with('error', 'Please verify your code first.');
+                ->with('error', __('Please verify your code first.'));
         }
 
         return view('auth.reset-password-new', [
@@ -121,7 +121,7 @@ class ForgotPasswordController extends Controller
         if ($pending === null || empty($pending['verified']) || ! isset($pending['email'])) {
             return redirect()
                 ->route('password.reset')
-                ->with('error', 'Session expired. Please start again.');
+                ->with('error', __('Session expired. Please start again.'));
         }
 
         $user = User::query()->where('email', $pending['email'])->first();
@@ -130,7 +130,7 @@ class ForgotPasswordController extends Controller
 
             return redirect()
                 ->route('password.reset')
-                ->with('error', 'Something went wrong. Please start again.');
+                ->with('error', __('Something went wrong. Please start again.'));
         }
 
         $user->update(['password' => Hash::make($request->validated('password'))]);
@@ -139,7 +139,7 @@ class ForgotPasswordController extends Controller
 
         return redirect()
             ->route('login')
-            ->with('success', 'Your password has been updated. Log in with your new password.');
+            ->with('success', __('Your password has been updated. Log in with your new password.'));
     }
 
     public function resend(Request $request): RedirectResponse
@@ -155,14 +155,14 @@ class ForgotPasswordController extends Controller
         if ($user !== null) {
             $code = $this->passwordResetOtp->issue($email);
 
-            Mail::to($email)->send(new PasswordResetOtpMail(
+            Mail::to($email)->locale(app()->getLocale())->send(new PasswordResetOtpMail(
                 code: $code,
                 userName: $user->name,
                 appName: (string) config('app.name'),
             ));
         }
 
-        return back()->with('success', 'If an account exists for that email, a new code has been sent.');
+        return back()->with('success', __('If an account exists for that email, a new code has been sent.'));
     }
 
     public function cancel(Request $request): RedirectResponse
@@ -176,7 +176,7 @@ class ForgotPasswordController extends Controller
 
         return redirect()
             ->route('password.reset')
-            ->with('success', 'Password reset cancelled. You can start again anytime.');
+            ->with('success', __('Password reset cancelled. You can start again anytime.'));
     }
 
     private function maskEmail(string $email): string

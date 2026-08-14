@@ -1,14 +1,26 @@
 @props([
     'product',
+    'imagesByColor' => null,
+    'defaultColor' => null,
 ])
 
 @php
-    $items = $product->images->map(fn ($image) => [
+    $toItems = fn ($images) => $images->map(fn ($image) => [
         'id' => $image->id,
         'url' => $image->url(),
         'isVideo' => $image->isVideo(),
         'alt' => $product->name,
     ])->values()->all();
+
+    $colorItems = collect($imagesByColor)->map($toItems)->all();
+
+    // Show only the default color's photos to start (falling back to the
+    // shared pool already baked into $colorItems by Product::imagesForColor,
+    // or to every photo if the product has no colors at all). Clicking a
+    // color swatch still swaps via colorItems below, unchanged.
+    $items = ($defaultColor !== null && ! empty($colorItems[$defaultColor]))
+        ? $colorItems[$defaultColor]
+        : $toItems($product->images);
 @endphp
 
 @if ($product->images->isEmpty())
@@ -21,8 +33,17 @@
         x-data="{
             active: 0,
             items: @js($items),
+            colorItems: @js($colorItems),
             setSlide(index) {
                 this.active = index;
+                this.syncVideos();
+            },
+            onColorChange(color) {
+                const list = this.colorItems[color];
+                if (list && list.length) {
+                    this.items = list;
+                }
+                this.active = 0;
                 this.syncVideos();
             },
             next() {
@@ -47,6 +68,7 @@
                 this.syncVideos();
             },
         }"
+        x-on:product-color-selected.window="onColorChange($event.detail.color)"
     >
         <div class="relative">
             <div x-ref="stage" class="store-card overflow-hidden bg-ink-100 shadow-elevated">

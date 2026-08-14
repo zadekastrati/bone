@@ -21,7 +21,7 @@ class EmailChangeOtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->appName.' — Confirm your new email',
+            subject: $this->appName.' — '.__('Confirm your new email'),
         );
     }
 

@@ -21,7 +21,7 @@ class PasswordResetOtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->appName.' — Reset your password',
+            subject: $this->appName.' — '.__('Reset your password'),
         );
     }
 

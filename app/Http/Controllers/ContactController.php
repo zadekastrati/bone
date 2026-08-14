@@ -28,6 +28,6 @@ class ContactController extends Controller
 
         return redirect()
             ->route('contact')
-            ->with('success', 'Thanks for reaching out. We received your message and will get back to you soon.');
+            ->with('success', __('Thanks for reaching out. We received your message and will get back to you soon.'));
     }
 }

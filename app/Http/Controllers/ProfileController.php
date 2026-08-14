@@ -84,7 +84,7 @@ class ProfileController extends Controller
         if ($phoneNeedsVerification) {
             $code = $this->phoneChangeOtp->issue($user->id);
 
-            Mail::to($user->email)->send(new PhoneChangeOtpMail(
+            Mail::to($user->email)->locale(app()->getLocale())->send(new PhoneChangeOtpMail(
                 code: $code,
                 userName: $user->name,
                 appName: $appName,
@@ -102,22 +102,22 @@ class ProfileController extends Controller
             return redirect()
                 ->route('profile.edit')
                 ->with('success', $phoneNeedsVerification
-                    ? 'Your details were updated. We sent a verification code to your email — enter it below to confirm your new phone number.'
-                    : 'Profile updated.');
+                    ? __('Your details were updated. We sent a verification code to your email — enter it below to confirm your new phone number.')
+                    : __('Profile updated.'));
         }
 
         $requestedAt = now()->format('M j, Y \a\t g:i A');
 
         $code = $this->emailChangeOtp->issue($newEmail);
 
-        Mail::to($newEmail)->send(new EmailChangeOtpMail(
+        Mail::to($newEmail)->locale(app()->getLocale())->send(new EmailChangeOtpMail(
             code: $code,
             userName: $user->name,
             appName: $appName,
         ));
 
         // Let the current address holder know too, in case this wasn't them.
-        Mail::to($oldEmail)->send(new EmailChangeRequestedMail(
+        Mail::to($oldEmail)->locale(app()->getLocale())->send(new EmailChangeRequestedMail(
             userName: $user->name,
             appName: $appName,
             newEmail: $newEmail,
@@ -128,7 +128,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'Your details were updated. We sent a verification code to your new email — enter it below to confirm the change.');
+            ->with('success', __('Your details were updated. We sent a verification code to your new email — enter it below to confirm the change.'));
     }
 
     public function verifyEmail(VerifyEmailChangeRequest $request): RedirectResponse
@@ -137,12 +137,12 @@ class ProfileController extends Controller
         if ($pending === null) {
             return redirect()
                 ->route('profile.edit')
-                ->with('error', 'That verification code expired. Please request the email change again.');
+                ->with('error', __('That verification code expired. Please request the email change again.'));
         }
 
         if (! $this->emailChangeOtp->verify($pending, $request->validated('code'))) {
             throw ValidationException::withMessages([
-                'code' => 'Invalid or expired code. Try again or request a new code.',
+                'code' => __('Invalid or expired code. Try again or request a new code.'),
             ]);
         }
 
@@ -152,7 +152,7 @@ class ProfileController extends Controller
         $user = $request->user();
         $user->update(['email' => $pending]);
 
-        Mail::to($pending)->send(new EmailChangedMail(
+        Mail::to($pending)->locale(app()->getLocale())->send(new EmailChangedMail(
             userName: $user->name,
             appName: (string) config('app.name'),
             changedAt: now()->format('M j, Y \a\t g:i A'),
@@ -160,7 +160,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'Your email address has been updated.');
+            ->with('success', __('Your email address has been updated.'));
     }
 
     public function resendEmailCode(Request $request): RedirectResponse
@@ -173,7 +173,7 @@ class ProfileController extends Controller
         $email = $pending['email'];
         $code = $this->emailChangeOtp->issue($email);
 
-        Mail::to($email)->send(new EmailChangeOtpMail(
+        Mail::to($email)->locale(app()->getLocale())->send(new EmailChangeOtpMail(
             code: $code,
             userName: $request->user()->name,
             appName: (string) config('app.name'),
@@ -181,7 +181,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'A new code has been sent to your new email.');
+            ->with('success', __('A new code has been sent to your new email.'));
     }
 
     public function cancelEmailChange(Request $request): RedirectResponse
@@ -195,7 +195,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'Email change cancelled.');
+            ->with('success', __('Email change cancelled.'));
     }
 
     public function verifyPhone(VerifyPhoneChangeRequest $request): RedirectResponse
@@ -206,12 +206,12 @@ class ProfileController extends Controller
         if ($pending === null) {
             return redirect()
                 ->route('profile.edit')
-                ->with('error', 'That verification code expired. Please request the phone change again.');
+                ->with('error', __('That verification code expired. Please request the phone change again.'));
         }
 
         if (! $this->phoneChangeOtp->verify($user->id, $request->validated('phone_code'))) {
             throw ValidationException::withMessages([
-                'code' => 'Invalid or expired code. Try again or request a new code.',
+                'code' => __('Invalid or expired code. Try again or request a new code.'),
             ]);
         }
 
@@ -222,7 +222,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'Your phone number has been updated.');
+            ->with('success', __('Your phone number has been updated.'));
     }
 
     public function resendPhoneCode(Request $request): RedirectResponse
@@ -235,7 +235,7 @@ class ProfileController extends Controller
         $user = $request->user();
         $code = $this->phoneChangeOtp->issue($user->id);
 
-        Mail::to($user->email)->send(new PhoneChangeOtpMail(
+        Mail::to($user->email)->locale(app()->getLocale())->send(new PhoneChangeOtpMail(
             code: $code,
             userName: $user->name,
             appName: (string) config('app.name'),
@@ -244,7 +244,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'A new code has been sent to your email.');
+            ->with('success', __('A new code has been sent to your email.'));
     }
 
     public function cancelPhoneChange(Request $request): RedirectResponse
@@ -254,7 +254,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'Phone number change cancelled.');
+            ->with('success', __('Phone number change cancelled.'));
     }
 
     public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
@@ -265,7 +265,7 @@ class ProfileController extends Controller
             'password' => $request->validated('password'),
         ]);
 
-        Mail::to($user->email)->send(new PasswordChangedMail(
+        Mail::to($user->email)->locale(app()->getLocale())->send(new PasswordChangedMail(
             userName: $user->name,
             appName: (string) config('app.name'),
             changedAt: now()->format('M j, Y \a\t g:i A'),
@@ -273,7 +273,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'Password changed.');
+            ->with('success', __('Password changed.'));
     }
 
     /**

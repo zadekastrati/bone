@@ -22,7 +22,7 @@ class PhoneChangeOtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->appName.' — Confirm your phone number',
+            subject: $this->appName.' — '.__('Confirm your phone number'),
         );
     }
 

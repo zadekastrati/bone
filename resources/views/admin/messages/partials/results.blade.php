@@ -16,7 +16,7 @@
                         <td class="font-medium text-ink-900">{{ $message->name }}</td>
                         <td><a href="mailto:{{ $message->email }}" class="text-ink-700 hover:text-accent-700">{{ $message->email }}</a></td>
                         <td class="max-w-[34rem] text-ink-600">{{ \Illuminate\Support\Str::limit($message->message, 120) }}</td>
-                        <td class="text-ink-600">{{ $message->created_at->format('M j, Y H:i') }}</td>
+                        <td class="text-ink-600">{{ $message->created_at->copy()->timezone(config('store.display_timezone'))->format('M j, Y H:i') }}</td>
                         <td class="text-right">
                             <a href="{{ route('admin.messages.show', $message->id) }}" class="admin-action-link">Open</a>
                         </td>
