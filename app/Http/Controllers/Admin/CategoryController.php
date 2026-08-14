@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreCategoryRequest;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -35,7 +36,13 @@ class CategoryController extends Controller
     {
         $this->authorize('create', Category::class);
 
-        Category::create($request->validated());
+        $data = collect($request->validated())->except('image')->all();
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('categories', 'public');
+        }
+
+        Category::create($data);
 
         return redirect()->route('admin.categories.index')->with('success', 'Category created.');
     }
@@ -51,7 +58,17 @@ class CategoryController extends Controller
     {
         $this->authorize('update', $category);
 
-        $category->update($request->validated());
+        $data = collect($request->validated())->except('image')->all();
+
+        if ($request->hasFile('image')) {
+            if ($category->image_path !== null) {
+                Storage::disk('public')->delete($category->image_path);
+            }
+
+            $data['image_path'] = $request->file('image')->store('categories', 'public');
+        }
+
+        $category->update($data);
 
         return redirect()->route('admin.categories.index')->with('success', 'Category updated.');
     }
@@ -62,6 +79,10 @@ class CategoryController extends Controller
 
         if ($category->products()->exists()) {
             return redirect()->route('admin.categories.index')->with('error', 'Move or delete products in this category first.');
+        }
+
+        if ($category->image_path !== null) {
+            Storage::disk('public')->delete($category->image_path);
         }
 
         $category->delete();

@@ -56,21 +56,22 @@
                 </div>
                 <a href="{{ route('shop.index') }}" class="link-brand inline-flex shrink-0 text-sm font-bold uppercase tracking-mega">View all</a>
             </div>
-            <div class="mt-12 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
-                @foreach ([
-                    ['label' => 'Leggings', 'sub' => 'Sculpt & sweat', 'href' => route('shop.index'), 'image' => 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80'],
-                    ['label' => 'Sports bras', 'sub' => 'High support', 'href' => route('shop.index'), 'image' => 'https://images.unsplash.com/photo-1548690312-e3b507d8c110?auto=format&fit=crop&w=1200&q=80'],
-                    ['label' => 'Tops', 'sub' => 'Crops & tanks', 'href' => route('shop.index'), 'image' => 'https://images.unsplash.com/photo-1518310952931-b1de897abd40?auto=format&fit=crop&w=1200&q=80'],
-                    ['label' => 'Layers', 'sub' => 'Hoodies & jackets', 'href' => route('shop.index'), 'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80'],
-                ] as $tile)
+            <div class="mt-12 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-5 lg:gap-6">
+                @foreach ($categories as $cat)
+                    @php
+                        $overlay = 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(250,246,241,0.86) 74%, rgba(247,241,235,0.94) 100%)';
+                        $bgImage = $cat->imageUrl() ? "{$overlay}, url('{$cat->imageUrl()}')" : $overlay;
+                    @endphp
                     <a
-                        href="{{ $tile['href'] }}"
+                        href="{{ route('shop.category', $cat) }}"
                         class="group relative flex min-h-[260px] flex-col justify-end overflow-hidden rounded-3xl p-7 text-ink-900 shadow-float ring-1 ring-zinc-200/60 transition duration-500 ease-out-expo motion-reduce:transition-none motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-[0_28px_56px_-16px_rgba(63,63,70,0.35)] motion-safe:hover:ring-accent-300/50"
-                        style="background-image: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(250,246,241,0.86) 74%, rgba(247,241,235,0.94) 100%), url('{{ $tile['image'] }}'); background-size: cover; background-position: center;"
+                        style="background-image: {{ $bgImage }}; background-size: cover; background-position: center;"
                     >
                         <div class="absolute inset-0 bg-card-shine opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                        <span class="relative text-xs font-bold uppercase tracking-mega text-ink-600">{{ $tile['sub'] }}</span>
-                        <span class="relative mt-2 font-display text-2xl font-bold uppercase tracking-wide lg:text-3xl">{{ $tile['label'] }}</span>
+                        @if ($cat->description)
+                            <span class="relative text-xs font-bold uppercase tracking-mega text-ink-600">{{ $cat->description }}</span>
+                        @endif
+                        <span class="relative mt-2 font-display text-2xl font-bold uppercase tracking-wide lg:text-3xl">{{ $cat->name }}</span>
                         <span class="relative mt-4 inline-flex text-xs font-bold uppercase tracking-mega text-accent-800 underline-offset-4 transition-all group-hover:translate-x-0.5 group-hover:underline">Shop now →</span>
                     </a>
                 @endforeach
