@@ -36,7 +36,20 @@ return [
             'throw' => false,
         ],
 
-        'public' => [
+        'public' => env('FILESYSTEM_DISK', 'local') === 's3' ? [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+            // Cloudflare R2 does not support the S3 ACL API — no 'visibility' key, so Flysystem
+            // never sends an ACL header. Object readability comes from the bucket's own public
+            // access setting (custom domain / r2.dev), not from per-object ACLs.
+        ] : [
             'driver' => 'local',
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
