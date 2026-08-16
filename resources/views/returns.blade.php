@@ -13,7 +13,7 @@
                 <section>
                     <h2 class="text-base font-semibold text-ink-900">{{ __('Return window') }}</h2>
                     <p class="mt-2">
-                        {{ __('You can request a return within 30 days of delivery for eligible items in original condition.') }}
+                        {{ __('You can request a return within 2-4 business days of delivery for eligible items in original condition.') }}
                     </p>
                 </section>
 
@@ -21,6 +21,13 @@
                     <h2 class="text-base font-semibold text-ink-900">{{ __('Condition requirements') }}</h2>
                     <p class="mt-2">
                         {{ __('Items must be unworn, unwashed, and returned with original tags attached.') }}
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-base font-semibold text-ink-900">{{ __('Exchange fees') }}</h2>
+                    <p class="mt-2">
+                        {{ __('To exchange a product, a postage fee applies: :kosovo within Kosovo, or :other for North Macedonia and Albania. If the item is faulty, damaged, or incorrect due to our error, we cover all costs and no fee applies.', ['kosovo' => '€3', 'other' => '€7']) }}
                     </p>
                 </section>
 
@@ -34,7 +41,7 @@
                 <section>
                     <h2 class="text-base font-semibold text-ink-900">{{ __('Refund timing') }}</h2>
                     <p class="mt-2">
-                        {{ __('Approved refunds are issued to the original payment method within 5-10 business days after inspection.') }}
+                        {{ __('Approved refunds are issued either through the postman on the day of return, or directly to your bank account.') }}
                     </p>
                 </section>
             </div>

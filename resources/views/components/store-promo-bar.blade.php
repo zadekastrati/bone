@@ -1,9 +1,8 @@
 {{-- Gymshark-style rotating promo strip (demo copy — not affiliated with any third-party brand) --}}
 @php
     $items = [
-        __('Free standard shipping on orders over :amount', ['amount' => config('store.currency_symbol') . '75']),
-        __('New drop every month · limited colourways'),
-        __('Students save 10% with verified ID'),
+        __('Free shipping on orders over :amount', ['amount' => config('store.currency_symbol') . '100']),
+        __('Cash on delivery available in Kosovo, North Macedonia & Albania'),
         __('Sign up for first-order perks & restock news'),
     ];
 @endphp
