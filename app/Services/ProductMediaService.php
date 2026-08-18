@@ -38,6 +38,52 @@ class ProductMediaService
     }
 
     /**
+     * Attach files that already exist on the "public" disk (e.g. R2 objects uploaded
+     * outside the app) to $product, without uploading or moving anything. Paths already
+     * attached to any product, or missing from the disk, are silently skipped here — the
+     * real guard is StoreProductRequest/UpdateProductRequest validation, which rejects
+     * the whole submission with a clear error; this is just a defensive second check.
+     *
+     * @param  list<string>  $paths
+     */
+    public function attachExisting(Product $product, array $paths, ?string $color = null): void
+    {
+        $paths = array_values(array_unique(array_filter(
+            $paths,
+            fn ($path): bool => is_string($path) && $path !== ''
+        )));
+
+        if ($paths === []) {
+            return;
+        }
+
+        $alreadyAttached = ProductImage::query()->whereIn('path', $paths)->pluck('path')->all();
+        $paths = array_values(array_diff($paths, $alreadyAttached));
+
+        if ($paths === []) {
+            return;
+        }
+
+        $disk = Storage::disk('public');
+        $sortOrder = (int) $product->images()->max('sort_order') + 1;
+
+        foreach ($paths as $path) {
+            if (! $disk->exists($path)) {
+                continue;
+            }
+
+            $product->images()->create([
+                'color' => $color,
+                'path' => $path,
+                'sort_order' => $sortOrder,
+            ]);
+            $sortOrder++;
+        }
+
+        $this->ensureThumbnail($product);
+    }
+
+    /**
      * @param  list<int|string>  $ids
      */
     public function deleteImages(Product $product, array $ids): void

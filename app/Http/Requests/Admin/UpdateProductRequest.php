@@ -36,6 +36,11 @@ class UpdateProductRequest extends FormRequest
             'variant_images' => ['nullable', 'array'],
             'variant_images.*' => ['array', 'max:12'],
             'variant_images.*.*' => ['file', 'mimes:jpeg,jpg,png,webp,mp4,webm,mov,ogg,m4v', 'max:102400'],
+            'attach_images' => ['nullable', 'array', 'max:50'],
+            'attach_images.*' => ['string', 'max:2048'],
+            'attach_variant_images' => ['nullable', 'array'],
+            'attach_variant_images.*' => ['array', 'max:50'],
+            'attach_variant_images.*.*' => ['string', 'max:2048'],
             'thumbnail_image_id' => ['nullable', 'integer', Rule::exists('product_images', 'id')->where('product_id', $productId)],
             'delete_image_ids' => ['nullable', 'array', 'max:50'],
             'delete_image_ids.*' => ['integer', Rule::exists('product_images', 'id')->where('product_id', $productId)],
@@ -87,6 +92,8 @@ class UpdateProductRequest extends FormRequest
                 }
             }
 
+            $this->validateAttachPaths($validator);
+
             $thumbnailId = $this->input('thumbnail_image_id');
             if ($thumbnailId !== null && $thumbnailId !== '') {
                 /** @var Product $routeProduct */
@@ -102,5 +109,38 @@ class UpdateProductRequest extends FormRequest
                 }
             }
         });
+    }
+
+    /**
+     * Guards against attaching the same R2 library file twice: once within this
+     * submission (picked in two color sections at once), and once against files
+     * already attached to any product (including a stale picker list from before
+     * someone else claimed the file). Also rejects paths that don't exist on disk.
+     */
+    private function validateAttachPaths(Validator $validator): void
+    {
+        $paths = collect($this->input('attach_images', []))
+            ->merge(collect($this->input('attach_variant_images', []))->flatten())
+            ->filter(fn ($path) => is_string($path) && $path !== '')
+            ->values();
+
+        if ($paths->isEmpty()) {
+            return;
+        }
+
+        if ($paths->count() !== $paths->unique()->count()) {
+            $validator->errors()->add('attach_images', 'The same library file was selected more than once — remove the duplicate and try again.');
+        }
+
+        $alreadyAttached = \App\Models\ProductImage::query()->whereIn('path', $paths->all())->pluck('path');
+        if ($alreadyAttached->isNotEmpty()) {
+            $validator->errors()->add('attach_images', 'These files are already attached to a product: '.$alreadyAttached->implode(', ').'. Refresh the library and pick again.');
+        }
+
+        $disk = \Illuminate\Support\Facades\Storage::disk('public');
+        $missing = $paths->reject(fn (string $path): bool => $disk->exists($path));
+        if ($missing->isNotEmpty()) {
+            $validator->errors()->add('attach_images', 'These files were not found in storage: '.$missing->implode(', '));
+        }
     }
 }

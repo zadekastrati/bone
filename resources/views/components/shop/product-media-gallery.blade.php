@@ -8,6 +8,8 @@
     $toItems = fn ($images) => $images->map(fn ($image) => [
         'id' => $image->id,
         'url' => $image->url(),
+        'thumbUrl' => $image->thumbUrl(),
+        'displayUrl' => $image->displayUrl(),
         'isVideo' => $image->isVideo(),
         'alt' => $product->name,
     ])->values()->all();
@@ -87,8 +89,9 @@
                         ></video>
                         <img
                             x-show="!item.isVideo"
-                            :src="item.url"
+                            :src="item.displayUrl"
                             :alt="item.alt"
+                            decoding="async"
                             class="aspect-[4/5] w-full object-cover"
                         >
                     </div>
@@ -141,8 +144,10 @@
                         ></video>
                         <img
                             x-show="!item.isVideo"
-                            :src="item.url"
+                            :src="item.thumbUrl"
                             alt=""
+                            loading="lazy"
+                            decoding="async"
                             class="aspect-square size-full object-cover"
                         >
                     </button>

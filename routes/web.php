@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MediaLibraryController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
@@ -50,6 +52,10 @@ Route::post('/country', [CountryController::class, 'update'])
 Route::post('/locale', [LocaleController::class, 'update'])
     ->middleware('throttle:30,1')
     ->name('locale.update');
+
+Route::get('media/product-images/{productImage}/{variant}', [MediaController::class, 'productImage'])
+    ->where('variant', 'thumb|display')
+    ->name('media.product-images.show');
 
 Route::prefix('shop')->name('shop.')->group(function (): void {
     Route::get('/', [ShopController::class, 'index'])->name('index');
@@ -114,6 +120,8 @@ Route::middleware('auth')->group(function (): void {
         Route::post('notifications/seen', [AdminNotificationController::class, 'markSeen'])->name('notifications.seen');
         Route::resource('users', AdminUserController::class);
         Route::resource('categories', AdminCategoryController::class)->except(['show']);
+        Route::get('media-library', [MediaLibraryController::class, 'index'])->name('media-library.index');
+        Route::get('media-library/thumbnail', [MediaLibraryController::class, 'thumbnail'])->name('media-library.thumbnail');
         Route::get('products-archived', [AdminProductController::class, 'archived'])->name('products.archived');
         Route::post('products/{product}/restore', [AdminProductController::class, 'restore'])
             ->withTrashed()
