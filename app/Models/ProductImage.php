@@ -54,6 +54,15 @@ class ProductImage extends Model
         return $this->isVideo() ? $this->url() : route('media.product-images.show', [$this, 'display']);
     }
 
+    /**
+     * Resized JPEG (max 800px edge) for the shop's product grid cards, which
+     * render much larger than the small tiles "thumb" is sized for.
+     */
+    public function gridUrl(): string
+    {
+        return $this->isVideo() ? $this->url() : route('media.product-images.show', [$this, 'grid']);
+    }
+
     public function isVideo(): bool
     {
         return self::isVideoPath($this->path);

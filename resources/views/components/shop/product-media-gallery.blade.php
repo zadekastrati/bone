@@ -36,6 +36,7 @@
             active: 0,
             items: @js($items),
             colorItems: @js($colorItems),
+            preloadReady: false,
             setSlide(index) {
                 this.active = index;
                 this.syncVideos();
@@ -46,7 +47,9 @@
                     this.items = list;
                 }
                 this.active = 0;
+                this.preloadReady = false;
                 this.syncVideos();
+                this.schedulePreload();
             },
             next() {
                 this.setSlide((this.active + 1) % this.items.length);
@@ -66,8 +69,18 @@
                     });
                 });
             },
+            // Only the active slide's full-size image is requested right
+            // away; the rest of this color's photos are held back briefly
+            // so they don't compete with it for the connection on the very
+            // first load. They still finish well before a shopper reacts
+            // and clicks next/prev, which is what keeps that interaction
+            // feeling instant.
+            schedulePreload() {
+                setTimeout(() => { this.preloadReady = true; }, 400);
+            },
             init() {
                 this.syncVideos();
+                this.schedulePreload();
             },
         }"
         x-on:product-color-selected.window="onColorChange($event.detail.color)"
@@ -89,8 +102,9 @@
                         ></video>
                         <img
                             x-show="!item.isVideo"
-                            :src="item.displayUrl"
+                            :src="(index === active || preloadReady) ? item.displayUrl : null"
                             :alt="item.alt"
+                            :fetchpriority="index === active ? 'high' : 'low'"
                             decoding="async"
                             class="aspect-[4/5] w-full object-cover"
                         >
