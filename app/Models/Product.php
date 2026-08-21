@@ -72,7 +72,12 @@ class Product extends Model
     }
 
     /**
-     * Search active products by name, description, or category name (case-sensitive depends on DB collation).
+     * Search active products by name — case-insensitive substring match first
+     * (handles the common case cheaply, in SQL), falling back to a fuzzy,
+     * typo-tolerant match in PHP only when the substring search finds
+     * nothing. This is what lets a near-miss like "leggins" still find
+     * "The Sculpt Leggings": that's a one-letter edit away from "leggings",
+     * not a substring of it, so no LIKE pattern would ever match it.
      */
     public function scopeSearch(Builder $query, string $term): Builder
     {
@@ -84,13 +89,59 @@ class Product extends Model
         $escaped = addcslashes($term, '%_\\');
         $like = '%'.$escaped.'%';
 
-        return $query->where(function (Builder $q) use ($like): void {
-            $q->where('name', 'like', $like)
-                ->orWhere('description', 'like', $like)
-                ->orWhereHas('category', function (Builder $c) use ($like): void {
-                    $c->where('name', 'like', $like);
-                });
-        });
+        $matchedIds = (clone $query)->where('name', 'like', $like)->pluck('id');
+
+        if ($matchedIds->isEmpty() && mb_strlen($term) >= 3) {
+            $matchedIds = self::fuzzySearchIds($query, $term);
+        }
+
+        return $query->whereIn('id', $matchedIds);
+    }
+
+    /**
+     * @return Collection<int, int>
+     */
+    private static function fuzzySearchIds(Builder $query, string $term): Collection
+    {
+        $termWords = array_values(array_filter(preg_split('/\s+/', mb_strtolower($term))));
+        if ($termWords === []) {
+            return collect();
+        }
+
+        return (clone $query)->pluck('name', 'id')
+            ->filter(function (string $name) use ($termWords): bool {
+                $nameWords = preg_split('/\s+/', mb_strtolower($name));
+
+                foreach ($termWords as $termWord) {
+                    $hasMatch = collect($nameWords)->contains(
+                        fn (string $nameWord): bool => self::isFuzzyMatch($termWord, $nameWord)
+                    );
+
+                    if (! $hasMatch) {
+                        return false;
+                    }
+                }
+
+                return true;
+            })
+            ->keys();
+    }
+
+    /**
+     * True if $a and $b are within a small edit distance of each other —
+     * one typo (missing/extra/wrong letter) for most words, two for longer
+     * ones, where a single edit is proportionally less significant.
+     */
+    private static function isFuzzyMatch(string $a, string $b): bool
+    {
+        $shorter = min(mb_strlen($a), mb_strlen($b));
+        $maxDistance = $shorter <= 10 ? 1 : 2;
+
+        if (abs(mb_strlen($a) - mb_strlen($b)) > $maxDistance) {
+            return false;
+        }
+
+        return levenshtein($a, $b) <= $maxDistance;
     }
 
     public function getRouteKeyName(): string

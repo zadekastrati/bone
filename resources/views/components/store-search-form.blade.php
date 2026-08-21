@@ -74,7 +74,6 @@
                 id="store-sort-{{ $variant }}"
                 class="form-select w-full"
                 aria-label="{{ __('Sort by') }}"
-                onchange="this.form.requestSubmit()"
             >
                 <option value="newest" @selected($sort === 'newest')>{{ __('Newest First') }}</option>
                 <option value="oldest" @selected($sort === 'oldest')>{{ __('Oldest First') }}</option>

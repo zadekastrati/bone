@@ -53,8 +53,21 @@ Route::post('/locale', [LocaleController::class, 'update'])
     ->middleware('throttle:30,1')
     ->name('locale.update');
 
+// Public, unauthenticated, cacheable image responses — they never touch the
+// session, cookies, CSRF, or locale, so skip that middleware entirely rather
+// than paying its (very real, on this filesystem) autoload cost on every
+// single image request.
 Route::get('media/product-images/{productImage}/{variant}', [MediaController::class, 'productImage'])
-    ->where('variant', 'thumb|display')
+    ->where('variant', 'thumb|display|grid')
+    ->withoutMiddleware([
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+        \App\Http\Middleware\ClearAbandonedRegistration::class,
+        \App\Http\Middleware\SetLocale::class,
+    ])
     ->name('media.product-images.show');
 
 Route::prefix('shop')->name('shop.')->group(function (): void {
