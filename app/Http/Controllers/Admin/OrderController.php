@@ -6,8 +6,11 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateOrderRequest;
 use App\Models\Order;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -52,6 +55,51 @@ class OrderController extends Controller
         $order->load(['items', 'user']);
 
         return view('admin.orders.show', compact('order'));
+    }
+
+    public function details(Order $order): View
+    {
+        $this->authorize('view', $order);
+
+        $order->load(['items.variant.product.images', 'user']);
+
+        return view('admin.orders.partials.detail', compact('order'));
+    }
+
+    public function quickStatus(Request $request, Order $order): JsonResponse
+    {
+        $this->authorize('update', $order);
+
+        $validated = $request->validate([
+            'status' => ['required', Rule::enum(OrderStatus::class)],
+        ]);
+
+        $status = OrderStatus::from($validated['status']);
+        $shippedAt = $order->shipped_at;
+
+        if ($status === OrderStatus::Shipped && $shippedAt === null) {
+            $shippedAt = now();
+        }
+
+        $order->update(['status' => $status, 'shipped_at' => $shippedAt]);
+
+        return response()->json([
+            'status' => $status->value,
+            'label' => $status->label(),
+            'badge' => Blade::render(
+                '<x-admin.badge :tone="$tone">{{ $label }}</x-admin.badge>',
+                ['tone' => $status->tone(), 'label' => $status->label()]
+            ),
+        ]);
+    }
+
+    public function invoice(Order $order): View
+    {
+        $this->authorize('view', $order);
+
+        $order->load(['items', 'user']);
+
+        return view('admin.orders.invoice', compact('order'));
     }
 
     public function update(UpdateOrderRequest $request, Order $order): RedirectResponse

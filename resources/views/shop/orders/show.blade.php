@@ -17,10 +17,16 @@
                 <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-950">{{ __('Items') }}</h2>
                 <ul class="mt-4 divide-y divide-ink-100 text-sm">
                     @foreach ($order->items as $item)
+                        @php
+                            $thumb = $item->variant?->product?->thumbnailImage();
+                        @endphp
                         <li class="flex flex-wrap items-center justify-between gap-3 py-4">
-                            <div>
-                                <p class="font-semibold text-ink-950">{{ $item->product_name }}</p>
-                                <p class="text-xs text-ink-500">{{ $item->color }} · {{ $item->size }} @if ($item->sku) · {{ $item->sku }} @endif</p>
+                            <div class="flex items-center gap-4">
+                                <x-product-image-thumb :path="$thumb?->path" size="sm" />
+                                <div>
+                                    <p class="font-semibold text-ink-950">{{ $item->product_name }}</p>
+                                    <p class="text-xs text-ink-500">{{ $item->color }} · {{ $item->size }} @if ($item->sku) · {{ $item->sku }} @endif</p>
+                                </div>
                             </div>
                             <div class="text-right text-sm">
                                 <p class="text-ink-600">× {{ $item->quantity }}</p>

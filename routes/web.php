@@ -129,6 +129,9 @@ Route::middleware('auth')->group(function (): void {
         Route::resource('messages', AdminContactMessageController::class)
             ->parameters(['messages' => 'id'])
             ->only(['index', 'show']);
+        Route::get('orders/{order}/details', [AdminOrderController::class, 'details'])->name('orders.details');
+        Route::patch('orders/{order}/quick-status', [AdminOrderController::class, 'quickStatus'])->name('orders.quickStatus');
+        Route::get('orders/{order}/invoice', [AdminOrderController::class, 'invoice'])->name('orders.invoice');
         Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
     });
 });

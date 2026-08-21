@@ -27,12 +27,14 @@
     };
     $imgFit = match ($size) {
         'grid' => 'h-full w-full object-cover object-center',
+        'sm' => '',
         'cartRow' => '',
         'editorial' => '',
         default => 'h-full w-full object-cover',
     };
 
     [$imgW, $imgH] = match ($size) {
+        'sm' => [40, 40],
         'cartRow' => [72, 72],
         'editorial' => [40, 40],
         default => [160, 200],
