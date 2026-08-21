@@ -11,9 +11,13 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     libonig-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libwebp-dev \
     nodejs \
     npm \
-    && docker-php-ext-install pdo pdo_mysql zip mbstring
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
+    && docker-php-ext-install pdo pdo_mysql zip mbstring gd
 
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json ./

@@ -406,4 +406,211 @@ document.addEventListener('drop', (event) => {
         .catch(() => { alert('Failed to save the new photo order. Please try again.'); });
 });
 
+/**
+ * Shared state for the admin "choose from library" picker (see
+ * admin/products/partials/image-gallery.blade.php and the
+ * admin.product-media-library-picker / admin.media-library-modal components).
+ * One fetch of the R2 file list is shared across every color section's picker
+ * on the page; pickedPaths tracks files chosen but not yet saved, so the same
+ * file can't be picked into two color sections in one editing session.
+ */
+Alpine.store('mediaLibrary', {
+    loading: false,
+    error: null,
+    files: [],
+    pickedPaths: [],
+    // Re-fetches every time the picker opens rather than caching after the first
+    // load — files get added to R2 directly (outside the app) at any time, so a
+    // stale in-memory list would hide anything uploaded after the picker was
+    // first opened on the page, even after closing and reopening it.
+    async ensureLoaded(url) {
+        if (this.loading) {
+            return;
+        }
+        this.loading = true;
+        this.error = null;
+        try {
+            const response = await axios.get(url);
+            // `visible` and `selected` are per-tile UI flags, not server data — mutated
+            // directly on these same objects by the modal below so that touching one
+            // tile only re-renders that tile, not the whole ~250-file grid.
+            this.files = (response.data.files || []).map((file) => ({ ...file, visible: false, selected: false }));
+        } catch (error) {
+            this.error = 'Could not load the media library. Please try again.';
+        } finally {
+            this.loading = false;
+        }
+    },
+    available() {
+        return this.files.filter((file) => ! this.pickedPaths.includes(file.path));
+    },
+    markPicked(paths) {
+        paths.forEach((path) => {
+            if (! this.pickedPaths.includes(path)) {
+                this.pickedPaths.push(path);
+            }
+        });
+    },
+    unmark(path) {
+        this.pickedPaths = this.pickedPaths.filter((p) => p !== path);
+    },
+});
+
+Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
+    open: false,
+    view: 'folders', // 'folders' | 'files' — browsing by folder first keeps each
+    // rendered grid down to ~100 tiles instead of all ~276 at once, which is what was
+    // actually making the picker feel sluggish (see folders getter + openFolder below).
+    activeFolder: null,
+    query: '',
+    onSelect: null,
+    observer: null,
+    /**
+     * These R2 photos are full camera originals (often 25-30+ megapixels) — a
+     * browser has to decode the whole thing before it can even downscale it
+     * for a ~150px grid tile, and that decode cost, not network speed, is what
+     * was actually freezing the tab when several loaded together. Images route
+     * through the server-side resize+cache endpoint instead of the raw R2
+     * file; videos still use the original (no equivalent problem there).
+     */
+    thumbSrc(item) {
+        return thumbnailUrl + '?path=' + encodeURIComponent(item.path);
+    },
+    async openFor(detail) {
+        this.onSelect = detail?.onSelect ?? null;
+        this.view = 'folders';
+        this.activeFolder = null;
+        this.query = '';
+        this.resetRevealThrottle();
+        this.open = true;
+        await Alpine.store('mediaLibrary').ensureLoaded(fetchUrl);
+        Alpine.store('mediaLibrary').files.forEach((file) => { file.selected = false; });
+    },
+    close() {
+        this.open = false;
+    },
+    toggle(item) {
+        item.selected = ! item.selected;
+    },
+    /**
+     * One card per R2 folder, with counts — computed from the same already-fetched
+     * file list, no extra request. Selecting a folder is what actually bounds the
+     * grid to a manageable size; this view itself never renders any thumbnails.
+     */
+    get folders() {
+        const byFolder = {};
+        Alpine.store('mediaLibrary').available().forEach((file) => {
+            const key = file.folder ?? 'Other files';
+            if (! byFolder[key]) {
+                byFolder[key] = { name: key, total: 0, videos: 0, images: 0 };
+            }
+            byFolder[key].total++;
+            if (file.is_video) {
+                byFolder[key].videos++;
+            } else {
+                byFolder[key].images++;
+            }
+        });
+        return Object.values(byFolder).sort((a, b) => a.name.localeCompare(b.name));
+    },
+    openFolder(name) {
+        this.activeFolder = name;
+        this.view = 'files';
+        this.query = '';
+        this.resetRevealThrottle();
+    },
+    backToFolders() {
+        this.view = 'folders';
+        this.activeFolder = null;
+        this.query = '';
+        this.resetRevealThrottle();
+    },
+    /**
+     * Leaving a folder mid-load aborts whatever tiles were still fetching (their
+     * <li> gets removed from the DOM by x-for), so their @load/@error never fires
+     * and activeReveals would stay stuck too high — permanently over-throttling
+     * the next folder. Clearing the queue/counter on every folder change avoids that.
+     */
+    resetRevealThrottle() {
+        this.revealQueue = [];
+        this.activeReveals = 0;
+    },
+    get filtered() {
+        const q = this.query.trim().toLowerCase();
+        const items = Alpine.store('mediaLibrary').available()
+            .filter((item) => (item.folder ?? 'Other files') === this.activeFolder);
+        if (! q) {
+            return items;
+        }
+        return items.filter((item) => item.path.toLowerCase().includes(q));
+    },
+    get selectedCount() {
+        return Alpine.store('mediaLibrary').files.filter((file) => file.selected).length;
+    },
+    confirm() {
+        const items = Alpine.store('mediaLibrary').files.filter((file) => file.selected);
+        if (items.length && this.onSelect) {
+            this.onSelect(items);
+            Alpine.store('mediaLibrary').markPicked(items.map((file) => file.path));
+        }
+        this.close();
+    },
+    /**
+     * The picker previously revealed every tile within the scroll margin the
+     * moment it intersected, so opening a 100-file folder — or making one
+     * scroll gesture that crossed 20+ tiles at once — fired that many
+     * multi-megabyte R2 fetches AND full-resolution image decodes
+     * simultaneously. Browsers decode an <img> at its real pixel dimensions
+     * before ever considering the tiny thumbnail size it's displayed at, so a
+     * burst of these (some of these photos are 10MB+ originals) is what was
+     * actually freezing the tab, not just the network. Tiles now queue
+     * instead of revealing immediately, and only a handful load at a time —
+     * see queueReveal/pumpQueue/tileSettled below.
+     */
+    observeTile(el, item) {
+        if (item.visible || item.queued) {
+            return;
+        }
+        if (! this.observer) {
+            this.observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (! entry.isIntersecting) {
+                        return;
+                    }
+                    const match = Alpine.store('mediaLibrary').files.find((file) => file.path === entry.target.dataset.path);
+                    this.observer.unobserve(entry.target);
+                    if (match) {
+                        this.queueReveal(match);
+                    }
+                });
+            }, { root: this.$refs.scrollContainer, rootMargin: '150px 0px', threshold: 0.01 });
+        }
+        this.observer.observe(el);
+    },
+    revealQueue: [],
+    activeReveals: 0,
+    maxConcurrentReveals: 4,
+    queueReveal(item) {
+        item.queued = true;
+        this.revealQueue.push(item);
+        this.pumpRevealQueue();
+    },
+    pumpRevealQueue() {
+        while (this.activeReveals < this.maxConcurrentReveals && this.revealQueue.length) {
+            const item = this.revealQueue.shift();
+            this.activeReveals++;
+            item.visible = true;
+        }
+    },
+    /** Fires on the tile's real <img>/<video> load or error — either way, frees its slot. */
+    tileSettled(item) {
+        if (item.settled) {
+            return;
+        }
+        item.settled = true;
+        this.activeReveals = Math.max(0, this.activeReveals - 1);
+        this.pumpRevealQueue();
+    },
+}));
+
 Alpine.start();

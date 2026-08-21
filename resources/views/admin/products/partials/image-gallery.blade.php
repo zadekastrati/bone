@@ -24,10 +24,23 @@
                 :input-name="$color !== null ? 'variant_images[' . $color . '][]' : 'images[]'"
                 label="Add images or video"
             />
+
+            <x-admin.product-media-library-picker
+                :input-name="$color !== null ? 'attach_variant_images[' . $color . '][]' : 'attach_images[]'"
+            />
         </div>
     @endforeach
 
     @error('thumbnail_image_id')
         <p class="text-xs text-red-600">{{ $message }}</p>
     @enderror
+
+    @error('attach_images')
+        <p class="text-xs text-red-600">{{ $message }}</p>
+    @enderror
+
+    <x-admin.media-library-modal
+        :fetch-url="route('admin.media-library.index')"
+        :thumbnail-url="route('admin.media-library.thumbnail')"
+    />
 </div>

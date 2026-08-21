@@ -22,7 +22,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
                         </span>
                     @else
-                        <img src="{{ $img->url() }}" alt="" class="size-full object-cover">
+                        <img src="{{ $img->thumbUrl() }}" alt="" loading="lazy" decoding="async" class="size-full object-cover">
                     @endif
 
                     <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent opacity-0 transition group-hover:opacity-100"></span>
