@@ -33,7 +33,7 @@
                     href="{{ route('shop.product', [$p->category, $p]) }}"
                     class="group shrink-0 self-start"
                 >
-                    <x-product-image-thumb :path="$thumb?->path" size="cartRow" class="transition duration-200 group-hover:opacity-90" />
+                    <x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" :alt="$p->name" size="cartRow" class="transition duration-200 group-hover:opacity-90" />
                 </a>
 
                 <div class="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-8">

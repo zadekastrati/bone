@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('Checkout'))
+@section('noindex', 'true')
 
 @section('content')
     @php
@@ -154,7 +155,7 @@
                         @endphp
                         <li class="flex items-start justify-between gap-4">
                             <span class="flex min-w-0 items-start gap-3">
-                                <x-product-image-thumb :path="$thumb?->path" size="sm" />
+                                <x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" :alt="$product->name" size="sm" />
                                 <span class="min-w-0 leading-snug">{{ $product->name }} <span class="text-ink-500">× {{ $line['quantity'] }}</span></span>
                             </span>
                             <span class="shrink-0 font-medium"><x-price :amount="$line['line_total']" /></span>

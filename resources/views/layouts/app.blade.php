@@ -4,16 +4,35 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>
-        @hasSection('title')
-            @yield('title') —
-        @endif
-        {{ config('app.name', 'Laravel') }}
-    </title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=oswald:500,600,700|outfit:400,500,600,700&display=swap" rel="stylesheet">
+    @php
+        $__seoTitle = trim($__env->yieldContent('title'));
+        $__seoTitle = $__seoTitle !== '' ? $__seoTitle.' — '.config('app.name', 'Laravel') : config('app.name', 'Laravel');
+        $__seoDescription = trim($__env->yieldContent('meta_description'));
+        $__seoDescription = $__seoDescription !== ''
+            ? $__seoDescription
+            : "Kit that keeps up when the set gets ugly — compression, support, and layers that move with you from warm-up to last rep.";
+        $__seoImage = trim($__env->yieldContent('meta_image'));
+        $__seoImage = $__seoImage !== '' ? $__seoImage : asset('logo.png');
+    @endphp
+    <title>{{ $__seoTitle }}</title>
+    <meta name="description" content="{{ $__seoDescription }}">
+    <link rel="canonical" href="{{ url()->current() }}">
+    @if (trim($__env->yieldContent('noindex')) !== '')
+        <meta name="robots" content="noindex, nofollow">
+    @endif
+    <meta property="og:type" content="{{ trim($__env->yieldContent('og_type')) !== '' ? trim($__env->yieldContent('og_type')) : 'website' }}">
+    <meta property="og:site_name" content="{{ config('app.name', 'Laravel') }}">
+    <meta property="og:title" content="{{ $__seoTitle }}">
+    <meta property="og:description" content="{{ $__seoDescription }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ $__seoImage }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $__seoTitle }}">
+    <meta name="twitter:description" content="{{ $__seoDescription }}">
+    <meta name="twitter:image" content="{{ $__seoImage }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @yield('structured_data')
 </head>
 @inject('cartService', \App\Services\CartService::class)
 <body @class([

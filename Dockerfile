@@ -39,8 +39,16 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
+# storage/ and bootstrap/cache/ must be writable by the user Apache runs as
+RUN chown -R www-data:www-data storage bootstrap/cache
+
 # Expose port 80
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Cache config/routes/views on container start (not at build time — env vars
+# like DB credentials aren't available yet during the image build, and
+# config:cache would otherwise bake in empty/wrong values permanently).
+CMD php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache \
+    && apache2-foreground

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('Cart'))
+@section('noindex', 'true')
 
 @section('content')
     <x-page-header :title="__('Cart')" :subtitle="__('Review items before checkout. Prices reflect the catalog at the time you added each line.')">

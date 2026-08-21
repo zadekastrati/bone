@@ -64,7 +64,7 @@ class CheckoutService
                 'subtotal' => $subtotal,
                 'shipping_amount' => $shipping,
                 'total' => bcadd($subtotal, $shipping, 2),
-                'customer_notes' => $data['customer_notes'],
+                'customer_notes' => $data['customer_notes'] ?? null,
             ]);
 
             $variantIds = $lines

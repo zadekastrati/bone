@@ -11,7 +11,7 @@
                     @php $thumb = $item->variant?->product?->thumbnailImage(); @endphp
                     <li class="flex flex-wrap items-center justify-between gap-4 py-3">
                         <div class="flex items-center gap-3">
-                            <x-product-image-thumb :path="$thumb?->path" size="sm" />
+                            <x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" size="sm" />
                             <div>
                                 <p class="font-semibold text-ink-950">{{ $item->product_name }}</p>
                                 <p class="text-xs text-ink-500">{{ $item->color }} · {{ $item->size }} @if ($item->sku) · {{ $item->sku }} @endif</p>

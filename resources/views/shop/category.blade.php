@@ -2,6 +2,10 @@
 
 @section('title', $category->name)
 
+@section('meta_description', $category->description
+    ? \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($category->description))), 160)
+    : __('Shop :category at :store.', ['category' => $category->name, 'store' => config('app.name')]))
+
 @section('content')
     <nav class="crumbs" aria-label="Breadcrumb">
         <a href="{{ route('home') }}">{{ __('Home') }}</a>

@@ -2,6 +2,40 @@
 
 @section('title', $product->name)
 
+@php
+    $__thumb = $product->thumbnailImage();
+    $__plainDescription = $product->description ? trim(preg_replace('/\s+/', ' ', strip_tags($product->description))) : null;
+@endphp
+
+@section('meta_description', $__plainDescription
+    ? \Illuminate\Support\Str::limit($__plainDescription, 160)
+    : __(':product — :category from :store.', ['product' => $product->name, 'category' => $category->name, 'store' => config('app.name')]))
+@section('meta_image', $__thumb && ! $__thumb->isVideo() ? $__thumb->displayUrl() : asset('logo.png'))
+@section('og_type', 'product')
+
+@section('structured_data')
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $product->name,
+            'description' => $__plainDescription ?? $product->name,
+            'image' => $__thumb && ! $__thumb->isVideo() ? [$__thumb->displayUrl()] : [],
+            'sku' => $product->style_code,
+            'category' => $category->name,
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => route('shop.product', [$category, $product]),
+                'priceCurrency' => config('store.currency', 'EUR'),
+                'price' => number_format((float) $product->price, 2, '.', ''),
+                'availability' => $product->isSoldOut()
+                    ? 'https://schema.org/OutOfStock'
+                    : 'https://schema.org/InStock',
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
+    </script>
+@endsection
+
 @section('content')
     <nav class="crumbs" aria-label="Breadcrumb">
         <a href="{{ route('shop.index') }}">{{ __('Shop') }}</a>

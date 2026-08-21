@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
-    private const RESIZABLE_EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp'];
+    private const RESIZABLE_EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp', 'avif'];
 
     public function __construct(private readonly ImageVariantCache $variantCache)
     {

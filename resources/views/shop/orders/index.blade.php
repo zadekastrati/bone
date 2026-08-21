@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('My orders'))
+@section('noindex', 'true')
 
 @section('content')
     <x-page-header
@@ -28,7 +29,7 @@
                             $thumb = $order->items->first()?->variant?->product?->thumbnailImage();
                         @endphp
                         <tr>
-                            <td class="w-20"><x-product-image-thumb :path="$thumb?->path" size="cartRow" /></td>
+                            <td class="w-20"><x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" :alt="$order->items->first()?->product_name ?? ''" size="cartRow" /></td>
                             <td class="font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</td>
                             <td class="text-ink-600">{{ $order->created_at->format('M j, Y') }}</td>
                             <td>

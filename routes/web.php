@@ -20,6 +20,7 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SitemapController;
 use App\Models\Category;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
@@ -35,6 +36,26 @@ Route::get('/', function () {
 
     return view('welcome', compact('categories'));
 })->name('home');
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
+Route::get('/robots.txt', function (): \Illuminate\Http\Response {
+    $lines = [
+        'User-agent: *',
+        'Disallow: /admin',
+        'Disallow: /cart',
+        'Disallow: /checkout',
+        'Disallow: /login',
+        'Disallow: /register',
+        'Disallow: /forgot-password',
+        'Disallow: /profile',
+        'Disallow: /orders',
+        '',
+        'Sitemap: '.route('sitemap'),
+    ];
+
+    return response(implode("\n", $lines), 200, ['Content-Type' => 'text/plain']);
+})->name('robots');
 
 Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');

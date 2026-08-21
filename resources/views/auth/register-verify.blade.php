@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('Confirm your email'))
+@section('noindex', 'true')
 
 @section('content')
     <div class="mx-auto max-w-md">

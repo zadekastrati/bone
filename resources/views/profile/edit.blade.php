@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('My Profile'))
+@section('noindex', 'true')
 
 @section('content')
     <x-page-header :title="__('My Profile')" :subtitle="__('Manage your personal details, password, and see your recent activity.')" />
@@ -178,7 +179,7 @@
                             @endphp
                             <li>
                                 <a href="{{ route('orders.show', $order) }}" class="flex items-center gap-4 px-8 py-4 transition hover:bg-zinc-50">
-                                    <x-product-image-thumb :path="$thumb?->path" size="cartRow" class="shrink-0" />
+                                    <x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" :alt="$order->items->first()?->product_name ?? ''" size="cartRow" class="shrink-0" />
                                     <div class="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                                         <div class="min-w-0">
                                             <p class="truncate font-mono text-xs font-semibold text-ink-900">{{ $order->order_number }}</p>
@@ -213,7 +214,7 @@
                                 $thumb = $p->images->first();
                             @endphp
                             <li class="flex items-center gap-4 px-8 py-4">
-                                <x-product-image-thumb :path="$thumb?->path" size="cartRow" />
+                                <x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" :alt="$p->name" size="cartRow" />
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate text-sm font-semibold text-ink-900">{{ $p->name }}</p>
                                     <p class="text-xs text-ink-500">{{ $v->size }} · {{ $v->color }} · {{ __('Qty') }} {{ $line['quantity'] }}</p>

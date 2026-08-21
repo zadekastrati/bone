@@ -1,5 +1,7 @@
 @props([
     'path' => null,
+    'thumbSrc' => null,
+    'alt' => '',
     'size' => 'md',
 ])
 
@@ -43,8 +45,8 @@
 
 @if ($path)
     <img
-        src="{{ Storage::url($path) }}"
-        alt=""
+        src="{{ $thumbSrc ?? Storage::url($path) }}"
+        alt="{{ $alt }}"
         width="{{ $imgW }}"
         height="{{ $imgH }}"
         {{ $attributes->merge(['class' => trim($box.' '.$imgFit)]) }}

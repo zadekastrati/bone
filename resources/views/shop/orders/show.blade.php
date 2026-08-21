@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('Order :number', ['number' => $order->order_number]))
+@section('noindex', 'true')
 
 @section('content')
     <nav class="crumbs" aria-label="Breadcrumb">
@@ -22,7 +23,7 @@
                         @endphp
                         <li class="flex flex-wrap items-center justify-between gap-3 py-4">
                             <div class="flex items-center gap-4">
-                                <x-product-image-thumb :path="$thumb?->path" size="sm" />
+                                <x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" :alt="$item->product_name" size="sm" />
                                 <div>
                                     <p class="font-semibold text-ink-950">{{ $item->product_name }}</p>
                                     <p class="text-xs text-ink-500">{{ $item->color }} · {{ $item->size }} @if ($item->sku) · {{ $item->sku }} @endif</p>

@@ -20,7 +20,7 @@
             @if ($image->isVideo())
                 <video src="{{ $image->url() }}" class="size-full object-cover transition duration-700 ease-out group-hover/card:scale-[1.03] motion-reduce:group-hover/card:scale-100" muted playsinline preload="metadata"></video>
             @else
-                <img src="{{ $image->gridUrl() }}" alt="" loading="lazy" decoding="async" class="size-full object-cover transition duration-700 ease-out group-hover/card:scale-[1.03] motion-reduce:group-hover/card:scale-100">
+                <img src="{{ $image->gridUrl() }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="size-full object-cover transition duration-700 ease-out group-hover/card:scale-[1.03] motion-reduce:group-hover/card:scale-100">
             @endif
         @else
             <div class="flex size-full items-center justify-center bg-gradient-to-br from-zinc-100 to-accent-200 text-center text-xs font-bold uppercase tracking-mega text-accent-700">{{ __('Photo soon') }}</div>

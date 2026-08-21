@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('Forgot password'))
+@section('noindex', 'true')
 
 @section('content')
     <div class="mx-auto max-w-md">
