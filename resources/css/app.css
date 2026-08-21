@@ -177,6 +177,25 @@
         @apply rounded-2xl border border-zinc-200/70 bg-zinc-100/65 p-6 sm:p-8;
     }
 
+    /*
+     | <fieldset> ships a browser-default groove border with no reset in
+     | Preflight, so an unstyled one draws a stray line across the page
+     | instead of reading as a section. These give checkout's fieldsets the
+     | same card treatment as .surface-card elsewhere, and turn <legend>
+     | into a normal block-level heading instead of sitting on the border.
+     */
+    .checkout-fieldset {
+        @apply surface-card block space-y-4 border-0;
+    }
+
+    .checkout-fieldset__legend {
+        @apply mb-2 block w-full p-0 font-display text-xs font-bold uppercase tracking-[0.18em] text-ink-500;
+    }
+
+    .checkout-summary {
+        @apply surface-card;
+    }
+
     /* Data tables — storefront (readable, not spreadsheet-heavy) */
     .table-shell {
         @apply overflow-hidden rounded-3xl border border-ink-200/40 bg-white shadow-elevated ring-1 ring-ink-950/[0.03];

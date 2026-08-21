@@ -144,6 +144,7 @@ Route::middleware('auth')->group(function (): void {
             ->name('products.forceDelete');
         Route::delete('products/bulk-delete', [AdminProductController::class, 'bulkDestroy'])->name('products.bulkDestroy');
         Route::delete('products/bulk-force-delete', [AdminProductController::class, 'bulkForceDelete'])->name('products.bulkForceDelete');
+        Route::post('products/bulk-restore', [AdminProductController::class, 'bulkRestore'])->name('products.bulkRestore');
         Route::delete('products/{product}/images/{image}', [AdminProductController::class, 'destroyImage'])->name('products.images.destroy');
         Route::post('products/{product}/images/reorder', [AdminProductController::class, 'reorderImages'])->name('products.images.reorder');
         Route::resource('products', AdminProductController::class)->except(['show']);

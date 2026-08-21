@@ -11,22 +11,22 @@
 
     <div
         class="mt-10 grid gap-12 lg:grid-cols-5"
-        x-data="{
-            country: @json(old('shipping_country', $defaultCountry)),
+        x-data='{
+            country: @json(old("shipping_country", $defaultCountry)),
             subtotal: {{ json_encode((float) $subtotal) }},
             rates: @json($shippingRateMap),
             displayCurrency: @json($displayCurrency),
-            get shipping() { return this.rates[this.country] ?? '0.00'; },
+            get shipping() { return this.rates[this.country] ?? "0.00"; },
             get total() { return (parseFloat(this.subtotal) + parseFloat(this.shipping)).toFixed(2); },
             format(baseAmount) {
                 const c = this.displayCurrency;
                 const value = (parseFloat(baseAmount) || 0) * c.rate;
-                const parts = value.toFixed(c.decimals).split('.');
+                const parts = value.toFixed(c.decimals).split(".");
                 const withThousands = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, c.thousands_separator);
                 const number = c.decimals > 0 ? withThousands + c.decimal_separator + parts[1] : withThousands;
-                return c.symbol_position === 'before' ? c.symbol + number : number + ' ' + c.symbol;
+                return c.symbol_position === "before" ? c.symbol + number : number + " " + c.symbol;
             }
-        }"
+        }'
     >
         <form method="POST" action="{{ route('checkout.store') }}" class="space-y-8 lg:col-span-3">
             @csrf

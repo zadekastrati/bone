@@ -37,30 +37,60 @@
                         { childList: true, subtree: true }
                     );
                 },
+                /*
+                 * The restore form (unlike the delete form) can't use the
+                 * checkboxes' native form attribute — an input can only be
+                 * associated with one form, and that's already claimed by
+                 * the delete form below. So on submit, copy the currently
+                 * checked ids into this form as hidden inputs instead.
+                 */
+                collectIds(form) {
+                    form.querySelectorAll('.js-collected-id').forEach((el) => el.remove());
+                    this.$el.querySelectorAll('.js-select-product:checked').forEach((checkbox) => {
+                        const hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = 'ids[]';
+                        hidden.className = 'js-collected-id';
+                        hidden.value = checkbox.value;
+                        form.appendChild(hidden);
+                    });
+                },
             }"
             @change="refresh()"
         >
             {{--
-                This form does NOT wrap #products-archived-results — nesting a
+                These forms do NOT wrap #products-archived-results — nesting a
                 <form> inside another <form> is invalid HTML and browsers silently
                 drop the inner one, which was mis-submitting every per-row Restore/
                 Delete-permanently button to this bulk route instead (see the
                 `form` attribute on the checkboxes below, which associates them
-                with this form despite living outside it).
+                with the delete form despite living outside it).
             --}}
-            <form
-                id="products-archived-bulk-delete-form"
-                method="POST"
-                action="{{ route('admin.products.bulkForceDelete') }}"
-                data-confirm-label="Delete permanently"
-                :data-confirm="`Permanently delete ${selectedCount} selected product(s)? This cannot be undone — their images and videos will be removed too.`"
-            >
-                @csrf
-                @method('DELETE')
-                <div class="mt-4" x-show="hasSelection" x-cloak>
+            <div class="mt-4 flex flex-wrap gap-3" x-show="hasSelection" x-cloak>
+                <form
+                    id="products-archived-bulk-restore-form"
+                    method="POST"
+                    action="{{ route('admin.products.bulkRestore') }}"
+                    data-confirm-label="Restore"
+                    :data-confirm="`Restore ${selectedCount} selected product(s)?`"
+                    @submit="collectIds($el)"
+                >
+                    @csrf
+                    <button type="submit" class="btn-dark">Restore Selected (<span x-text="selectedCount"></span>)</button>
+                </form>
+
+                <form
+                    id="products-archived-bulk-delete-form"
+                    method="POST"
+                    action="{{ route('admin.products.bulkForceDelete') }}"
+                    data-confirm-label="Delete permanently"
+                    :data-confirm="`Permanently delete ${selectedCount} selected product(s)? This cannot be undone — their images and videos will be removed too.`"
+                >
+                    @csrf
+                    @method('DELETE')
                     <button type="submit" class="btn-danger">Delete Selected Permanently (<span x-text="selectedCount"></span>)</button>
-                </div>
-            </form>
+                </form>
+            </div>
 
             <div id="products-archived-results" class="transition-opacity" :class="{ 'opacity-50': loading }">
                 @include('admin.products.partials.archived-results')

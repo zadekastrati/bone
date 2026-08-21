@@ -294,4 +294,21 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.archived')->with('success', 'Selected products permanently deleted.');
     }
+
+    public function bulkRestore(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:products,id'],
+        ]);
+
+        $products = Product::onlyTrashed()->whereIn('id', $validated['ids'])->get();
+
+        foreach ($products as $product) {
+            $this->authorize('restore', $product);
+            $product->restore();
+        }
+
+        return redirect()->route('admin.products.archived')->with('success', 'Selected products restored.');
+    }
 }

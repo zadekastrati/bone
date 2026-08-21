@@ -56,6 +56,17 @@ document.addEventListener('submit', async (event) => {
         const data = await response.json();
 
         if (! response.ok) {
+            /**
+             * A rejected quantity update (e.g. asking for more than the
+             * current stock) must not leave the input showing the rejected
+             * number — that reads as "it worked" when nothing was actually
+             * saved. Snap it back to the last value the server confirmed.
+             */
+            const qtyInput = form.querySelector('[data-qty-live]');
+            if (qtyInput) {
+                qtyInput.value = qtyInput.defaultValue;
+            }
+
             window.dispatchEvent(new CustomEvent('cart-error', {
                 detail: { message: data.message ?? 'Something went wrong.' },
             }));

@@ -12,6 +12,15 @@
 @else
     {{-- One column width for lines + checkout (aligned); wider than max-w-3xl --}}
     <div class="mx-auto mt-10 w-full max-w-5xl">
+        <p
+            x-data="{ text: '', show: false, timer: null }"
+            x-show="show"
+            x-cloak
+            x-text="text"
+            class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"
+            @cart-error.window="text = $event.detail.message ?? '{{ __('Something went wrong.') }}'; show = true; clearTimeout(timer); timer = setTimeout(() => show = false, 4000)"
+        ></p>
+
         <div class="divide-y divide-zinc-200/90 border-t border-zinc-200/90">
         @foreach ($lines as $line)
             @php
@@ -60,7 +69,7 @@
                                 name="quantity"
                                 value="{{ $line['quantity'] }}"
                                 min="0"
-                                max="99"
+                                max="{{ min(99, $v->stock_quantity) }}"
                                 data-qty-live
                                 class="w-16 rounded-lg border border-zinc-200/90 bg-white px-2 py-1.5 text-center text-sm tabular-nums text-ink-900 shadow-sm focus:border-accent-400 focus:outline-none focus:ring-2 focus:ring-accent-400/20"
                             >
