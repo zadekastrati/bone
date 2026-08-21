@@ -42,17 +42,55 @@
             });
             this.$refs.fileInput.files = dt.files;
         },
-        refreshPreviews() {
-            this.previews.forEach((preview) => {
-                if (preview.url) {
-                    URL.revokeObjectURL(preview.url);
-                }
-            });
-            this.previews = this.files.map((file) => ({
-                url: URL.createObjectURL(file),
+        previewToken: 0,
+        /**
+         * Selected photos are often full camera originals (25-30+ megapixels) —
+         * previewing them via a plain object URL on the raw file makes the
+         * browser decode the whole thing just to show a ~150px tile, which is
+         * what was making this grid so heavy to scroll while uploading (the
+         * files aren't on the server yet, so the resized-thumbnail endpoint
+         * used everywhere else doesn't apply here). Downscaled client-side via
+         * canvas instead; the original, full-quality file is untouched and is
+         * still what actually gets uploaded via syncInput() above.
+         */
+        async makePreviewUrl(file) {
+            if (! file.type.startsWith('image/')) {
+                return URL.createObjectURL(file);
+            }
+            try {
+                const maxDimension = 320;
+                const bitmap = await createImageBitmap(file);
+                const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+                const width = Math.max(1, Math.round(bitmap.width * scale));
+                const height = Math.max(1, Math.round(bitmap.height * scale));
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
+                bitmap.close();
+                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.8));
+                return blob ? URL.createObjectURL(blob) : URL.createObjectURL(file);
+            } catch (error) {
+                return URL.createObjectURL(file);
+            }
+        },
+        async refreshPreviews() {
+            const token = ++this.previewToken;
+            const staleUrls = this.previews.map((preview) => preview.url);
+            const nextPreviews = await Promise.all(this.files.map(async (file) => ({
+                url: await this.makePreviewUrl(file),
                 isVideo: file.type.startsWith('video/') || /\.(mp4|webm|mov|ogg|m4v)$/i.test(file.name),
                 name: file.name,
-            }));
+            })));
+
+            if (token !== this.previewToken) {
+                // Superseded by a newer call (files changed again mid-resize) — discard.
+                nextPreviews.forEach((preview) => preview.url && URL.revokeObjectURL(preview.url));
+                return;
+            }
+
+            staleUrls.forEach((url) => url && URL.revokeObjectURL(url));
+            this.previews = nextPreviews;
         },
         init() {
             const form = this.$root.closest('form');

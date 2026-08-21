@@ -23,12 +23,6 @@ class ShopController extends Controller
 
         $sort = $this->resolveSort($request);
 
-        $categories = Category::query()
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->withCount(['activeProducts'])
-            ->get();
-
         $searchResults = null;
         if ($q !== '') {
             $searchResults = $this->applySort(
@@ -54,6 +48,14 @@ class ShopController extends Controller
         if ($request->ajax()) {
             return view('shop.partials.results', compact('products', 'q', 'searchResults'));
         }
+
+        // Only needed for the full page shell (category dropdown) — the AJAX
+        // partial above never references it, so skip it on every keystroke.
+        $categories = Category::query()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->withCount(['activeProducts'])
+            ->get();
 
         return view('shop.index', compact('categories', 'products', 'q', 'searchResults', 'sort'));
     }

@@ -107,7 +107,7 @@ class ProductController extends Controller
         $this->authorize('update', $product);
 
         $data = collect($request->validated())
-            ->except(['images', 'variant_images', 'variants', 'delete_image_ids', 'thumbnail_image_id'])
+            ->except(['images', 'variant_images', 'attach_images', 'attach_variant_images', 'variants', 'delete_image_ids', 'thumbnail_image_id'])
             ->all();
         $data['is_active'] = $request->boolean('is_active', true);
 
@@ -120,6 +120,9 @@ class ProductController extends Controller
 
             $this->mediaService->storeUploads($product, $request->file('images', []));
             $this->storeVariantImages($product, $request);
+
+            $this->mediaService->attachExisting($product, $request->input('attach_images', []));
+            $this->attachVariantImages($product, $request);
 
             $this->mediaService->setThumbnail($product, $request->input('thumbnail_image_id'));
         });
@@ -175,6 +178,23 @@ class ProductController extends Controller
             }
 
             $this->mediaService->storeUploads($product, $files, $color);
+        }
+    }
+
+    /**
+     * Attach R2 library files picked into a specific color's section (admin.products.partials.image-gallery),
+     * keyed by that color's exact variant color name. Unknown color keys are ignored.
+     */
+    private function attachVariantImages(Product $product, Request $request): void
+    {
+        $validColors = $product->variants()->pluck('color')->unique()->all();
+
+        foreach ((array) $request->input('attach_variant_images', []) as $color => $paths) {
+            if (! in_array($color, $validColors, true)) {
+                continue;
+            }
+
+            $this->mediaService->attachExisting($product, (array) $paths, $color);
         }
     }
 

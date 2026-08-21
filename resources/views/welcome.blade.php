@@ -14,7 +14,7 @@
             loop
             playsinline
         >
-            <source src="{{ asset('videos/hero-banner.mp4') }}" type="video/mp4" />
+            <source src="{{ Storage::disk('public')->url('Horizontal_1.mp4') }}" type="video/mp4" />
         </video>
         <div class="relative mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
             <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-accent-300 sm:text-xs">Women&apos;s performance · gym to street</p>

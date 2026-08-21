@@ -77,7 +77,7 @@
                             <td class="w-24">
                                 @php $thumb = $product->thumbnailImage(); @endphp
                                 @if ($thumb && ! $thumb->isVideo())
-                                    <img src="{{ Storage::url($thumb->path) }}" alt="{{ $product->name }} thumbnail" class="h-14 w-14 rounded-xl object-cover" loading="lazy">
+                                    <img src="{{ $thumb->thumbUrl() }}" alt="{{ $product->name }} thumbnail" class="h-14 w-14 rounded-xl object-cover" loading="lazy">
                                 @elseif ($thumb && $thumb->isVideo())
                                     <span class="relative inline-block h-14 w-14 overflow-hidden rounded-xl ring-1 ring-zinc-200">
                                         <video src="{{ $thumb->url() }}" class="size-full object-cover" muted playsinline preload="metadata"></video>
