@@ -45,6 +45,15 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
+# mod_php (used by this image) requires exactly one MPM, and only
+# mpm_prefork is thread-safe with it. Force that regardless of whatever
+# else may have gotten enabled — some build environments were seeing
+# "More than one MPM loaded" at container start despite this image
+# building clean locally, so don't rely on the default state.
+RUN (a2dismod mpm_event || true) \
+    && (a2dismod mpm_worker || true) \
+    && a2enmod mpm_prefork
+
 # storage/ and bootstrap/cache/ must be writable by the user Apache runs as
 RUN chown -R www-data:www-data storage bootstrap/cache
 
