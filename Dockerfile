@@ -22,13 +22,19 @@ RUN apt-get update && apt-get install -y \
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json ./
 
-# Install PHP dependencies
+# Install PHP dependencies. --no-scripts: composer.json's post-autoload-dump
+# hook runs `artisan package:discover`, which needs the actual app code —
+# not copied in yet at this point (kept separate so this slow dependency
+# install layer only reruns when composer.lock changes, not on every code
+# change). Re-run the discover step below, once the app code is present.
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && composer install --no-dev --optimize-autoloader
+    && composer install --no-dev --optimize-autoloader --no-scripts
 
 # Copy the rest of the app
 COPY . .
+
+RUN composer run-script post-autoload-dump
 
 # Install frontend dependencies & build Vite
 RUN npm install && npm run build
