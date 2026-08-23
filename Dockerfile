@@ -70,8 +70,17 @@ EXPOSE 80
 # there with the volume's own — initially empty — contents, silently
 # wiping out the framework/{cache,sessions,views}, logs, and their
 # ownership that the RUN step below only set up at build time.
+# The MPM re-enable here (identical to the RUN step above) runs again as the
+# very last thing before Apache actually starts, in case the platform this
+# runs on does anything to the container between "image built" and
+# "container started" that re-enables a conflicting MPM — build-time alone
+# wasn't enough to stop "AH00534: More than one MPM loaded" in that case.
 CMD mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/testing storage/framework/views storage/logs bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
+    && (a2dismod mpm_event || true) \
+    && (a2dismod mpm_worker || true) \
+    && a2enmod mpm_prefork \
+    && apache2ctl -M \
     && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
