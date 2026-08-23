@@ -54,7 +54,16 @@ EXPOSE 80
 # Cache config/routes/views on container start (not at build time — env vars
 # like DB credentials aren't available yet during the image build, and
 # config:cache would otherwise bake in empty/wrong values permanently).
-CMD php artisan config:cache \
+#
+# The mkdir/chown here run on every start, not just once at build time,
+# because a host that mounts a persistent volume over storage/ (e.g. to
+# keep uploaded files across deploys) replaces whatever the image had
+# there with the volume's own — initially empty — contents, silently
+# wiping out the framework/{cache,sessions,views}, logs, and their
+# ownership that the RUN step below only set up at build time.
+CMD mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/testing storage/framework/views storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
     && apache2-foreground
