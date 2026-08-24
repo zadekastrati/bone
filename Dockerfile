@@ -42,8 +42,9 @@ RUN npm install && npm run build
 # Set Apache document root to Laravel public folder
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Enable Apache mod_rewrite, mod_expires, mod_headers (the latter two back the
+# Cache-Control/Expires rules in public/.htaccess)
+RUN a2enmod rewrite expires headers
 
 # mod_php (used by this image) requires exactly one MPM, and only
 # mpm_prefork is thread-safe with it. Force that regardless of whatever

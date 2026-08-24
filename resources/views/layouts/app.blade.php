@@ -30,7 +30,6 @@
     <meta name="twitter:title" content="{{ $__seoTitle }}">
     <meta name="twitter:description" content="{{ $__seoDescription }}">
     <meta name="twitter:image" content="{{ $__seoImage }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('structured_data')
 </head>
@@ -46,7 +45,7 @@
         <header class="sticky top-0 z-50 border-b border-zinc-200/80 bg-gradient-to-b from-zinc-50/95 to-zinc-100/80 text-ink-900 shadow-[0_8px_30px_-12px_rgba(94,82,74,0.14)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-zinc-50/90">
             <div class="page-shell flex h-14 min-w-0 items-center gap-2 sm:gap-3 lg:h-[4.25rem] lg:gap-4">
                 <a href="{{ route('home') }}" class="shrink-0 transition-opacity hover:opacity-80">
-                    <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" class="h-5 w-auto lg:h-6">
+                    <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" width="320" height="118" class="h-5 w-auto lg:h-6">
                 </a>
 
                 {{-- Middle: search + desktop nav share the flexible width so the cart column is never pushed off-screen --}}
@@ -183,6 +182,7 @@
             </div>
         </header>
 
+        <main class="flex flex-1 flex-col">
         <div class="page-shell pt-6 lg:pt-8">
             @if (session('success'))
                 <div
@@ -229,28 +229,29 @@
                 @yield('content')
             </div>
         @endif
+        </main>
 
         <footer class="mt-auto border-t border-zinc-200/80 bg-gradient-to-b from-zinc-100 via-zinc-50 to-zinc-50 text-ink-800">
             <div class="page-shell grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-20">
                 <div class="sm:col-span-2 lg:col-span-1">
-                    <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" class="h-5 w-auto lg:h-6">
+                    <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" width="320" height="118" class="h-5 w-auto lg:h-6">
                     <p class="mt-4 flex items-center gap-2 text-pretty text-sm text-ink-600">
-                        <i class="fas fa-envelope"></i>
+                        <x-icons.envelope class="h-4 w-4 shrink-0" />
                         bone@example.com
                     </p>
                     <p class="mt-2 flex items-center gap-2 text-pretty text-sm text-ink-600">
-                        <i class="fas fa-phone"></i>
+                        <x-icons.phone class="h-4 w-4 shrink-0" />
                         +383 49 123 456
                     </p>
                     <div class="mt-4 flex items-center gap-4 text-pretty text-ink-600">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700">
-                            <i class="fab fa-facebook-f"></i>
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700" aria-label="{{ __('Follow us on Facebook') }}">
+                            <x-icons.facebook class="h-4 w-4" />
                         </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700">
-                            <i class="fab fa-instagram"></i>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700" aria-label="{{ __('Follow us on Instagram') }}">
+                            <x-icons.instagram class="h-4 w-4" />
                         </a>
-                        <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700">
-                            <i class="fab fa-tiktok"></i>
+                        <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700" aria-label="{{ __('Follow us on TikTok') }}">
+                            <x-icons.tiktok class="h-4 w-4" />
                         </a>
                     </div>
                 </div>

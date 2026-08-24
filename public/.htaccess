@@ -19,3 +19,28 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Static assets are either content-hashed by Vite (public/build/assets/*)
+# or change rarely (fonts, logo) — long cache lifetimes let repeat visits
+# skip re-downloading them instead of the default "no cache" behaviour.
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    <FilesMatch "\.woff2$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+    <FilesMatch "\.(png|jpe?g|webp)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+</IfModule>

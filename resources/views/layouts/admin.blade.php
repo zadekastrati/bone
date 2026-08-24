@@ -16,6 +16,7 @@
 </head>
 
 <body
+    data-admin-bundle="1"
     class="min-h-full bg-zinc-100/70 font-sans text-base leading-relaxed text-ink-900 antialiased lg:h-full lg:overflow-hidden">
     <div class="admin-layout" x-data="{ sidebarOpen: false }" @keydown.window.escape="sidebarOpen = false">
         <div x-show="sidebarOpen" x-transition.opacity
