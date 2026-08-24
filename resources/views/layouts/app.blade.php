@@ -237,11 +237,7 @@
                     <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" width="320" height="118" class="h-5 w-auto lg:h-6">
                     <p class="mt-4 flex items-center gap-2 text-pretty text-sm text-ink-600">
                         <x-icons.envelope class="h-4 w-4 shrink-0" />
-                        bone@example.com
-                    </p>
-                    <p class="mt-2 flex items-center gap-2 text-pretty text-sm text-ink-600">
-                        <x-icons.phone class="h-4 w-4 shrink-0" />
-                        +383 49 123 456
+                        info@bone-active.com
                     </p>
                     <div class="mt-4 flex items-center gap-4 text-pretty text-ink-600">
                         <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700" aria-label="{{ __('Follow us on Facebook') }}">

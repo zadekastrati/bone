@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     && docker-php-ext-configure gd --with-jpeg --with-webp \
-    && docker-php-ext-install pdo pdo_mysql zip mbstring gd
+    && docker-php-ext-install pdo pdo_mysql zip mbstring gd bcmath
 
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json ./
