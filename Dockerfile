@@ -82,6 +82,7 @@ CMD mkdir -p storage/framework/cache/data storage/framework/sessions storage/fra
     && (a2dismod mpm_worker || true) \
     && a2enmod mpm_prefork \
     && apache2ctl -M \
+    && php artisan migrate --force \
     && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
