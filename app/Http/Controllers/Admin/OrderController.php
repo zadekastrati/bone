@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateOrderRequest;
 use App\Models\Order;
+use App\Services\OrderStatusService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +16,8 @@ use Illuminate\View\View;
 
 class OrderController extends Controller
 {
+    public function __construct(private readonly OrderStatusService $orderStatus) {}
+
     public function index(Request $request): View
     {
         $this->authorize('viewAny', Order::class);
@@ -75,13 +78,8 @@ class OrderController extends Controller
         ]);
 
         $status = OrderStatus::from($validated['status']);
-        $shippedAt = $order->shipped_at;
 
-        if ($status === OrderStatus::Shipped && $shippedAt === null) {
-            $shippedAt = now();
-        }
-
-        $order->update(['status' => $status, 'shipped_at' => $shippedAt]);
+        $this->orderStatus->updateStatus($order, $status);
 
         return response()->json([
             'status' => $status->value,
@@ -113,13 +111,10 @@ class OrderController extends Controller
             $data['shipped_at'] = null;
         }
 
-        if (($data['status'] ?? '') === OrderStatus::Shipped->value
-            && empty($data['shipped_at'])
-            && $order->shipped_at === null) {
-            $data['shipped_at'] = now()->toDateTimeString();
-        }
+        $status = OrderStatus::from($data['status']);
+        unset($data['status']);
 
-        $order->update($data);
+        $this->orderStatus->updateStatus($order, $status, $data);
 
         return redirect()->route('admin.orders.show', $order)->with('success', 'Order updated.');
     }

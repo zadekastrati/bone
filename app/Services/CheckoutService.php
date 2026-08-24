@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Mail\NewOrderAdminMail;
 use App\Mail\OrderPlacedMail;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -134,6 +135,19 @@ class CheckoutService
                 'user_id' => $user->id,
                 'exception' => $e->getMessage(),
             ]);
+        }
+
+        $notifyAddress = config('store.notification_email') ?: config('mail.from.address');
+
+        if ($notifyAddress) {
+            try {
+                Mail::to($notifyAddress)->send(new NewOrderAdminMail($order));
+            } catch (\Throwable $e) {
+                Log::error('New order admin notification failed', [
+                    'order_id' => $order->id,
+                    'exception' => $e->getMessage(),
+                ]);
+            }
         }
 
         return $order;

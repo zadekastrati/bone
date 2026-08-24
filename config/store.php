@@ -78,6 +78,13 @@ return [
         'default_country' => env('STORE_DEFAULT_COUNTRY', 'XK'),
     ],
 
+    /*
+    | Where "new order placed" notifications go. Falls back to the mailer's
+    | From address (your storefront inbox) so this doesn't need its own env
+    | var set up unless you want notifications going somewhere else.
+    */
+    'notification_email' => env('STORE_NOTIFICATION_EMAIL'),
+
     'bank' => [
         'account_name' => env('STORE_BANK_ACCOUNT_NAME', ''),
         'iban' => env('STORE_BANK_IBAN', ''),

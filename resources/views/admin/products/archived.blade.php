@@ -30,8 +30,10 @@
                     const boxes = this.$el.querySelectorAll('.js-select-product:checked');
                     this.selectedCount = boxes.length;
                     this.hasSelection = boxes.length > 0;
+                    this.syncRestoreIds();
                 },
                 init() {
+                    this.syncRestoreIds();
                     new MutationObserver(() => this.refresh()).observe(
                         document.getElementById('products-archived-results'),
                         { childList: true, subtree: true }
@@ -41,10 +43,18 @@
                  * The restore form (unlike the delete form) can't use the
                  * checkboxes' native form attribute — an input can only be
                  * associated with one form, and that's already claimed by
-                 * the delete form below. So on submit, copy the currently
-                 * checked ids into this form as hidden inputs instead.
+                 * the delete form below. So the checked ids are mirrored into
+                 * this form as hidden inputs on every checkbox change, kept
+                 * continuously in sync rather than collected right at submit
+                 * time — the previous submit-time-only version raced against
+                 * the data-confirm modal's own submit interception and could
+                 * end up submitting before the ids were copied over.
                  */
-                collectIds(form) {
+                syncRestoreIds() {
+                    const form = document.getElementById('products-archived-bulk-restore-form');
+                    if (! form) {
+                        return;
+                    }
                     form.querySelectorAll('.js-collected-id').forEach((el) => el.remove());
                     this.$el.querySelectorAll('.js-select-product:checked').forEach((checkbox) => {
                         const hidden = document.createElement('input');
@@ -73,7 +83,6 @@
                     action="{{ route('admin.products.bulkRestore') }}"
                     data-confirm-label="Restore"
                     :data-confirm="`Restore ${selectedCount} selected product(s)?`"
-                    @submit="collectIds($el)"
                 >
                     @csrf
                     <button type="submit" class="btn-dark">Restore Selected (<span x-text="selectedCount"></span>)</button>
