@@ -92,12 +92,6 @@
                         <dt class="text-xs font-bold uppercase tracking-mega text-ink-400">{{ __('Payment') }}</dt>
                         <dd class="mt-1 font-semibold text-ink-900">{{ $order->payment_method->label() }} — {{ $order->payment_status->label() }}</dd>
                     </div>
-                    @if ($order->tracking_number)
-                        <div>
-                            <dt class="text-xs font-bold uppercase tracking-mega text-ink-400">{{ __('Tracking') }}</dt>
-                            <dd class="mt-1 font-mono text-xs text-ink-800">{{ $order->tracking_number }}</dd>
-                        </div>
-                    @endif
                 </dl>
             </div>
 

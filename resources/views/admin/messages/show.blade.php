@@ -6,6 +6,11 @@
     <div class="mx-auto w-full max-w-3xl">
         <x-page-header title="Message details" subtitle="Review the full contact form submission.">
             <a href="{{ route('admin.messages.index') }}" class="btn-secondary">Back to messages</a>
+            <form method="POST" action="{{ route('admin.messages.destroy', $message->id) }}" data-confirm="Delete this message from {{ $message->name }}?" data-confirm-label="Delete">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn-danger">Delete</button>
+            </form>
         </x-page-header>
 
         <div class="panel p-6 sm:p-8">

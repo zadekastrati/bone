@@ -16,4 +16,9 @@ class ContactMessagePolicy
     {
         return $user->isAdmin();
     }
+
+    public function delete(User $user, ContactMessage $message): bool
+    {
+        return $user->isAdmin();
+    }
 }

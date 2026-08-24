@@ -45,6 +45,11 @@
                                     <span x-text="open ? 'Hide' : 'Details'"></span>
                                 </button>
                                 <a href="{{ route('admin.orders.show', $order) }}" class="admin-action-link">Manage</a>
+                                <form method="POST" action="{{ route('admin.orders.destroy', $order) }}" class="inline" data-confirm="Archive order {{ $order->order_number }}?" data-confirm-label="Archive">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="admin-action-link">Archive</button>
+                                </form>
                             </div>
                         </td>
                     </tr>

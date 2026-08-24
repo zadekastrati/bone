@@ -125,14 +125,6 @@
                                                     <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background-color:{{ $statusColor['bg'] }};color:{{ $statusColor['text'] }};">{{ $order->status->label() }}</span>
                                                 </td>
                                             </tr>
-                                            @if ($order->status === \App\Enums\OrderStatus::Shipped && $order->tracking_number)
-                                                <tr>
-                                                    <td colspan="2" style="padding:16px 0 0;">
-                                                        <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#a58d78;">{{ __('Tracking number') }}</p>
-                                                        <p style="margin:0;font-size:15px;font-weight:600;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#3a2f28;">{{ $order->tracking_number }}</p>
-                                                    </td>
-                                                </tr>
-                                            @endif
                                         </table>
                                     </td>
                                 </tr>

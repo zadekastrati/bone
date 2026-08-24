@@ -118,4 +118,60 @@ class OrderController extends Controller
 
         return redirect()->route('admin.orders.show', $order)->with('success', 'Order updated.');
     }
+
+    public function destroy(Order $order): RedirectResponse
+    {
+        $this->authorize('delete', $order);
+
+        $order->delete();
+
+        return redirect()->route('admin.orders.index')->with('success', 'Order archived.');
+    }
+
+    public function archived(Request $request): View
+    {
+        $this->authorize('viewAny', Order::class);
+
+        $query = Order::onlyTrashed()->with(['user'])->latest('deleted_at');
+
+        if ($request->filled('q')) {
+            $term = '%'.$request->string('q')->trim().'%';
+            $query->where(function ($q) use ($term): void {
+                $q->where('order_number', 'like', $term)
+                    ->orWhereHas('user', function ($uq) use ($term): void {
+                        $uq->where('first_name', 'like', $term)
+                            ->orWhere('last_name', 'like', $term)
+                            ->orWhere('email', 'like', $term);
+                    });
+            });
+        }
+
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $orders */
+        $orders = $query->paginate(20);
+        $orders->withQueryString();
+
+        if ($request->ajax()) {
+            return view('admin.orders.partials.archived-results', compact('orders'));
+        }
+
+        return view('admin.orders.archived', compact('orders'));
+    }
+
+    public function restore(Order $order): RedirectResponse
+    {
+        $this->authorize('restore', $order);
+
+        $order->restore();
+
+        return redirect()->route('admin.orders.archived')->with('success', 'Order restored.');
+    }
+
+    public function forceDelete(Order $order): RedirectResponse
+    {
+        $this->authorize('forceDelete', $order);
+
+        $order->forceDelete();
+
+        return redirect()->route('admin.orders.archived')->with('success', 'Order permanently deleted.');
+    }
 }

@@ -22,7 +22,7 @@ class OrderStatusService
     ];
 
     /**
-     * @param  array<string, mixed>  $attributes  Additional columns to update alongside status (payment_status, tracking_number, admin_notes, ...).
+     * @param  array<string, mixed>  $attributes  Additional columns to update alongside status (payment_status, admin_notes, ...).
      */
     public function updateStatus(Order $order, OrderStatus $status, array $attributes = []): Order
     {

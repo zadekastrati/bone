@@ -171,11 +171,18 @@ Route::middleware('auth')->group(function (): void {
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::resource('messages', AdminContactMessageController::class)
             ->parameters(['messages' => 'id'])
-            ->only(['index', 'show']);
+            ->only(['index', 'show', 'destroy']);
+        Route::get('orders/archived', [AdminOrderController::class, 'archived'])->name('orders.archived');
+        Route::post('orders/{order}/restore', [AdminOrderController::class, 'restore'])
+            ->withTrashed()
+            ->name('orders.restore');
+        Route::delete('orders/{order}/force-delete', [AdminOrderController::class, 'forceDelete'])
+            ->withTrashed()
+            ->name('orders.forceDelete');
         Route::get('orders/{order}/details', [AdminOrderController::class, 'details'])->name('orders.details');
         Route::patch('orders/{order}/quick-status', [AdminOrderController::class, 'quickStatus'])->name('orders.quickStatus');
         Route::get('orders/{order}/invoice', [AdminOrderController::class, 'invoice'])->name('orders.invoice');
-        Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
+        Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update', 'destroy']);
     });
 });
 

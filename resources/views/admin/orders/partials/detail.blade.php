@@ -75,9 +75,6 @@
                 <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
                 <x-admin.badge :tone="$order->payment_status->tone()">{{ $order->payment_status->label() }}</x-admin.badge>
             </div>
-            @if ($order->tracking_number)
-                <p class="mt-2 font-mono text-xs text-ink-600">Tracking: {{ $order->tracking_number }}</p>
-            @endif
         </div>
 
         <div class="rounded-2xl border border-zinc-200/80 bg-white/70 p-4">

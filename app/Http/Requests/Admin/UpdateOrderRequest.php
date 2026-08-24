@@ -29,7 +29,6 @@ class UpdateOrderRequest extends FormRequest
         return [
             'status' => ['required', Rule::enum(OrderStatus::class)],
             'payment_status' => ['required', Rule::enum(PaymentStatus::class)],
-            'tracking_number' => ['nullable', 'string', 'max:64'],
             'shipped_at' => ['nullable', 'date'],
             'admin_notes' => ['nullable', 'string', 'max:5000'],
         ];

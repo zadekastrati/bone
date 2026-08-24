@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -40,5 +41,16 @@ class ContactMessageController extends Controller
         $this->authorize('view', $message);
 
         return view('admin.messages.show', compact('message'));
+    }
+
+    public function destroy(int $id): RedirectResponse
+    {
+        $message = ContactMessage::query()->findOrFail($id);
+
+        $this->authorize('delete', $message);
+
+        $message->delete();
+
+        return redirect()->route('admin.messages.index')->with('success', 'Message deleted.');
     }
 }

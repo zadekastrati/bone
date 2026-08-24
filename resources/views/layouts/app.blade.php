@@ -240,14 +240,9 @@
                         info@bone-active.com
                     </p>
                     <div class="mt-4 flex items-center gap-4 text-pretty text-ink-600">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700" aria-label="{{ __('Follow us on Facebook') }}">
-                            <x-icons.facebook class="h-4 w-4" />
-                        </a>
                         <a href="https://www.instagram.com/bone.active?igsi=M215OG4wZG1uYzI3" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700" aria-label="{{ __('Follow us on Instagram') }}">
                             <x-icons.instagram class="h-4 w-4" />
                         </a>
-                        <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700" aria-label="{{ __('Follow us on TikTok') }}">
-                            <x-icons.tiktok class="h-4 w-4" />
                         </a>
                     </div>
                 </div>

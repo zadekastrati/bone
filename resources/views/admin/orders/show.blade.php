@@ -98,10 +98,6 @@
                     </select>
                 </div>
                 <div>
-                    <label for="tracking_number" class="form-label">Tracking number</label>
-                    <input type="text" name="tracking_number" id="tracking_number" value="{{ old('tracking_number', $order->tracking_number) }}" class="form-input">
-                </div>
-                <div>
                     <label for="shipped_at" class="form-label">Shipped at</label>
                     <input type="datetime-local" name="shipped_at" id="shipped_at" value="{{ old('shipped_at', $order->shipped_at?->format('Y-m-d\TH:i')) }}" class="form-input">
                 </div>
