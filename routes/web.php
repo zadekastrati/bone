@@ -63,7 +63,7 @@ Route::view('/terms-and-conditions', 'terms-and-conditions')->name('terms');
 Route::view('/returns', 'returns')->name('returns');
 Route::view('/size-guide', 'size-guide')->name('size-guide');
 Route::post('/contact', [ContactController::class, 'store'])
-    ->middleware('throttle:10,1')
+    ->middleware(['auth', 'throttle:10,1'])
     ->name('contact.store');
 
 Route::post('/country', [CountryController::class, 'update'])
