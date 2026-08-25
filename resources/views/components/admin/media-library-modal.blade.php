@@ -3,6 +3,16 @@
     'thumbnailUrl',
 ])
 
+{{--
+    Teleported to <body> instead of rendering in place — this component lives
+    nested inside the admin layout, alongside its sticky top header. Sticky
+    elements commonly get their own browser compositing layer, which
+    backdrop-blur can fail to see through even though it paints the dark
+    overlay over it fine — the header showed dimmed but stayed sharp instead
+    of blurred. Rendering as a direct child of <body> sidesteps that stacking
+    context entirely.
+--}}
+<template x-teleport="body">
 <div
     x-data="mediaLibraryModal(@js($fetchUrl), @js($thumbnailUrl))"
     @open-media-picker.window="openFor($event.detail)"
@@ -31,7 +41,7 @@
         x-transition:leave="transition ease-in duration-150 transform"
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="absolute inset-4 mx-auto flex max-w-4xl flex-col overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-elevated sm:inset-x-8 sm:inset-y-8 lg:inset-y-10"
+        class="absolute inset-4 mx-auto flex max-w-4xl flex-col overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-elevated sm:inset-x-8 sm:inset-y-4 lg:inset-y-6"
         @click.stop
     >
         <div class="flex shrink-0 items-center justify-between gap-4 border-b border-zinc-200/80 bg-gradient-to-b from-zinc-50 to-white px-6 py-4">
@@ -70,7 +80,7 @@
             >
         </div>
 
-        <div class="flex-1 overflow-y-auto px-6 py-4" x-ref="scrollContainer">
+        <div class="flex-1 snap-y snap-proximity overflow-y-auto px-6 py-4" x-ref="scrollContainer">
             <template x-if="$store.mediaLibrary.loading">
                 <p class="py-12 text-center text-sm text-zinc-500">Loading library…</p>
             </template>
@@ -114,14 +124,14 @@
             >
                 <template x-for="item in filtered" :key="item.path">
                     <li
-                        class="group relative aspect-square cursor-pointer overflow-hidden rounded-xl bg-zinc-100 ring-2 transition [content-visibility:auto] [contain-intrinsic-size:160px_160px]"
+                        class="group relative aspect-square snap-start cursor-pointer overflow-hidden rounded-xl bg-zinc-100 ring-2 transition [content-visibility:auto] [contain-intrinsic-size:160px_160px]"
                         :class="item.selected ? 'ring-accent-600' : 'ring-ink-200/70 hover:ring-accent-300'"
                         :data-path="item.path"
                         x-init="observeTile($el, item)"
                         @click="toggle(item)"
                     >
                         <template x-if="item.visible && item.is_video">
-                            <video :src="item.url" class="size-full object-cover" muted playsinline preload="metadata" @loadedmetadata="tileSettled(item)" x-on:error="tileSettled(item)"></video>
+                            <video :src="item.url" class="size-full object-cover" muted playsinline preload="metadata" @loadedmetadata="tileSettled(item); $el.currentTime = 0.1" x-on:error="tileSettled(item)"></video>
                         </template>
                         <template x-if="item.visible && !item.is_video">
                             <img :src="thumbSrc(item)" alt="" loading="lazy" decoding="async" class="size-full object-cover" @load="tileSettled(item)" x-on:error="tileSettled(item)">
@@ -160,3 +170,4 @@
         </div>
     </div>
 </div>
+</template>

@@ -20,7 +20,7 @@
         <template x-for="(item, index) in attached" :key="item.path">
             <li class="group relative aspect-square overflow-hidden rounded-xl ring-1 ring-ink-200/70">
                 <input type="hidden" name="{{ $inputName }}" :value="item.path">
-                <video :src="item.url" x-show="item.is_video" class="size-full object-cover" muted playsinline preload="metadata"></video>
+                <video :src="item.url" x-show="item.is_video" class="size-full object-cover" muted playsinline preload="metadata" onloadedmetadata="this.currentTime=0.1"></video>
                 <img :src="item.url" x-show="!item.is_video" alt="" class="size-full object-cover">
                 <span class="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink-950/70 to-transparent"></span>
                 <button

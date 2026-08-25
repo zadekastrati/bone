@@ -26,22 +26,27 @@ class ImageVariantCache
 
     /**
      * Resolves a single cached variant, generating it only on a genuine
-     * cache miss. Checks the cache disk FIRST and returns immediately on a
-     * hit — every call to $sourceDisk->exists()/get() is a real R2 network
-     * round trip (tens to hundreds of ms each), so touching R2 to serve a
-     * file that's already cached was pure waste.
-     *
-     * Cached on the "public" disk (R2), not "local" — Railway's container
-     * filesystem is ephemeral and wiped on every redeploy/restart, which was
-     * silently forcing every image to regenerate from scratch (a fresh R2
-     * fetch + GD resize) after every deploy instead of ever staying warm.
+     * cache miss. Two-tier cache: "local" disk is checked first and is
+     * near-instant (no network round trip), but is wiped on every Railway
+     * redeploy/restart. "public" (R2) is checked next — durable across
+     * redeploys, but every hit still costs a real R2 network round trip
+     * (tens to hundreds of ms), so a hit there also gets written back to
+     * local, making every request after the first one on this container
+     * instant again instead of paying that R2 cost every single time.
      */
     public function resolve(string $sourcePath, string $cacheKey, int $maxDimension, string $sourceDisk = 'public'): ?string
     {
-        $cache = Storage::disk('public');
+        $fast = Storage::disk('local');
+        if ($fast->exists($cacheKey)) {
+            return $fast->get($cacheKey);
+        }
 
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
+        $durable = Storage::disk('public');
+        if ($durable->exists($cacheKey)) {
+            $bytes = $durable->get($cacheKey);
+            $fast->put($cacheKey, $bytes);
+
+            return $bytes;
         }
 
         $disk = Storage::disk($sourceDisk);
@@ -50,7 +55,8 @@ class ImageVariantCache
         }
 
         $bytes = ImageResizer::resize($disk->get($sourcePath), $maxDimension);
-        $cache->put($cacheKey, $bytes);
+        $fast->put($cacheKey, $bytes);
+        $durable->put($cacheKey, $bytes);
 
         return $bytes;
     }
@@ -68,11 +74,12 @@ class ImageVariantCache
      */
     public function warm(string $sourcePath, array $cacheKeysByVariant, string $sourceDisk = 'public'): void
     {
-        $cache = Storage::disk('public');
+        $fast = Storage::disk('local');
+        $durable = Storage::disk('public');
 
         $missing = array_filter(
             $cacheKeysByVariant,
-            fn (int $maxDimension, string $cacheKey): bool => ! $cache->exists($cacheKey),
+            fn (int $maxDimension, string $cacheKey): bool => ! $fast->exists($cacheKey) && ! $durable->exists($cacheKey),
             ARRAY_FILTER_USE_BOTH
         );
 
@@ -88,7 +95,9 @@ class ImageVariantCache
         $original = $disk->get($sourcePath);
 
         foreach ($missing as $cacheKey => $maxDimension) {
-            $cache->put($cacheKey, ImageResizer::resize($original, $maxDimension));
+            $bytes = ImageResizer::resize($original, $maxDimension);
+            $fast->put($cacheKey, $bytes);
+            $durable->put($cacheKey, $bytes);
         }
     }
 }

@@ -82,7 +82,7 @@
                                     <img src="{{ $thumb->thumbUrl() }}" alt="{{ $product->name }} thumbnail" class="h-14 w-14 rounded-xl object-cover opacity-70" loading="lazy">
                                 @elseif ($thumb && $thumb->isVideo())
                                     <span class="relative inline-block h-14 w-14 overflow-hidden rounded-xl opacity-70 ring-1 ring-zinc-200">
-                                        <video src="{{ $thumb->url() }}" class="size-full object-cover" muted playsinline preload="metadata"></video>
+                                        <video src="{{ $thumb->url() }}" class="size-full object-cover" muted playsinline preload="metadata" onloadedmetadata="this.currentTime=0.1"></video>
                                         <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink-950/35" aria-hidden="true">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
                                         </span>

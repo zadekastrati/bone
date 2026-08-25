@@ -92,7 +92,7 @@ class MediaLibraryController extends Controller
 
         $cacheKey = 'thumbnails/'.sha1($path).'.jpg';
 
-        if (! function_exists('imagecreatefromstring') && ! Storage::disk('public')->exists($cacheKey)) {
+        if (! function_exists('imagecreatefromstring') && ! Storage::disk('local')->exists($cacheKey) && ! Storage::disk('public')->exists($cacheKey)) {
             // No GD available and nothing cached yet — fall back to the
             // original rather than error, so the picker still works, just
             // without the speed-up.

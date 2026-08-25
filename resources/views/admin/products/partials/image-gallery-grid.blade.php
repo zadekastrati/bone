@@ -17,7 +17,7 @@
                     data-image-id="{{ $img->id }}"
                 >
                     @if ($img->isVideo())
-                        <video src="{{ $img->url() }}" class="size-full object-cover" muted playsinline preload="metadata"></video>
+                        <video src="{{ $img->url() }}" class="size-full object-cover" muted playsinline preload="metadata" onloadedmetadata="this.currentTime=0.1"></video>
                         <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink-950/35" aria-hidden="true">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
                         </span>
