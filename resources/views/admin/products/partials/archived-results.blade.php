@@ -55,7 +55,9 @@
             <table class="data-table data-table--admin">
                 <thead>
                     <tr>
-                        <th class="w-10"><span class="sr-only">Select</span></th>
+                        <th class="w-10">
+                            <input type="checkbox" class="js-select-all" autocomplete="off" x-on:click.prevent="toggleAll()" aria-label="Select all">
+                        </th>
                         <th></th>
                         <th>Product</th>
                         <th>Category</th>
@@ -72,7 +74,7 @@
                             @click="openDetail(products[{{ $loop->index }}])"
                         >
                             <td class="w-10" @click.stop>
-                                <input type="checkbox" name="ids[]" value="{{ $product->id }}" form="products-archived-bulk-delete-form" class="js-select-product" aria-label="Select {{ $product->name }}">
+                                <input type="checkbox" name="ids[]" value="{{ $product->id }}" form="products-archived-bulk-delete-form" class="js-select-product" autocomplete="off" aria-label="Select {{ $product->name }}">
                             </td>
                             <td class="w-24">
                                 @php $thumb = $product->thumbnailImage(); @endphp

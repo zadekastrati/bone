@@ -27,13 +27,33 @@
                 hasSelection: false,
                 selectedCount: 0,
                 refresh() {
-                    const boxes = this.$el.querySelectorAll('.js-select-product:checked');
-                    this.selectedCount = boxes.length;
-                    this.hasSelection = boxes.length > 0;
+                    const boxes = Array.from(this.$el.querySelectorAll('.js-select-product'));
+                    const checked = boxes.filter((box) => box.checked);
+                    this.selectedCount = checked.length;
+                    this.hasSelection = checked.length > 0;
+                    const selectAll = this.$el.querySelector('.js-select-all');
+                    if (selectAll) {
+                        selectAll.checked = boxes.length > 0 && checked.length === boxes.length;
+                        selectAll.indeterminate = checked.length > 0 && checked.length < boxes.length;
+                    }
                     this.syncRestoreIds();
                 },
+                toggleAll() {
+                    // Decides the new state itself (any unchecked → check all, else
+                    // uncheck all) instead of trusting the checkbox's own native click
+                    // toggle — some browsers don't reliably flip `checked` on the first
+                    // click when the box was indeterminate, which read as a dead click.
+                    const boxes = Array.from(this.$el.querySelectorAll('.js-select-product'));
+                    const shouldCheck = boxes.some((box) => ! box.checked);
+                    boxes.forEach((box) => { box.checked = shouldCheck; });
+                    this.refresh();
+                },
                 init() {
-                    this.syncRestoreIds();
+                    // Browsers restore checkbox checked-state on reload/back-navigation
+                    // independent of the server-rendered HTML — refresh() (which also
+                    // calls syncRestoreIds) recomputes everything against the real row
+                    // states instead of trusting a possibly-stale restored one.
+                    this.refresh();
                     new MutationObserver(() => this.refresh()).observe(
                         document.getElementById('products-archived-results'),
                         { childList: true, subtree: true }

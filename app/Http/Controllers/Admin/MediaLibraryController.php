@@ -52,7 +52,7 @@ class MediaLibraryController extends Controller
         );
 
         $files = collect($disk->allFiles())
-            ->reject(fn (string $path): bool => in_array($path, $excluded, true))
+            ->reject(fn (string $path): bool => in_array($path, $excluded, true) || str_starts_with($path, 'thumbnails/'))
             ->filter(function (string $path): bool {
                 $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
@@ -74,10 +74,12 @@ class MediaLibraryController extends Controller
      * These photos are full camera originals (routinely 25-30+ megapixels) —
      * decoding several of those at once in a browser tab to show as ~150px grid
      * tiles is what was actually making the picker unusably slow, not just the
-     * network transfer. Resized once here and cached locally on the "local"
-     * disk (not "public"/R2 — this is a disposable cache, not product data), so
-     * every request after the first for a given file is served instantly with
-     * no R2 round-trip and no re-encoding.
+     * network transfer. Resized once here and cached on the "public" disk (R2,
+     * under thumbnails/ — excluded from the library listing above) so every
+     * request after the first for a given file is served instantly with no
+     * R2 round-trip and no re-encoding, and survives redeploys/restarts
+     * instead of regenerating from scratch every time (Railway's container
+     * filesystem is wiped on every deploy).
      */
     public function thumbnail(Request $request): Response|RedirectResponse
     {
@@ -90,7 +92,7 @@ class MediaLibraryController extends Controller
 
         $cacheKey = 'thumbnails/'.sha1($path).'.jpg';
 
-        if (! function_exists('imagecreatefromstring') && ! Storage::disk('local')->exists($cacheKey)) {
+        if (! function_exists('imagecreatefromstring') && ! Storage::disk('public')->exists($cacheKey)) {
             // No GD available and nothing cached yet — fall back to the
             // original rather than error, so the picker still works, just
             // without the speed-up.

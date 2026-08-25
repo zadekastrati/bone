@@ -3,6 +3,9 @@
         <table class="data-table data-table--admin">
             <thead>
                 <tr>
+                    <th class="w-10">
+                        <input type="checkbox" class="js-select-all" autocomplete="off" x-on:click.prevent="toggleAll()" aria-label="Select all">
+                    </th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Message</th>
@@ -13,6 +16,9 @@
             <tbody>
                 @forelse ($messages as $message)
                     <tr>
+                        <td class="w-10">
+                            <input type="checkbox" name="ids[]" value="{{ $message->id }}" form="messages-bulk-delete-form" class="js-select-message" autocomplete="off" aria-label="Select message from {{ $message->name }}">
+                        </td>
                         <td class="font-medium text-ink-900">{{ $message->name }}</td>
                         <td><a href="mailto:{{ $message->email }}" class="text-ink-700 hover:text-accent-700">{{ $message->email }}</a></td>
                         <td class="max-w-[34rem] text-ink-600">{{ \Illuminate\Support\Str::limit($message->message, 120) }}</td>
@@ -30,7 +36,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="data-table-empty text-ink-500">No messages found.</td>
+                        <td colspan="6" class="data-table-empty text-ink-500">No messages found.</td>
                     </tr>
                 @endforelse
             </tbody>

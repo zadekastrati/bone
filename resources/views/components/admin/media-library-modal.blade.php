@@ -31,7 +31,7 @@
         x-transition:leave="transition ease-in duration-150 transform"
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="absolute inset-4 mx-auto flex max-w-4xl flex-col overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-elevated sm:inset-x-8 sm:inset-y-8 lg:inset-x-auto lg:inset-y-10 lg:w-full"
+        class="absolute inset-4 mx-auto flex max-w-4xl flex-col overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-elevated sm:inset-x-8 sm:inset-y-8 lg:inset-y-10"
         @click.stop
     >
         <div class="flex shrink-0 items-center justify-between gap-4 border-b border-zinc-200/80 bg-gradient-to-b from-zinc-50 to-white px-6 py-4">

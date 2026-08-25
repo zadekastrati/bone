@@ -85,6 +85,7 @@ class ProductController extends Controller
 
             $this->mediaService->storeUploads($product, $request->file('images', []));
             $this->storeVariantImages($product, $request);
+            $this->mediaService->attachExisting($product, $request->input('attach_images', []));
 
             return $product;
         });

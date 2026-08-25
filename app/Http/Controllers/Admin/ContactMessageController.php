@@ -53,4 +53,40 @@ class ContactMessageController extends Controller
 
         return redirect()->route('admin.messages.index')->with('success', 'Message deleted.');
     }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $this->authorize('viewAny', ContactMessage::class);
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:contact_messages,id'],
+        ]);
+
+        $count = ContactMessage::query()->whereIn('id', $validated['ids'])->delete();
+
+        return redirect()->route('admin.messages.index')->with('success', "Deleted {$count} message(s).");
+    }
+
+    public function destroyAll(Request $request): RedirectResponse
+    {
+        $this->authorize('viewAny', ContactMessage::class);
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        $query = ContactMessage::query();
+
+        if ($request->filled('q')) {
+            $term = '%'.$request->string('q')->trim().'%';
+            $query->where(function ($q) use ($term): void {
+                $q->where('name', 'like', $term)
+                    ->orWhere('email', 'like', $term)
+                    ->orWhere('message', 'like', $term);
+            });
+        }
+
+        $count = $query->delete();
+
+        return redirect()->route('admin.messages.index')->with('success', "Deleted {$count} message(s).");
+    }
 }

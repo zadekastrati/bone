@@ -86,6 +86,10 @@
                     <p class="mt-1 text-sm text-zinc-500">Photos and video shown on the storefront. The first photo becomes the catalog thumbnail; change it later when editing.</p>
                 </div>
                 <x-admin.product-media-upload />
+                <x-admin.product-media-library-picker />
+                @error('attach_images')
+                    <p class="text-xs text-red-600">{{ $message }}</p>
+                @enderror
             </div>
         </x-admin.form-section>
 
@@ -152,4 +156,9 @@
             <button type="submit" class="btn-primary px-8 py-2.5 font-medium">Create product</button>
         </div>
     </form>
+
+    <x-admin.media-library-modal
+        :fetch-url="route('admin.media-library.index')"
+        :thumbnail-url="route('admin.media-library.thumbnail')"
+    />
 @endsection

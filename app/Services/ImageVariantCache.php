@@ -26,14 +26,19 @@ class ImageVariantCache
 
     /**
      * Resolves a single cached variant, generating it only on a genuine
-     * cache miss. Checks the local cache disk FIRST and returns immediately
-     * on a hit — every call to $sourceDisk->exists()/get() is a real R2
-     * network round trip (tens to hundreds of ms each), so touching R2 to
-     * serve a file that's already cached locally was pure waste.
+     * cache miss. Checks the cache disk FIRST and returns immediately on a
+     * hit — every call to $sourceDisk->exists()/get() is a real R2 network
+     * round trip (tens to hundreds of ms each), so touching R2 to serve a
+     * file that's already cached was pure waste.
+     *
+     * Cached on the "public" disk (R2), not "local" — Railway's container
+     * filesystem is ephemeral and wiped on every redeploy/restart, which was
+     * silently forcing every image to regenerate from scratch (a fresh R2
+     * fetch + GD resize) after every deploy instead of ever staying warm.
      */
     public function resolve(string $sourcePath, string $cacheKey, int $maxDimension, string $sourceDisk = 'public'): ?string
     {
-        $cache = Storage::disk('local');
+        $cache = Storage::disk('public');
 
         if ($cache->exists($cacheKey)) {
             return $cache->get($cacheKey);
@@ -63,7 +68,7 @@ class ImageVariantCache
      */
     public function warm(string $sourcePath, array $cacheKeysByVariant, string $sourceDisk = 'public'): void
     {
-        $cache = Storage::disk('local');
+        $cache = Storage::disk('public');
 
         $missing = array_filter(
             $cacheKeysByVariant,

@@ -439,7 +439,10 @@ Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
     },
     revealQueue: [],
     activeReveals: 0,
-    maxConcurrentReveals: 4,
+    // Higher now that thumbnails are cached durably on R2 (see ImageVariantCache) —
+    // most reveals are a fast cache hit, not a cold R2-fetch-and-resize, so there's
+    // little decode-storm risk left to throttle against.
+    maxConcurrentReveals: 10,
     queueReveal(item) {
         item.queued = true;
         this.revealQueue.push(item);
