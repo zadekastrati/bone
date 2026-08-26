@@ -36,10 +36,12 @@ class CategoryController extends Controller
     {
         $this->authorize('create', Category::class);
 
-        $data = collect($request->validated())->except('image')->all();
+        $data = collect($request->validated())->except(['image', 'attach_image'])->all();
 
         if ($request->hasFile('image')) {
             $data['image_path'] = $request->file('image')->store('categories', 'public');
+        } elseif ($request->filled('attach_image')) {
+            $data['image_path'] = $request->input('attach_image');
         }
 
         Category::create($data);
@@ -58,7 +60,7 @@ class CategoryController extends Controller
     {
         $this->authorize('update', $category);
 
-        $data = collect($request->validated())->except('image')->all();
+        $data = collect($request->validated())->except(['image', 'attach_image'])->all();
 
         if ($request->hasFile('image')) {
             if ($category->image_path !== null) {
@@ -66,6 +68,12 @@ class CategoryController extends Controller
             }
 
             $data['image_path'] = $request->file('image')->store('categories', 'public');
+        } elseif ($request->filled('attach_image')) {
+            if ($category->image_path !== null) {
+                Storage::disk('public')->delete($category->image_path);
+            }
+
+            $data['image_path'] = $request->input('attach_image');
         }
 
         $category->update($data);

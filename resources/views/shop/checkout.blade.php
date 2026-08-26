@@ -95,7 +95,7 @@
                             required
                         >
                             @foreach ($shippingCountries as $code => $info)
-                                <option value="{{ $code }}">{{ __($info['label']) }} — <x-price :amount="$info['amount']" /> {{ __('shipping') }}</option>
+                                <option value="{{ $code }}">{{ __($info['label']) }}, <x-price :amount="$info['amount']" /> {{ __('shipping') }}</option>
                             @endforeach
                         </select>
                         <p class="mt-1 text-xs text-ink-500">{{ __('Kosovo (XK), Albania (AL), or North Macedonia (MK) only.') }}</p>
@@ -132,7 +132,7 @@
                 <h2 class="checkout-fieldset__legend">{{ __('Notes') }}</h2>
                 <div>
                     <label for="customer_notes" class="form-label">{{ __('Order notes') }} <span class="font-normal text-ink-400">({{ __('optional') }})</span></label>
-                    <p class="text-xs text-ink-500">{{ __('Anything about your order (not the address) — gifts, sizing, or special requests.') }}</p>
+                    <p class="text-xs text-ink-500">{{ __('Anything about your order, like gifts, sizing, or special requests (not the address).') }}</p>
                     <textarea name="customer_notes" id="customer_notes" rows="3" class="form-input mt-1.5 min-h-[6rem] resize-y py-3">{{ old('customer_notes') }}</textarea>
                 </div>
             </div>
@@ -180,7 +180,7 @@
                         x-cloak
                         class="mt-1 text-right text-xs text-ink-500"
                     >
-                        {{ __('Charged as') }} <strong x-text="'€' + Number(total).toFixed(2)"></strong> — {{ __('prices are set in EUR; the amount above is a converted estimate.') }}
+                        {{ __('Charged as') }} <strong x-text="'€' + Number(total).toFixed(2)"></strong>. {{ __('Prices are set in EUR; the amount above is a converted estimate.') }}
                     </p>
                 </div>
             </div>

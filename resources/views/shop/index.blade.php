@@ -6,12 +6,14 @@
     @php
         $isSearch = $q !== '' && $searchResults !== null;
         $products = $products ?? null;
-        $pageSubtitle = __('Search or browse by category — every product shows colors and sizes before checkout.');
+        $training = $training ?? null;
+        $pageSubtitle = __('Search or browse by category. Every product shows colors and sizes before checkout.');
         if ($isSearch) {
             $pageSubtitle = trans_choice(':count result for “:query”.|:count results for “:query”.', $searchResults->total(), ['count' => $searchResults->total(), 'query' => e($q)]);
         } elseif ($products !== null) {
             $pageSubtitle = trans_choice(':count product available.|:count products available.', $products->total(), ['count' => $products->total()]);
         }
+        $pageTitle = $isSearch ? __('Search results') : ($training ? $training->label() : __('Shop'));
     @endphp
 
     <nav class="crumbs mb-6" aria-label="Breadcrumb">
@@ -21,12 +23,16 @@
             <a href="{{ route('shop.index') }}">{{ __('Shop') }}</a>
             <span class="mx-1.5 text-ink-300" aria-hidden="true">/</span>
             <span class="text-ink-800" aria-current="page">{{ __('Search') }}</span>
+        @elseif ($training)
+            <a href="{{ route('shop.index') }}">{{ __('Shop') }}</a>
+            <span class="mx-1.5 text-ink-300" aria-hidden="true">/</span>
+            <span class="text-ink-800" aria-current="page">{{ $training->label() }}</span>
         @else
             <span class="text-ink-800" aria-current="page">{{ __('Shop') }}</span>
         @endif
     </nav>
 
-    <x-page-header :title="$isSearch ? __('Search results') : __('Shop')" :subtitle="$pageSubtitle">
+    <x-page-header :title="$pageTitle" :subtitle="$pageSubtitle">
         @auth
             <a href="{{ route('orders.index') }}" class="btn-secondary">{{ __('My orders') }}</a>
         @endauth
@@ -51,6 +57,8 @@
             @endif
             @if ($isSearch)
                 <a href="{{ route('shop.index') }}" class="btn-secondary whitespace-nowrap">{{ __('Clear search') }}</a>
+            @elseif ($training)
+                <a href="{{ route('shop.index') }}" class="btn-secondary whitespace-nowrap">{{ __('Clear filter') }}</a>
             @elseif ($products !== null && $products->total() > 0)
                 <a href="#products" class="btn-ghost whitespace-nowrap px-4 py-2 text-[11px]">{{ __('Browse products') }}</a>
             @endif

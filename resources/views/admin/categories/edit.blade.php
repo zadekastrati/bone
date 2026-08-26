@@ -41,8 +41,14 @@
                         <img src="{{ $category->imageUrl() }}" alt="" class="mb-3 h-32 w-full max-w-xs rounded-xl object-cover ring-1 ring-ink-200/70">
                     @endif
                     <input type="file" name="image" id="image" accept="image/jpeg,image/png,image/webp" class="form-input @error('image') form-input-error @enderror">
-                    <p class="mt-2 text-xs text-ink-500">Shown as the background photo for this category on the homepage. Upload a new file to replace it.</p>
+                    <p class="mt-2 text-xs text-ink-500">Shown as the background photo for this category on the homepage. Upload a new file, or pick one already on R2, to replace it.</p>
                     @error('image')
+                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                    <div class="mt-3">
+                        <x-admin.category-image-picker />
+                    </div>
+                    @error('attach_image')
                         <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -61,4 +67,9 @@
             </div>
         </form>
     </div>
+
+    <x-admin.media-library-modal
+        :fetch-url="route('admin.media-library.index')"
+        :thumbnail-url="route('admin.media-library.thumbnail')"
+    />
 @endsection

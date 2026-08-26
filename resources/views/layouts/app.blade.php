@@ -6,16 +6,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @php
         $__seoTitle = trim($__env->yieldContent('title'));
-        $__seoTitle = $__seoTitle !== '' ? $__seoTitle.' — '.config('app.name', 'Laravel') : config('app.name', 'Laravel');
+        $__seoTitle = $__seoTitle !== '' ? $__seoTitle.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel');
         $__seoDescription = trim($__env->yieldContent('meta_description'));
         $__seoDescription = $__seoDescription !== ''
             ? $__seoDescription
-            : "Kit that keeps up when the set gets ugly — compression, support, and layers that move with you from warm-up to last rep.";
+            : "Kit that keeps up when the set gets ugly. Compression, support, and layers that move with you from warm-up to last rep.";
         $__seoImage = trim($__env->yieldContent('meta_image'));
         $__seoImage = $__seoImage !== '' ? $__seoImage : asset('logo.png');
     @endphp
     <title>{{ $__seoTitle }}</title>
     <meta name="description" content="{{ $__seoDescription }}">
+    <link rel="icon" type="image/jpeg" href="{{ asset('logo.jpeg') }}">
     <link rel="canonical" href="{{ url()->current() }}">
     @if (trim($__env->yieldContent('noindex')) !== '')
         <meta name="robots" content="noindex, nofollow">

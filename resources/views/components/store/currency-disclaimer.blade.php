@@ -7,7 +7,7 @@
 
 @if ($currency !== 'EUR')
     <p {{ $attributes->merge(['class' => 'text-xs text-ink-500']) }}>
-        Prices are set in euros (EUR) — the {{ $currency }} amount{{ $amount !== null ? ' above' : '' }} is a converted estimate for reference.
+        Prices are set in euros (EUR). The {{ $currency }} amount{{ $amount !== null ? ' above' : '' }} is a converted estimate for reference.
         @if ($amount !== null)
             You're charged <strong>{{ $svc->format((float) $amount, 'EUR') }}</strong>.
         @endif

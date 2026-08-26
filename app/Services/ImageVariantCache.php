@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Support\ImageResizer;
+use App\Support\VideoThumbnailer;
 use Illuminate\Support\Facades\Storage;
 
 class ImageVariantCache
 {
+    private const VIDEO_EXTENSIONS = ['mp4', 'webm', 'mov', 'ogg', 'm4v'];
     /**
      * Max dimension (longest edge, px) per named size.
      *
@@ -54,11 +56,24 @@ class ImageVariantCache
             return null;
         }
 
-        $bytes = ImageResizer::resize($disk->get($sourcePath), $maxDimension);
+        $original = $disk->get($sourcePath);
+        $bytes = $this->isVideo($sourcePath)
+            ? VideoThumbnailer::extractFrame($original, $maxDimension)
+            : ImageResizer::resize($original, $maxDimension);
+
+        if ($bytes === null) {
+            return null;
+        }
+
         $fast->put($cacheKey, $bytes);
         $durable->put($cacheKey, $bytes);
 
         return $bytes;
+    }
+
+    private function isVideo(string $path): bool
+    {
+        return in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), self::VIDEO_EXTENSIONS, true);
     }
 
     /**

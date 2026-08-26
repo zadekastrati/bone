@@ -14,7 +14,7 @@
                 <p style="margin:0 0 16px;">{{ __('Hi :name,', ['name' => $userName]) }}</p>
                 <p style="margin:0 0 24px;">{!! __('This confirms the password for your :app account was changed on :date.', ['app' => e($appName), 'date' => '<strong>'.e($changedAt).'</strong>']) !!}</p>
                 <p style="margin:0 0 16px;font-size:14px;color:#73655a;">{{ __('If you made this change, no further action is needed. If you didn\'t, please reset your password immediately and contact us.') }}</p>
-                <p style="margin:0;font-size:14px;color:#8f7d6d;">— {{ $appName }}</p>
+                <p style="margin:0;font-size:14px;color:#8f7d6d;">- {{ $appName }}</p>
             </td>
         </tr>
     </table>

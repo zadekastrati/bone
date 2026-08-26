@@ -14,7 +14,7 @@
                 <p style="margin:0 0 16px;">{{ __('Hi :name,', ['name' => $userName]) }}</p>
                 <p style="margin:0 0 24px;">{!! __('This confirms that on :date, this email address became the one linked to your :app account. You\'ll use it to log in and receive order updates from now on.', ['date' => '<strong>'.e($changedAt).'</strong>', 'app' => e($appName)]) !!}</p>
                 <p style="margin:0 0 16px;font-size:14px;color:#73655a;">{{ __('If you didn\'t make this change, please contact us right away.') }}</p>
-                <p style="margin:0;font-size:14px;color:#8f7d6d;">— {{ $appName }}</p>
+                <p style="margin:0;font-size:14px;color:#8f7d6d;">- {{ $appName }}</p>
             </td>
         </tr>
     </table>

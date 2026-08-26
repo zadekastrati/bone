@@ -13,7 +13,7 @@
                 <p style="margin:0 0 24px;">{!! __('Use this code to :action and finish creating your :app account:', ['action' => '<strong>'.__('confirm your email').'</strong>', 'app' => e($appName)]) !!}</p>
                 <p style="margin:0 0 24px;font-size:28px;font-weight:700;letter-spacing:0.25em;text-align:center;font-family:ui-monospace,monospace;">{{ $code }}</p>
                 <p style="margin:0 0 16px;font-size:14px;color:#73655a;">{{ __('This code expires in 15 minutes. If you did not register, you can ignore this email.') }}</p>
-                <p style="margin:0;font-size:14px;color:#8f7d6d;">— {{ $appName }}</p>
+                <p style="margin:0;font-size:14px;color:#8f7d6d;">- {{ $appName }}</p>
             </td>
         </tr>
     </table>

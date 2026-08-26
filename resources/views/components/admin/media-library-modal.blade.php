@@ -130,13 +130,27 @@
                         x-init="observeTile($el, item)"
                         @click="toggle(item)"
                     >
-                        <template x-if="item.visible && item.is_video">
-                            <video :src="item.url" class="size-full object-cover" muted playsinline preload="metadata" @loadedmetadata="tileSettled(item); $el.currentTime = 0.1" x-on:error="tileSettled(item)"></video>
-                        </template>
-                        <template x-if="item.visible && !item.is_video">
+                        {{--
+                            Videos use the same server-generated poster JPEG as photos
+                            (via ffmpeg, see ImageVariantCache) instead of a raw <video>
+                            element — many of these are unprocessed camera/phone exports
+                            whose metadata sits at the end of the file, so a browser can
+                            end up needing to fetch most of the file just to paint one
+                            frame. A cached poster image loads exactly like a photo does.
+                        --}}
+                        <template x-if="item.visible">
                             <img :src="thumbSrc(item)" alt="" loading="lazy" decoding="async" class="size-full object-cover" @load="tileSettled(item)" x-on:error="tileSettled(item)">
                         </template>
                         <div x-show="!item.visible" class="absolute inset-0 animate-pulse bg-zinc-200"></div>
+
+                        <span
+                            x-show="item.is_video"
+                            class="pointer-events-none absolute left-1.5 top-1.5 inline-flex size-5 items-center justify-center rounded-full bg-ink-950/60 text-white"
+                        >
+                            <svg class="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </span>
 
                         <span
                             class="pointer-events-none absolute inset-0 bg-accent-600/25"

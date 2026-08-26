@@ -314,6 +314,7 @@ Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
     activeFolder: null,
     query: '',
     onSelect: null,
+    single: false,
     observer: null,
     /**
      * These R2 photos are full camera originals (often 25-30+ megapixels) — a
@@ -328,6 +329,7 @@ Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
     },
     async openFor(detail) {
         this.onSelect = detail?.onSelect ?? null;
+        this.single = detail?.single ?? false;
         this.view = 'folders';
         this.activeFolder = null;
         this.query = '';
@@ -340,6 +342,9 @@ Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
         this.open = false;
     },
     toggle(item) {
+        if (this.single && ! item.selected) {
+            Alpine.store('mediaLibrary').files.forEach((file) => { file.selected = false; });
+        }
         item.selected = ! item.selected;
     },
     /**
@@ -384,7 +389,6 @@ Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
     resetRevealThrottle() {
         this.revealQueue = [];
         this.activeReveals = 0;
-        this.activeVideoReveals = 0;
     },
     get filtered() {
         const q = this.query.trim().toLowerCase();
@@ -440,54 +444,36 @@ Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
     },
     revealQueue: [],
     activeReveals: 0,
-    activeVideoReveals: 0,
-    // Higher now that thumbnails are cached durably on R2 (see ImageVariantCache) —
-    // most reveals are a fast cache hit, not a cold R2-fetch-and-resize, so there's
-    // little decode-storm risk left to throttle against. Only applies to images.
-    maxConcurrentReveals: 24,
-    // Videos are a completely different cost: each one spins up a real browser
-    // video decoder, a much scarcer resource than a cached JPEG request. Revealing
-    // too many at once (the same limit as images) made most of them stall forever
-    // without ever firing loadedmetadata — permanent black tiles, not just slow
-    // ones, since a stuck reveal never frees its slot for the next item either.
-    maxConcurrentVideoReveals: 4,
+    // Videos now use the same server-generated poster JPEG as photos (via
+    // ffmpeg, see ImageVariantCache) instead of a raw <video> element, so
+    // they're just as cheap as images and share this one limit — no more
+    // separate video-decoder throttling needed. A cold generate for one of
+    // these multi-megabyte camera originals (R2 fetch + resize/ffmpeg) still
+    // takes 2-3+ seconds on its own, so this is kept modest rather than the
+    // 24 it was briefly bumped to, which overwhelmed the server enough that
+    // some requests failed outright instead of just loading slowly.
+    // `php artisan media:warm-library` pre-warms everything so cold-path
+    // slowness should be rare in practice.
+    maxConcurrentReveals: 6,
     queueReveal(item) {
         item.queued = true;
         this.revealQueue.push(item);
         this.pumpRevealQueue();
     },
     pumpRevealQueue() {
-        // Can't just take the head of the queue and stop at the first blocked
-        // item — images and videos are throttled independently, so a blocked
-        // video at the front shouldn't also block an eligible image behind it.
-        for (let i = 0; i < this.revealQueue.length; i++) {
-            const item = this.revealQueue[i];
-            const limit = item.is_video ? this.maxConcurrentVideoReveals : this.maxConcurrentReveals;
-            const active = item.is_video ? this.activeVideoReveals : this.activeReveals;
-            if (active >= limit) {
-                continue;
-            }
-            this.revealQueue.splice(i, 1);
-            i--;
-            if (item.is_video) {
-                this.activeVideoReveals++;
-            } else {
-                this.activeReveals++;
-            }
+        while (this.activeReveals < this.maxConcurrentReveals && this.revealQueue.length) {
+            const item = this.revealQueue.shift();
+            this.activeReveals++;
             item.visible = true;
         }
     },
-    /** Fires on the tile's real <img>/<video> load or error — either way, frees its slot. */
+    /** Fires on the tile's real <img> load or error — either way, frees its slot. */
     tileSettled(item) {
         if (item.settled) {
             return;
         }
         item.settled = true;
-        if (item.is_video) {
-            this.activeVideoReveals = Math.max(0, this.activeVideoReveals - 1);
-        } else {
-            this.activeReveals = Math.max(0, this.activeReveals - 1);
-        }
+        this.activeReveals = Math.max(0, this.activeReveals - 1);
         this.pumpRevealQueue();
     },
 }));

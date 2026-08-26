@@ -90,7 +90,7 @@
                     </div>
                     <div>
                         <dt class="text-xs font-bold uppercase tracking-mega text-ink-400">{{ __('Payment') }}</dt>
-                        <dd class="mt-1 font-semibold text-ink-900">{{ $order->payment_method->label() }} — {{ $order->payment_status->label() }}</dd>
+                        <dd class="mt-1 font-semibold text-ink-900">{{ $order->payment_method->label() }} · {{ $order->payment_status->label() }}</dd>
                     </div>
                 </dl>
             </div>

@@ -37,8 +37,14 @@
                 <div>
                     <label for="image" class="form-label">Category image</label>
                     <input type="file" name="image" id="image" accept="image/jpeg,image/png,image/webp" class="form-input @error('image') form-input-error @enderror">
-                    <p class="mt-2 text-xs text-ink-500">Shown as the background photo for this category on the homepage.</p>
+                    <p class="mt-2 text-xs text-ink-500">Shown as the background photo for this category on the homepage. Upload a file, or pick one already on R2.</p>
                     @error('image')
+                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                    <div class="mt-3">
+                        <x-admin.category-image-picker />
+                    </div>
+                    @error('attach_image')
                         <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -57,4 +63,9 @@
             </div>
         </form>
     </div>
+
+    <x-admin.media-library-modal
+        :fetch-url="route('admin.media-library.index')"
+        :thumbnail-url="route('admin.media-library.thumbnail')"
+    />
 @endsection

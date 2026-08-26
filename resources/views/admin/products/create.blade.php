@@ -78,6 +78,21 @@
                         <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+                <div>
+                    <span class="form-label">Training focus</span>
+                    <p class="-mt-1 text-xs text-zinc-500">Powers the "How do you train?" filter on the homepage. Pick any that apply — leave blank if none fit.</p>
+                    <div class="mt-2 flex flex-wrap gap-3">
+                        @foreach (\App\Enums\TrainingTag::cases() as $tag)
+                            <label class="inline-flex items-center gap-2 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-800">
+                                <input type="checkbox" name="training_tags[]" value="{{ $tag->value }}" @checked(in_array($tag->value, old('training_tags', []), true))>
+                                {{ $tag->label() }}
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('training_tags')
+                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <div class="space-y-4 border-t border-zinc-200 pt-6">

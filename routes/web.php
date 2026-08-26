@@ -21,7 +21,9 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
+use App\Enums\TrainingTag;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,7 +36,23 @@ Route::get('/', function () {
         ->orderBy('name')
         ->get();
 
-    return view('welcome', compact('categories'));
+    // One query for every active product's tags, tallied in PHP — cheaper than
+    // a separate whereJsonContains() count query per training tag, and this
+    // list is only ever the size of the active catalog.
+    $activeTrainingTags = Product::query()->where('is_active', true)->pluck('training_tags');
+
+    // Tags with zero matching products are dropped entirely rather than shown
+    // disabled/empty — clicking through to a filter with nothing in it is a
+    // dead end, so it's better not to offer it in the first place.
+    $trainingTags = collect(TrainingTag::cases())
+        ->map(fn (TrainingTag $tag) => [
+            'tag' => $tag,
+            'count' => $activeTrainingTags->filter(fn ($tags) => is_array($tags) && in_array($tag->value, $tags, true))->count(),
+        ])
+        ->filter(fn (array $row) => $row['count'] > 0)
+        ->values();
+
+    return view('welcome', compact('categories', 'trainingTags'));
 })->name('home');
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

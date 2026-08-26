@@ -6,7 +6,7 @@
             </svg>
         </div>
         <p class="font-display mt-6 text-xl font-bold uppercase tracking-wide text-ink-950">{{ __('Your bag is empty') }}</p>
-        <p class="mt-2 max-w-sm text-sm text-ink-600 text-pretty">{{ __('Add pieces from the shop — they\'ll show up here with size and colour.') }}</p>
+        <p class="mt-2 max-w-sm text-sm text-ink-600 text-pretty">{{ __('Add pieces from the shop and they\'ll show up here with size and colour.') }}</p>
         <a href="{{ route('shop.index') }}" class="btn-primary mt-8 inline-flex px-10">{{ __('Continue shopping') }}</a>
     </div>
 @else
@@ -52,9 +52,9 @@
                             <span class="text-xs font-normal text-ink-500">{{ __('each') }}</span>
                         </p>
                         @if ($v->stock_quantity < 1)
-                            <p class="text-[11px] font-bold uppercase tracking-wide text-amber-800">{{ __('Sold out — no stock left') }}</p>
+                            <p class="text-[11px] font-bold uppercase tracking-wide text-amber-800">{{ __('Sold out, no stock left') }}</p>
                         @elseif (! $v->isInStock((int) $line['quantity']))
-                            <p class="text-[11px] font-semibold text-amber-800">{{ __('Only :count left — reduce quantity', ['count' => $v->stock_quantity]) }}</p>
+                            <p class="text-[11px] font-semibold text-amber-800">{{ __('Only :count left, please reduce quantity', ['count' => $v->stock_quantity]) }}</p>
                         @endif
                     </div>
 

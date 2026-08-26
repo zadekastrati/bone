@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     libwebp-dev \
     nodejs \
     npm \
+    ffmpeg \
     && docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install pdo pdo_mysql zip mbstring gd bcmath
 

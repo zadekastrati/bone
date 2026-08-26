@@ -52,7 +52,7 @@
                 @if ($pendingEmail)
                     <div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-amber-50 px-4 py-3">
                         <p class="text-sm text-amber-900">
-                            {!! __('Verification pending for :email — enter the code we emailed you to confirm the change.', ['email' => '<strong>'.e($pendingEmail).'</strong>']) !!}
+                            {!! __('Verification pending for :email. Enter the code we emailed you to confirm the change.', ['email' => '<strong>'.e($pendingEmail).'</strong>']) !!}
                         </p>
                         <div class="flex shrink-0 items-center gap-3">
                             <button type="button" @click="emailModalOpen = true" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">{{ __('Verify now') }}</button>
@@ -100,7 +100,7 @@
                         @if ($pendingPhone)
                             <div class="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-amber-50 px-4 py-3">
                                 <p class="text-sm text-amber-900">
-                                    {!! __('Verification pending for :phone — enter the code we emailed you to confirm it.', ['phone' => '<strong>'.e($pendingPhone).'</strong>']) !!}
+                                    {!! __('Verification pending for :phone. Enter the code we emailed you to confirm it.', ['phone' => '<strong>'.e($pendingPhone).'</strong>']) !!}
                                 </p>
                                 <div class="flex shrink-0 items-center gap-3">
                                     <button type="button" @click="phoneModalOpen = true" class="text-xs font-bold uppercase tracking-wide text-accent-700 hover:underline">{{ __('Verify now') }}</button>
@@ -137,7 +137,7 @@
 
                 <div class="mt-6 border-t border-zinc-200/70 pt-6">
                     <label for="country" class="form-label">{{ __('Country & currency') }}</label>
-                    <p class="text-xs text-ink-500">{{ __('Prices across the site are shown in this currency. All prices are set in EUR — other currencies are converted for display only, and you\'re always charged the EUR amount.') }}</p>
+                    <p class="text-xs text-ink-500">{{ __('Prices across the site are shown in this currency. All prices are set in EUR; other currencies are converted for display only, and you\'re always charged the EUR amount.') }}</p>
                     <form method="POST" action="{{ route('country.update') }}" class="mt-2 max-w-xs">
                         @csrf
                         <select
@@ -159,7 +159,7 @@
             {{-- Security --}}
             <div x-show="tab === 'security'" x-cloak class="panel p-8">
                 <h2 class="font-display text-lg font-bold uppercase tracking-wide text-ink-950">{{ __('Security') }}</h2>
-                <p class="mt-2 max-w-md text-sm text-ink-500">{{ __('Your password was last changed when you set it up or last updated it. Change it any time — you\'ll need your current password.') }}</p>
+                <p class="mt-2 max-w-md text-sm text-ink-500">{{ __('Your password was last changed when you set it up or last updated it. Change it any time, you\'ll just need your current password.') }}</p>
                 <button type="button" @click="$refs.passwordForm.reset(); passwordModalOpen = true" class="btn-primary mt-6 px-8 py-3 text-sm">{{ __('Change password') }}</button>
             </div>
 

@@ -12,8 +12,8 @@
                 <p style="margin:0 0 16px;">{{ __('Hi :name,', ['name' => $userName]) }}</p>
                 <p style="margin:0 0 24px;">{!! __('Use this code to confirm adding :phone as the phone number on your :app account:', ['phone' => '<strong>'.e($newPhone).'</strong>', 'app' => e($appName)]) !!}</p>
                 <p style="margin:0 0 24px;font-size:28px;font-weight:700;letter-spacing:0.25em;text-align:center;font-family:ui-monospace,monospace;">{{ $code }}</p>
-                <p style="margin:0 0 16px;font-size:14px;color:#73655a;">{{ __('This code expires in 15 minutes. If you didn\'t request this, you can ignore this email — your phone number won\'t change.') }}</p>
-                <p style="margin:0;font-size:14px;color:#8f7d6d;">— {{ $appName }}</p>
+                <p style="margin:0 0 16px;font-size:14px;color:#73655a;">{{ __('This code expires in 15 minutes. If you didn\'t request this, you can ignore this email. Your phone number won\'t change.') }}</p>
+                <p style="margin:0;font-size:14px;color:#8f7d6d;">- {{ $appName }}</p>
             </td>
         </tr>
     </table>

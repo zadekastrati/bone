@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OrderStatus;
+use App\Enums\TrainingTag;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
@@ -22,6 +23,7 @@ class ShopController extends Controller
         }
 
         $sort = $this->resolveSort($request);
+        $training = $this->resolveTraining($request);
 
         $searchResults = null;
         if ($q !== '') {
@@ -39,6 +41,7 @@ class ShopController extends Controller
             ? $this->applySort(
                 Product::query()
                     ->where('is_active', true)
+                    ->when($training !== null, fn (BuilderContract $query) => $query->whereJsonContains('training_tags', $training->value))
                     ->with(['category', 'images'])
                     ->withSum('variants', 'stock_quantity'),
                 $sort
@@ -46,7 +49,7 @@ class ShopController extends Controller
             : null;
 
         if ($request->ajax()) {
-            return view('shop.partials.results', compact('products', 'q', 'searchResults'));
+            return view('shop.partials.results', compact('products', 'q', 'searchResults', 'training'));
         }
 
         // Only needed for the full page shell (category dropdown) — the AJAX
@@ -57,7 +60,7 @@ class ShopController extends Controller
             ->withCount(['activeProducts'])
             ->get();
 
-        return view('shop.index', compact('categories', 'products', 'q', 'searchResults', 'sort'));
+        return view('shop.index', compact('categories', 'products', 'q', 'searchResults', 'sort', 'training'));
     }
 
     public function category(Request $request, Category $category): View
@@ -103,6 +106,13 @@ class ShopController extends Controller
         $sort = (string) $request->query('sort', 'newest');
 
         return in_array($sort, self::SORT_OPTIONS, true) ? $sort : 'newest';
+    }
+
+    private function resolveTraining(Request $request): ?TrainingTag
+    {
+        $value = $request->query('training');
+
+        return is_string($value) ? TrainingTag::tryFrom($value) : null;
     }
 
     private function applySort(BuilderContract $query, string $sort): BuilderContract

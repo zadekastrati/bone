@@ -32,6 +32,7 @@ class Product extends Model
         'description',
         'price',
         'is_active',
+        'training_tags',
     ];
 
     /**
@@ -40,6 +41,7 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'is_active' => 'boolean',
+        'training_tags' => 'array',
     ];
 
     public function category(): BelongsTo

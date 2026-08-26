@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\TrainingTag;
 use App\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -31,6 +32,8 @@ class UpdateProductRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:20000'],
             'price' => ['required', 'numeric', 'min:0', 'max:999999.99'],
             'is_active' => ['nullable', 'boolean'],
+            'training_tags' => ['nullable', 'array'],
+            'training_tags.*' => [Rule::in(TrainingTag::values())],
             'images' => ['nullable', 'array', 'max:12'],
             'images.*' => ['file', 'mimes:jpeg,jpg,png,webp,mp4,webm,mov,ogg,m4v', 'max:102400'],
             'variant_images' => ['nullable', 'array'],

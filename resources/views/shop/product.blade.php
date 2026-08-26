@@ -9,7 +9,7 @@
 
 @section('meta_description', $__plainDescription
     ? \Illuminate\Support\Str::limit($__plainDescription, 160)
-    : __(':product — :category from :store.', ['product' => $product->name, 'category' => $category->name, 'store' => config('app.name')]))
+    : __(':product, :category from :store.', ['product' => $product->name, 'category' => $category->name, 'store' => config('app.name')]))
 @section('meta_image', $__thumb && ! $__thumb->isVideo() ? $__thumb->displayUrl() : asset('logo.png'))
 @section('og_type', 'product')
 

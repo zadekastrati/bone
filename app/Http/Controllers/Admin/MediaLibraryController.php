@@ -18,7 +18,9 @@ class MediaLibraryController extends Controller
 {
     private const MEDIA_EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp', 'mp4', 'webm', 'mov', 'ogg', 'm4v'];
 
-    private const THUMBNAIL_EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp'];
+    private const THUMBNAIL_EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp', 'mp4', 'webm', 'mov', 'ogg', 'm4v'];
+
+    private const IMAGE_EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp'];
 
     private const THUMBNAIL_MAX_DIMENSION = 400;
 
@@ -91,8 +93,10 @@ class MediaLibraryController extends Controller
         abort_if($path === '' || ! in_array($ext, self::THUMBNAIL_EXTENSIONS, true), 404);
 
         $cacheKey = 'thumbnails/'.sha1($path).'.jpg';
+        $isImage = in_array($ext, self::IMAGE_EXTENSIONS, true);
+        $alreadyCached = Storage::disk('local')->exists($cacheKey) || Storage::disk('public')->exists($cacheKey);
 
-        if (! function_exists('imagecreatefromstring') && ! Storage::disk('local')->exists($cacheKey) && ! Storage::disk('public')->exists($cacheKey)) {
+        if ($isImage && ! function_exists('imagecreatefromstring') && ! $alreadyCached) {
             // No GD available and nothing cached yet — fall back to the
             // original rather than error, so the picker still works, just
             // without the speed-up.
@@ -104,7 +108,19 @@ class MediaLibraryController extends Controller
 
         $bytes = $this->variantCache->resolve($path, $cacheKey, self::THUMBNAIL_MAX_DIMENSION);
 
-        abort_if($bytes === null, 404);
+        if ($bytes === null) {
+            // Video frame extraction can fail (missing ffmpeg, corrupt file,
+            // unsupported codec) — fall back to the raw file so the tile at
+            // least loads something instead of a permanently broken icon.
+            if (! $isImage) {
+                $disk = Storage::disk('public');
+                abort_unless($disk->exists($path), 404);
+
+                return redirect($disk->url($path));
+            }
+
+            abort(404);
+        }
 
         return response($bytes, 200, [
             'Content-Type' => 'image/jpeg',
