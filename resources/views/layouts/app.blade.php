@@ -244,6 +244,8 @@
                         <a href="https://www.instagram.com/bone.active?igsi=M215OG4wZG1uYzI3" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700" aria-label="{{ __('Follow us on Instagram') }}">
                             <x-icons.instagram class="h-4 w-4" />
                         </a>
+                        <a href="https://www.facebook.com/profile.php?id=61593204533823" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-accent-700" aria-label="{{ __('Follow us on Facebook') }}">
+                            <x-icons.facebook class="h-4 w-4" />
                         </a>
                     </div>
                 </div>
@@ -252,18 +254,18 @@
                     <ul class="mt-5 space-y-3 text-sm">
                         <li><a href="{{ route('cart.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Bag / cart') }}</a></li>
                         <li><a href="{{ route('shop.index') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('All women\'s') }}</a></li>
-                        <li><a href="{{ route('shop.index') }}#leggings" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Leggings') }}</a></li>
-                        <li><a href="{{ route('shop.index') }}#bras" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Sports bras') }}</a></li>
-                        <li><a href="{{ route('shop.index') }}#layers" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Layers') }}</a></li>
+                        @foreach ($footerCategories ?? [] as $footerCategory)
+                            <li><a href="{{ route('shop.category', $footerCategory) }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ Str::ucfirst(Str::lower($footerCategory->name)) }}</a></li>
+                        @endforeach
                     </ul>
                 </div>
                 <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">{{ __('Help') }}</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-700">{{ __('Information') }}</p>
                     <ul class="mt-5 space-y-3 text-sm">
                         <li><a href="{{ route('about') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('About us') }}</a></li>
                         <li><a href="{{ route('contact') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Contact us') }}</a></li>
                         <li><a href="{{ route('terms') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Terms & conditions') }}</a></li>
-                        <li><a href="{{ route('returns') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Returns') }}</a></li>
+                        <li><a href="{{ route('returns') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Returns Policy') }}</a></li>
                         <li><a href="{{ route('size-guide') }}" class="text-ink-600 transition-colors duration-200 hover:text-accent-700">{{ __('Size guide') }}</a></li>
                     </ul>
                 </div>
