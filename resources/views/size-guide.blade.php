@@ -16,48 +16,48 @@
                     <thead>
                         <tr>
                             <th>{{ __('Size') }}</th>
-                            <th>{{ __('Bust (in)') }}</th>
-                            <th>{{ __('Waist (in)') }}</th>
-                            <th>{{ __('Hips (in)') }}</th>
+                            <th>{{ __('Bust (cm)') }}</th>
+                            <th>{{ __('Waist (cm)') }}</th>
+                            <th>{{ __('Hips (cm)') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td class="font-semibold text-ink-900">XS</td>
-                            <td>31-33</td>
-                            <td>24-26</td>
-                            <td>34-36</td>
+                            <td>79-84</td>
+                            <td>61-66</td>
+                            <td>86-91</td>
                         </tr>
                         <tr>
                             <td class="font-semibold text-ink-900">S</td>
-                            <td>33-35</td>
-                            <td>26-28</td>
-                            <td>36-38</td>
+                            <td>84-89</td>
+                            <td>66-71</td>
+                            <td>91-97</td>
                         </tr>
                         <tr>
                             <td class="font-semibold text-ink-900">M</td>
-                            <td>35-37</td>
-                            <td>28-30</td>
-                            <td>38-40</td>
+                            <td>89-94</td>
+                            <td>71-76</td>
+                            <td>97-102</td>
                         </tr>
                         <tr>
                             <td class="font-semibold text-ink-900">L</td>
-                            <td>37-40</td>
-                            <td>30-33</td>
-                            <td>40-43</td>
+                            <td>94-102</td>
+                            <td>76-84</td>
+                            <td>102-109</td>
                         </tr>
                         <tr>
                             <td class="font-semibold text-ink-900">XL</td>
-                            <td>40-43</td>
-                            <td>33-36</td>
-                            <td>43-46</td>
+                            <td>102-109</td>
+                            <td>84-91</td>
+                            <td>109-117</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <p class="mt-6 text-sm text-ink-600">
-                {!! __('Need help choosing? Reach out from our :link page and include your usual brand/size for recommendations.', ['link' => '<a href="'.route('contact').'" class="font-medium text-accent-700 hover:text-accent-600">'.__('Contact Us').'</a>']) !!}
+                {!! __('Need help finding your size? :link and share your usual brand and size. We\'ll help you find the right fit.', ['link' => '<a href="'.route('contact').'" class="font-medium text-accent-700 hover:text-accent-600">'.__('Contact us').'</a>']) !!}
             </p>
         </div>
     </div>

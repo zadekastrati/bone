@@ -8,13 +8,13 @@
 
         <div class="panel p-8 sm:p-12 relative" aria-labelledby="about-heading">
             <p class="text-lg leading-relaxed text-ink-800 font-medium mb-6">
-                {{ __('BONÉ was founded with a single mission: to create performance activewear designed by an active woman, for active women who train hard and never stop chasing the next challenge.') }}
+                {{ __('BONÉ was created with a simple purpose: to make high-quality activewear that empowers every movement. Designed by an active woman for women who move, BONÉ brings together performance, comfort, and confidence for every fitness journey.') }}
             </p>
             <p class="mb-4 text-muted">
-                {{ __(' Every cut, fabric, and finish is engineered to move with you , through the weight room, the hiking trail, the tennis court, the yoga mat, the pilates reformer, and everywhere in between. Sweat-wicking, breathable, and built to hold its shape no matter how you move. But it does not stop there.From your hardest training day to the walk home, to coffee with a friend, BONÉ moves with your whole day, not just your workout.') }}
+                {{ __('From your hardest training session to the walk home or coffee with a friend, BONÉ is designed to move with you. Thoughtful fabrics, considered fits, and versatile designs deliver performance and comfort through every workout and whatever comes next.') }}
             </p>
             <p class="text-muted">
-                {{ __('Designed in Europe, made for the way real women move ,strong, soft, and everything in between.') }}
+                {{ __('Designed in Europe. Built for movement. Designed for you.') }}
             </p>
         </div>
     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Home')
+@section('title', __('Home'))
 
 @section('content_outer', 'w-full max-w-none flex-1')
 
@@ -18,18 +18,20 @@
         </video>
         <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10"></div>
         <div class="relative mx-auto mt-8 w-full max-w-6xl px-4 sm:mt-14 sm:px-6 lg:px-8">
-            <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] sm:text-xs">Women&apos;s performance · gym to street</p>
-            <h1 class="font-display mt-5 max-w-4xl text-5xl font-bold uppercase leading-[0.9] tracking-tight text-balance text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.55)] sm:text-7xl md:text-8xl lg:text-9xl">
-                Become your<br class="hidden sm:inline" /> personal best
+            <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] sm:text-xs">{{ __('Women\'s performance · gym to street') }}</p>
+            <h1 class="font-display mt-5 max-w-4xl text-5xl font-bold uppercase {{ app()->getLocale() === 'sq' ? 'leading-[1.3]' : 'leading-[0.9]' }} tracking-tight text-balance text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.55)] sm:text-7xl md:text-8xl lg:text-9xl">
+                {!! __('Become your<br class="hidden sm:inline" /> personal best') !!}
             </h1>
             <p class="mx-auto mt-8 max-w-xl text-base leading-relaxed text-white/90 text-pretty sm:mx-0 sm:text-lg sm:leading-relaxed">
-                Kit that keeps up when the set gets ugly. Compression, support, and layers that move with you from warm-up to last rep.
+                {{ __('A gear designed for performance, comfort, and confidence') }}
             </p>
             <div class="mt-10 flex flex-wrap items-center gap-3 sm:mt-12 sm:gap-4">
                 <a href="{{ route('shop.index') }}" class="btn-primary inline-flex min-h-[3rem] px-10 py-3.5 text-xs sm:px-12">
-                    Shop women&apos;s
+                    {{ __('Shop women\'s') }}
                 </a>
-                <a href="{{ route('register') }}" class="btn-secondary min-h-[3rem] px-10 py-3.5 text-xs sm:px-12">Join the list</a>
+                @guest
+                    <a href="{{ route('register') }}" class="btn-secondary min-h-[3rem] px-10 py-3.5 text-xs sm:px-12">{{ __('Join the list') }}</a>
+                @endguest
             </div>
         </div>
     </section>
@@ -37,10 +39,11 @@
     {{-- Category strip: editorial labels + quick links --}}
     <section class="border-y border-zinc-200/80 bg-zinc-100/80 px-4 py-4 sm:px-6">
         <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row sm:gap-8">
-            <p class="text-center text-[10px] font-bold uppercase tracking-mega text-accent-700 sm:text-left">Trending</p>
-            <div class="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
-                @foreach (['New arrivals' => route('shop.index') . '#new', 'Shop all' => route('shop.index'), 'Sports bras' => route('shop.index'), 'Layers' => route('shop.index')] as $label => $href)
-                    <a href="{{ $href }}" class="rounded-full border border-zinc-200/90 bg-white/90 px-4 py-2 text-[10px] font-bold uppercase tracking-mega text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-zinc-50">{{ $label }}</a>
+            <p class="text-center text-[10px] font-bold uppercase tracking-mega text-accent-700 sm:text-left">{{ __('Trending') }}</p>
+            <div class="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                <a href="{{ route('shop.index') }}" class="rounded-full border border-zinc-200/90 bg-white/90 px-4 py-2 text-[10px] font-bold uppercase tracking-mega text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-zinc-50">{{ __('Shop all') }}</a>
+                @foreach ($categories as $cat)
+                    <a href="{{ route('shop.category', $cat) }}" class="rounded-full border border-zinc-200/90 bg-white/90 px-4 py-2 text-[10px] font-bold uppercase tracking-mega text-ink-700 shadow-sm transition hover:border-accent-300 hover:bg-zinc-50">{{ $cat->name }}</a>
                 @endforeach
             </div>
         </div>
@@ -51,11 +54,11 @@
         <div class="mx-auto max-w-7xl">
             <div class="flex flex-col gap-6 border-b border-ink-200/60 pb-10 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-mega text-accent-600">Shop</p>
-                    <h2 class="font-display mt-2 text-3xl font-bold uppercase tracking-wide text-ink-950 text-balance sm:text-4xl lg:text-5xl">Shop by category</h2>
-                    <p class="mt-3 max-w-xl text-sm leading-relaxed text-ink-600 text-pretty sm:text-base">Pick your line, every category is built for how you train.</p>
+                    <p class="text-[10px] font-bold uppercase tracking-mega text-accent-600">{{ __('Shop') }}</p>
+                    <h2 class="font-display mt-2 text-3xl font-bold uppercase tracking-wide text-ink-950 text-balance sm:text-4xl lg:text-5xl">{{ __('Shop by category') }}</h2>
+                    <p class="mt-3 max-w-xl text-sm leading-relaxed text-ink-600 text-pretty sm:text-base">{{ __('Pick your lane, every category is built for how you train.') }}</p>
                 </div>
-                <a href="{{ route('shop.index') }}" class="link-brand inline-flex shrink-0 text-sm font-bold uppercase tracking-mega">View all</a>
+                <a href="{{ route('shop.index') }}" class="link-brand inline-flex shrink-0 text-sm font-bold uppercase tracking-mega">{{ __('View all') }}</a>
             </div>
             <div class="mt-12 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-5 lg:gap-6">
                 @foreach ($categories as $cat)
@@ -73,7 +76,7 @@
                             <span class="relative text-xs font-bold uppercase tracking-mega text-ink-600">{{ $cat->description }}</span>
                         @endif
                         <span class="relative mt-2 font-display text-2xl font-bold uppercase tracking-wide lg:text-3xl">{{ $cat->name }}</span>
-                        <span class="relative mt-4 inline-flex text-xs font-bold uppercase tracking-mega text-accent-800 underline-offset-4 transition-all group-hover:translate-x-0.5 group-hover:underline">Shop now →</span>
+                        <span class="relative mt-4 inline-flex text-xs font-bold uppercase tracking-mega text-accent-800 underline-offset-4 transition-all group-hover:translate-x-0.5 group-hover:underline">{{ __('Shop now →') }}</span>
                     </a>
                 @endforeach
             </div>
@@ -84,8 +87,8 @@
     @if ($trainingTags->isNotEmpty())
         <section class="border-y border-ink-200/60 bg-white px-4 py-12 sm:px-6 lg:py-16">
             <div class="mx-auto max-w-5xl text-center">
-                <h2 class="font-display text-2xl font-bold uppercase tracking-wide text-ink-950 sm:text-3xl">How do you train?</h2>
-                <p class="mx-auto mt-3 max-w-lg text-sm text-ink-600 text-pretty">Tap a focus and we&apos;ll drop you in the shop to build your kit.</p>
+                <h2 class="font-display text-2xl font-bold uppercase tracking-wide text-ink-950 sm:text-3xl">{{ __('How do you move?') }}</h2>
+                <p class="mx-auto mt-3 max-w-lg text-sm text-ink-600 text-pretty">{{ __('Choose your activity and find your fit.') }}</p>
                 <div class="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                     @foreach ($trainingTags as $row)
                         <a
@@ -105,12 +108,12 @@
         <div class="pointer-events-none absolute -right-20 -top-20 size-[28rem] rounded-full bg-accent-200/50 blur-3xl sm:size-[36rem]"></div>
         <div class="pointer-events-none absolute bottom-0 left-0 size-64 rounded-full bg-white/60 blur-3xl"></div>
         <div class="relative mx-auto max-w-3xl text-center">
-            <p class="text-[10px] font-bold uppercase tracking-mega text-accent-700">Why bone</p>
-            <h2 class="font-display mt-4 text-3xl font-bold uppercase tracking-wide text-balance text-ink-950 sm:text-5xl lg:text-6xl">Built in the weight room mindset</h2>
+            <p class="text-[10px] font-bold uppercase tracking-mega text-accent-700">{{ __('Why bone') }}</p>
+            <h2 class="font-display mt-4 text-3xl font-bold uppercase tracking-wide text-balance text-ink-950 sm:text-5xl lg:text-6xl">{{ __('Built for movement, designed for you') }}</h2>
             <p class="mx-auto mt-8 text-lg leading-relaxed text-ink-600 text-pretty sm:text-xl">
-                Four-way stretch, squat-proof opacity, and seams that stay flat under the bar. Designed for women&apos;s bodies, not resized from a men&apos;s block.
+                {{ __('Four-way stretch. Squat-proof coverage. Breathable, moisture-wicking fabrics. Designed for women and built to move with you.') }}
             </p>
-            <a href="{{ route('shop.index') }}" class="btn-primary mt-12 inline-flex px-10 py-3.5 text-sm sm:px-12">Explore the shop</a>
+            <a href="{{ route('shop.index') }}" class="btn-primary mt-12 inline-flex px-10 py-3.5 text-sm sm:px-12">{{ __('Explore the shop') }}</a>
         </div>
     </section>
 
@@ -118,9 +121,9 @@
     <section class="border-t border-ink-200/80 bg-white px-4 py-16 sm:px-6 lg:py-20">
         <div class="mx-auto grid max-w-7xl gap-6 sm:grid-cols-3 sm:gap-6 lg:gap-8">
             @foreach ([
-                ['t' => 'Fast dispatch', 'd' => 'Orders ship quickly on business days.'],
-                ['t' => 'First fit guarantee!', 'd' => 'Not the right fit? Your first full-price item, fully refunded.', 'strong' => true],
-                ['t' => 'Secure checkout', 'd' => 'Encrypted payments, cards and wallets supported.'],
+                ['t' => __('Fast dispatch'), 'd' => __('Ships within 2-3 business days.')],
+                ['t' => __('First fit guarantee'), 'd' => __('Not the right fit? Your first full-price item, fully refunded.'), 'strong' => true],
+                ['t' => __('Secure checkout'), 'd' => __('Encrypted payments, cards and wallets supported.')],
             ] as $row)
                 <div class="rounded-2xl border border-zinc-100/90 bg-zinc-50/60 p-8 text-center ring-1 ring-zinc-900/[0.04] transition-shadow duration-300 hover:shadow-soft sm:text-left lg:p-9">
                     <p class="font-display text-lg font-bold uppercase tracking-wide lg:text-xl {{ ($row['strong'] ?? false) ? 'text-black' : 'text-ink-950' }}">{{ $row['t'] }}</p>
@@ -130,10 +133,9 @@
         </div>
 
         <div class="mx-auto mt-16 max-w-3xl border-t border-ink-200/60 pt-14 text-center">
-            <h3 class="font-display text-xl font-bold uppercase tracking-wide text-ink-950">Workout clothes for women who train</h3>
+            <h3 class="font-display text-xl font-bold uppercase tracking-wide text-ink-950">{{ __('Women\'s activewear designed for the way you move') }}</h3>
             <p class="mt-4 text-sm leading-relaxed text-ink-600 text-pretty">
-                Functional kit for squats, sprints, and everything after. We obsess over fabric, fit, and finish so the only thing you&apos;re fighting for is the next rep, not your gear.
-                {{ config('app.name') }} is an independent demo storefront and is not affiliated with any third-party brand.
+                {{ __('Performance meets comfort in thoughtful fabrics and considered fits, giving you the freedom and confidence to move through every workout and whatever comes next.') }}
             </p>
         </div>
     </section>

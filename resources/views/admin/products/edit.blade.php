@@ -87,7 +87,7 @@
                 </div>
                 <div>
                     <span class="form-label">Training focus</span>
-                    <p class="-mt-1 text-xs text-zinc-500">Powers the "How do you train?" filter on the homepage. Pick any that apply — leave blank if none fit.</p>
+                    <p class="-mt-1 text-xs text-zinc-500">Powers the "How do you move?" filter on the homepage. Pick any that apply — leave blank if none fit.</p>
                     <div class="mt-2 flex flex-wrap gap-3">
                         @foreach (\App\Enums\TrainingTag::cases() as $tag)
                             <label class="inline-flex items-center gap-2 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-800">
