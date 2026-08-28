@@ -10,7 +10,7 @@
         $__seoDescription = trim($__env->yieldContent('meta_description'));
         $__seoDescription = $__seoDescription !== ''
             ? $__seoDescription
-            : "Kit that keeps up when the set gets ugly. Compression, support, and layers that move with you from warm-up to last rep.";
+            : "A gear designed for performance, comfort, and confidence";
         $__seoImage = trim($__env->yieldContent('meta_image'));
         $__seoImage = $__seoImage !== '' ? $__seoImage : asset('logo.png');
     @endphp

@@ -10,8 +10,6 @@
         $pageSubtitle = __('Search or browse by category. Every product shows colors and sizes before checkout.');
         if ($isSearch) {
             $pageSubtitle = trans_choice(':count result for “:query”.|:count results for “:query”.', $searchResults->total(), ['count' => $searchResults->total(), 'query' => e($q)]);
-        } elseif ($products !== null) {
-            $pageSubtitle = trans_choice(':count product available.|:count products available.', $products->total(), ['count' => $products->total()]);
         }
         $pageTitle = $isSearch ? __('Search results') : ($training ? $training->label() : __('Shop'));
     @endphp
@@ -45,16 +43,6 @@
             <x-store-search-form variant="shop" x-ref="form" />
         </div>
         <div class="flex shrink-0 flex-wrap items-center gap-3 border-t border-zinc-100 pt-4 sm:border-t-0 sm:pt-0">
-            @if (! $isSearch)
-                <p class="text-sm text-ink-600">
-                    <span class="font-semibold tabular-nums text-ink-900">{{ $categories->count() }}</span>
-                    {{ trans_choice('category|categories', $categories->count()) }}
-                    @if ($products !== null && $products->total() > 0)
-                        <span class="text-ink-400"> · </span>
-                        <span class="font-semibold tabular-nums text-ink-900">{{ $products->total() }}</span> {{ trans_choice('product|products', $products->total()) }}
-                    @endif
-                </p>
-            @endif
             @if ($isSearch)
                 <a href="{{ route('shop.index') }}" class="btn-secondary whitespace-nowrap">{{ __('Clear search') }}</a>
             @elseif ($training)

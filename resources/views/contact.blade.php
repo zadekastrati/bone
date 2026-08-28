@@ -8,7 +8,7 @@
 
         <div class="panel p-8 sm:p-12 relative" aria-labelledby="contact-heading">
             <p class="text-center text-muted mb-8 text-lg">
-                {{ __('Have a question about an order, our products, or just want to say hi? We\'d love to hear from you.') }}
+                {{ __('Questions about an order, our products, or finding what is right for you? We\'re here to help.') }}
             </p>
 
             @auth

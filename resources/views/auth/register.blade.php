@@ -7,7 +7,7 @@
     <div class="mx-auto max-w-md">
         <div class="text-center">
             <h1 class="font-display text-2xl font-bold text-ink-950 sm:text-3xl">{{ __('Create your account') }}</h1>
-            <p class="text-muted mt-2">{!! __('New accounts use the :role role. We\'ll email you a code to confirm your address before your account is created.', ['role' => '<strong>'.__('user').'</strong>']) !!}</p>
+            <p class="text-muted mt-2">{{ __('Join BONÉ. We\'ll email you a verification code to confirm your account.') }}</p>
         </div>
 
         <form

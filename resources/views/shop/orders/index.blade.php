@@ -15,10 +15,10 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>{{ __('Order') }}</th>
+                        <th>{{ __('Order Number') }}</th>
                         <th>{{ __('Date') }}</th>
                         <th>{{ __('Status') }}</th>
-                        <th>{{ __('Payment') }}</th>
+                        <th>{{ __('Payment Type') }}</th>
                         <th>{{ __('Total') }}</th>
                         <th></th>
                     </tr>

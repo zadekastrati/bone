@@ -34,7 +34,7 @@
                 <div class="min-w-0">
                     <p class="ui-eyebrow">{{ __('Store catalog') }}</p>
                     <h2 id="products-heading" class="section-title mt-1">{{ $training ? $training->label() : __('All products') }}</h2>
-                    <p class="text-muted mt-3 max-w-xl">{{ $training ? __('Kit picked for :focus days.', ['focus' => mb_strtolower($training->label())]) : __('Browse every active product in the store.') }}</p>
+                    <p class="text-muted mt-3 max-w-xl">{{ $training ? __('Kit picked for :focus days.', ['focus' => mb_strtolower($training->label())]) : __('Explore the full BONÉ collection') }}</p>
                 </div>
             </header>
             <ul class="mt-10 grid list-none gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">

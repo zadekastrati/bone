@@ -58,7 +58,7 @@
         name="q"
         id="{{ $inputId }}"
         value="{{ $value }}"
-        placeholder="{{ __('What are you looking for today?') }}"
+        placeholder="{{ __('Find what moves you') }}"
         maxlength="200"
         autocomplete="off"
         class="min-w-0 flex-1 border-0 bg-transparent py-1 text-sm text-ink-800 placeholder:text-ink-400 focus:outline-none focus:ring-0 focus:border-0 focus:shadow-none"
