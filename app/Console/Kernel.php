@@ -12,7 +12,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Keeps the admin "choose from library" picker and customer product
+        // pages fast for anything uploaded straight to R2 outside the app —
+        // without this, a fresh batch of uploads pays the cold
+        // fetch-and-resize cost live on whoever opens the picker/page first.
+        $schedule->command('media:warm-library')->hourly()->withoutOverlapping();
+        $schedule->command('media:warm-product-images')->hourly()->withoutOverlapping();
     }
 
     /**

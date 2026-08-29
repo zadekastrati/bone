@@ -269,6 +269,11 @@ Alpine.store('mediaLibrary', {
     error: null,
     files: [],
     pickedPaths: [],
+    // path -> data: URI, filled in a batch per folder by loadFolderThumbnails
+    // below instead of one HTTP request per tile — see that method and
+    // MediaLibraryController::folderThumbnails() for why.
+    thumbCache: {},
+    loadedFolders: [],
     // Re-fetches every time the picker opens rather than caching after the first
     // load — files get added to R2 directly (outside the app) at any time, so a
     // stale in-memory list would hide anything uploaded after the picker was
@@ -291,6 +296,29 @@ Alpine.store('mediaLibrary', {
             this.loading = false;
         }
     },
+    /**
+     * Fetches every already-cached thumbnail for one folder's files in a
+     * single request and merges them into thumbCache. Cached per folder name
+     * for the lifetime of the page (thumbCache only grows) — reopening a
+     * folder already viewed this session is instant with no extra request.
+     * Takes the paths already known client-side (from ensureLoaded above)
+     * rather than having the server re-list R2 to work out folder
+     * membership — that listing call alone is a slow R2 round trip, and
+     * we'd otherwise be paying it again on every folder open.
+     */
+    async loadFolderThumbnails(folder, paths, url) {
+        if (this.loadedFolders.includes(folder)) {
+            return;
+        }
+        try {
+            const response = await axios.post(url, { paths });
+            Object.assign(this.thumbCache, response.data.thumbnails || {});
+            this.loadedFolders.push(folder);
+        } catch (error) {
+            // Non-fatal — tiles just fall back to the per-tile thumbnail
+            // endpoint below instead of the instant inline data URI.
+        }
+    },
     available() {
         return this.files.filter((file) => ! this.pickedPaths.includes(file.path));
     },
@@ -306,12 +334,13 @@ Alpine.store('mediaLibrary', {
     },
 });
 
-Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
+Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl, folderThumbnailsUrl) => ({
     open: false,
     view: 'folders', // 'folders' | 'files' — browsing by folder first keeps each
     // rendered grid down to ~100 tiles instead of all ~276 at once, which is what was
     // actually making the picker feel sluggish (see folders getter + openFolder below).
     activeFolder: null,
+    folderLoading: false,
     query: '',
     onSelect: null,
     single: false,
@@ -323,8 +352,19 @@ Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
      * was actually freezing the tab when several loaded together. Images route
      * through the server-side resize+cache endpoint instead of the raw R2
      * file; videos still use the original (no equivalent problem there).
+     *
+     * Prefers the inline data: URI loaded in bulk for the whole folder by
+     * openFolder() — already in memory, no request at all — and only falls
+     * back to the one-tile-at-a-time endpoint for a file that folder batch
+     * didn't have cached yet (e.g. uploaded within the last hour, before the
+     * next `media:warm-library` run).
      */
     thumbSrc(item) {
+        const cached = Alpine.store('mediaLibrary').thumbCache[item.path];
+        if (cached) {
+            return cached;
+        }
+
         return thumbnailUrl + '?path=' + encodeURIComponent(item.path);
     },
     async openFor(detail) {
@@ -368,11 +408,46 @@ Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
         });
         return Object.values(byFolder).sort((a, b) => a.name.localeCompare(b.name));
     },
-    openFolder(name) {
-        this.activeFolder = name;
-        this.view = 'files';
+    /**
+     * Fetches the whole folder's cached thumbnails in one request (see
+     * thumbCache/loadFolderThumbnails on the store) and pre-marks every tile
+     * that came back as visible *before* switching to the files view —
+     * those are already-decoded bytes sitting in memory, not a pending
+     * network fetch, so there's no reason to trickle them in through the
+     * reveal queue below.
+     *
+     * Order matters here: activeFolder isn't set until after the batch
+     * completes, specifically so the grid (and its x-for/x-init) doesn't
+     * mount a single tile before then. Setting activeFolder/view first and
+     * awaiting after was tried and doesn't work — Alpine renders the grid on
+     * the very next tick regardless of the pending await, each tile's
+     * IntersectionObserver fires immediately for anything already in the
+     * viewport, and every one of those tiles ends up requesting the old
+     * one-at-a-time endpoint (thumbCache is still empty at that point) —
+     * defeating the batch fetch entirely for exactly the tiles a user sees
+     * first. Only a tile the batch didn't have cached still goes through
+     * observeTile/queueReveal, same as before.
+     */
+    async openFolder(name) {
         this.query = '';
         this.resetRevealThrottle();
+        this.folderLoading = true;
+
+        const paths = Alpine.store('mediaLibrary').available()
+            .filter((file) => (file.folder ?? 'Other files') === name)
+            .map((file) => file.path);
+
+        await Alpine.store('mediaLibrary').loadFolderThumbnails(name, paths, folderThumbnailsUrl);
+
+        Alpine.store('mediaLibrary').files.forEach((file) => {
+            if ((file.folder ?? 'Other files') === name && Alpine.store('mediaLibrary').thumbCache[file.path]) {
+                file.visible = true;
+            }
+        });
+
+        this.activeFolder = name;
+        this.view = 'files';
+        this.folderLoading = false;
     },
     backToFolders() {
         this.view = 'folders';
@@ -454,7 +529,7 @@ Alpine.data('mediaLibraryModal', (fetchUrl, thumbnailUrl) => ({
     // some requests failed outright instead of just loading slowly.
     // `php artisan media:warm-library` pre-warms everything so cold-path
     // slowness should be rare in practice.
-    maxConcurrentReveals: 6,
+    maxConcurrentReveals: 16,
     queueReveal(item) {
         item.queued = true;
         this.revealQueue.push(item);

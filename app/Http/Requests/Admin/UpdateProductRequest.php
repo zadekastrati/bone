@@ -117,8 +117,10 @@ class UpdateProductRequest extends FormRequest
     /**
      * Guards against attaching the same R2 library file twice: once within this
      * submission (picked in two color sections at once), and once against files
-     * already attached to any product (including a stale picker list from before
-     * someone else claimed the file). Also rejects paths that don't exist on disk.
+     * already attached to *this* product (a stale picker list from before it was
+     * added here). Attaching a file already used on a different product is fine —
+     * the same photo is meant to be reusable across products. Also rejects paths
+     * that don't exist on disk.
      */
     private function validateAttachPaths(Validator $validator): void
     {
@@ -135,9 +137,12 @@ class UpdateProductRequest extends FormRequest
             $validator->errors()->add('attach_images', 'The same library file was selected more than once — remove the duplicate and try again.');
         }
 
-        $alreadyAttached = \App\Models\ProductImage::query()->whereIn('path', $paths->all())->pluck('path');
+        /** @var Product $product */
+        $product = $this->route('product');
+
+        $alreadyAttached = \App\Models\ProductImage::query()->where('product_id', $product->id)->whereIn('path', $paths->all())->pluck('path');
         if ($alreadyAttached->isNotEmpty()) {
-            $validator->errors()->add('attach_images', 'These files are already attached to a product: '.$alreadyAttached->implode(', ').'. Refresh the library and pick again.');
+            $validator->errors()->add('attach_images', 'These files are already attached to this product: '.$alreadyAttached->implode(', ').'. Refresh the library and pick again.');
         }
 
         $disk = \Illuminate\Support\Facades\Storage::disk('public');

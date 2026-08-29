@@ -1,6 +1,7 @@
 @props([
     'fetchUrl',
     'thumbnailUrl',
+    'folderThumbnailsUrl',
 ])
 
 {{--
@@ -14,7 +15,7 @@
 --}}
 <template x-teleport="body">
 <div
-    x-data="mediaLibraryModal(@js($fetchUrl), @js($thumbnailUrl))"
+    x-data="mediaLibraryModal(@js($fetchUrl), @js($thumbnailUrl), @js($folderThumbnailsUrl))"
     @open-media-picker.window="openFor($event.detail)"
     @keydown.escape.window="close()"
     class="fixed inset-0 z-50 pointer-events-none"
@@ -47,7 +48,7 @@
         <div class="flex shrink-0 items-center justify-between gap-4 border-b border-zinc-200/80 bg-gradient-to-b from-zinc-50 to-white px-6 py-4">
             <div class="min-w-0">
                 <h3 class="text-sm font-semibold text-zinc-900">Choose from library</h3>
-                <p class="mt-0.5 truncate text-xs text-zinc-500" x-show="view === 'folders'">Pick a folder to browse — files already uploaded to R2 that aren't attached to a product yet.</p>
+                <p class="mt-0.5 truncate text-xs text-zinc-500" x-show="view === 'folders'">Pick a folder to browse every image and video uploaded to R2 — already used elsewhere or not.</p>
                 <p class="mt-0.5 truncate text-xs text-zinc-500" x-show="view === 'files'" x-text="activeFolder"></p>
             </div>
             <button
@@ -89,13 +90,17 @@
                 <p class="py-12 text-center text-sm text-red-600" x-text="$store.mediaLibrary.error"></p>
             </template>
 
-            <template x-if="!$store.mediaLibrary.loading && !$store.mediaLibrary.error && view === 'folders' && folders.length === 0">
-                <p class="py-12 text-center text-sm text-zinc-500">No unattached files left — everything's been assigned.</p>
+            <template x-if="!$store.mediaLibrary.loading && !$store.mediaLibrary.error && view === 'folders' && !folderLoading && folders.length === 0">
+                <p class="py-12 text-center text-sm text-zinc-500">No files found on R2 yet.</p>
+            </template>
+
+            <template x-if="folderLoading">
+                <p class="py-12 text-center text-sm text-zinc-500">Loading thumbnails…</p>
             </template>
 
             <ul
                 class="grid grid-cols-2 gap-3 sm:grid-cols-3"
-                x-show="!$store.mediaLibrary.loading && !$store.mediaLibrary.error && view === 'folders'"
+                x-show="!$store.mediaLibrary.loading && !$store.mediaLibrary.error && view === 'folders' && !folderLoading"
             >
                 <template x-for="folder in folders" :key="folder.name">
                     <li>
@@ -115,7 +120,7 @@
             </ul>
 
             <template x-if="!$store.mediaLibrary.loading && !$store.mediaLibrary.error && view === 'files' && filtered.length === 0">
-                <p class="py-12 text-center text-sm text-zinc-500">No unattached files match.</p>
+                <p class="py-12 text-center text-sm text-zinc-500">No files match.</p>
             </template>
 
             <ul
