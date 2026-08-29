@@ -85,6 +85,13 @@ class ProductMediaService
     }
 
     /**
+     * Detach images from $product. This only ever removes the ProductImage
+     * row — it must NOT delete the underlying R2 file. The media library
+     * lists files directly from R2, independent of what's attached to any
+     * product, so a photo an admin removes here (e.g. attached to the wrong
+     * color by mistake) needs to stay available there for reuse. Actual R2
+     * deletion isn't performed anywhere in this app.
+     *
      * @param  list<int|string>  $ids
      */
     public function deleteImages(Product $product, array $ids): void
@@ -93,15 +100,10 @@ class ProductMediaService
             return;
         }
 
-        $images = ProductImage::query()
+        ProductImage::query()
             ->where('product_id', $product->id)
             ->whereIn('id', $ids)
-            ->get();
-
-        foreach ($images as $image) {
-            Storage::disk('public')->delete($image->path);
-            $image->delete();
-        }
+            ->delete();
 
         $this->ensureThumbnail($product);
     }
