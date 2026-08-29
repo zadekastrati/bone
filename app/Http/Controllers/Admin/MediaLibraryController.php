@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Services\ImageVariantCache;
@@ -38,8 +37,10 @@ class MediaLibraryController extends Controller
     }
 
     /**
-     * List files sitting on the "public" disk (R2) that aren't attached to a
-     * product or category yet, for the admin "choose from library" picker.
+     * List files sitting on the "public" disk (R2) for the admin "choose from
+     * library" picker. Files already attached to a product or category stay
+     * listed — the same R2 photo is meant to be reusable across multiple
+     * products, so being in use elsewhere is not a reason to hide it.
      */
     public function index(): JsonResponse
     {
@@ -47,11 +48,7 @@ class MediaLibraryController extends Controller
 
         $disk = Storage::disk('public');
 
-        $excluded = array_merge(
-            ProductImage::query()->pluck('path')->all(),
-            Category::query()->whereNotNull('image_path')->pluck('image_path')->all(),
-            self::EXCLUDED_PATHS,
-        );
+        $excluded = self::EXCLUDED_PATHS;
 
         $files = collect($disk->allFiles())
             ->reject(fn (string $path): bool => in_array($path, $excluded, true) || str_starts_with($path, 'thumbnails/'))
@@ -69,6 +66,59 @@ class MediaLibraryController extends Controller
             ->values();
 
         return response()->json(['files' => $files]);
+    }
+
+    /**
+     * Returns every cached thumbnail for a batch of paths in a single
+     * response, as inline base64 data URIs, instead of one HTTP request per
+     * tile.
+     *
+     * The picker previously fetched each tile's thumbnail from `thumbnail()`
+     * below as it scrolled into view — correct, but each of those is a
+     * separate round trip, and this app's dev environment (and to a lesser
+     * extent, any request) pays a real fixed per-request cost on top of the
+     * actual image bytes. Multiply that by "however many tiles fit on
+     * screen" and opening a folder feels sluggish even though every
+     * thumbnail is already cached and nothing is being resized live.
+     * Returning a whole folder's worth of already-cached thumbnails in one
+     * response cuts that down to one request no matter how many tiles it
+     * contains, so the grid can render immediately once it arrives. Only
+     * already-cached thumbnails are included — see the class docblock on
+     * `thumbnail()` for the cache itself; nothing is resized on demand here,
+     * a cache miss is just omitted and the tile falls back to `thumbnail()`.
+     *
+     * Takes the folder's file paths directly from the client — which already
+     * has them from index() above — rather than re-deriving folder membership
+     * with a fresh $disk->allFiles() call here. That call is a real R2
+     * ListObjects round trip (well over a second on its own), and repeating
+     * it on every folder open was pure waste on top of the thumbnail reads.
+     */
+    public function folderThumbnails(Request $request): JsonResponse
+    {
+        $this->authorize('create', Product::class);
+
+        $paths = collect($request->input('paths', []))
+            ->filter(fn ($path): bool => is_string($path) && $path !== '')
+            ->filter(function (string $path): bool {
+                $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+                return in_array($ext, self::THUMBNAIL_EXTENSIONS, true);
+            })
+            ->take(200)
+            ->values();
+
+        $cache = Storage::disk('local');
+        $thumbnails = [];
+
+        foreach ($paths as $path) {
+            $bytes = $cache->get('thumbnails/'.sha1($path).'.jpg');
+
+            if ($bytes !== null) {
+                $thumbnails[$path] = 'data:image/jpeg;base64,'.base64_encode($bytes);
+            }
+        }
+
+        return response()->json(['thumbnails' => $thumbnails]);
     }
 
     /**

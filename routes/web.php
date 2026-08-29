@@ -172,8 +172,29 @@ Route::middleware('auth')->group(function (): void {
         Route::post('notifications/seen', [AdminNotificationController::class, 'markSeen'])->name('notifications.seen');
         Route::resource('users', AdminUserController::class);
         Route::resource('categories', AdminCategoryController::class)->except(['show']);
-        Route::get('media-library', [MediaLibraryController::class, 'index'])->name('media-library.index');
-        Route::get('media-library/thumbnail', [MediaLibraryController::class, 'thumbnail'])->name('media-library.thumbnail');
+        // The picker can fire a couple hundred of these thumbnail requests in one
+        // session — CSRF/locale/registration-cleanup middleware add real per-request
+        // overhead on this filesystem for zero benefit on a read-only, already-admin
+        // GET endpoint, so they're skipped here (session/cookies/auth stay, since the
+        // route is still admin-only).
+        $mediaLibraryWithoutMiddleware = [
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\ClearAbandonedRegistration::class,
+            \App\Http\Middleware\SetLocale::class,
+        ];
+        Route::get('media-library', [MediaLibraryController::class, 'index'])
+            ->withoutMiddleware($mediaLibraryWithoutMiddleware)
+            ->name('media-library.index');
+        Route::get('media-library/thumbnail', [MediaLibraryController::class, 'thumbnail'])
+            ->withoutMiddleware($mediaLibraryWithoutMiddleware)
+            ->name('media-library.thumbnail');
+        // POST rather than GET — a folder's worth of paths in a query string
+        // risks the URL length limit; VerifyCsrfToken is already excluded
+        // above, so no CSRF token is needed for this admin-only endpoint.
+        Route::post('media-library/folder-thumbnails', [MediaLibraryController::class, 'folderThumbnails'])
+            ->withoutMiddleware($mediaLibraryWithoutMiddleware)
+            ->name('media-library.folder-thumbnails');
         Route::get('products-archived', [AdminProductController::class, 'archived'])->name('products.archived');
         Route::post('products/{product}/restore', [AdminProductController::class, 'restore'])
             ->withTrashed()

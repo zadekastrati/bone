@@ -71,5 +71,6 @@
     <x-admin.media-library-modal
         :fetch-url="route('admin.media-library.index')"
         :thumbnail-url="route('admin.media-library.thumbnail')"
+        :folder-thumbnails-url="route('admin.media-library.folder-thumbnails')"
     />
 @endsection

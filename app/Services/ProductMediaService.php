@@ -39,8 +39,9 @@ class ProductMediaService
 
     /**
      * Attach files that already exist on the "public" disk (e.g. R2 objects uploaded
-     * outside the app) to $product, without uploading or moving anything. Paths already
-     * attached to any product, or missing from the disk, are silently skipped here — the
+     * outside the app) to $product, without uploading or moving anything. The same file
+     * can be attached to any number of different products — only an exact duplicate on
+     * *this* product, or a path missing from the disk, is silently skipped here; the
      * real guard is StoreProductRequest/UpdateProductRequest validation, which rejects
      * the whole submission with a clear error; this is just a defensive second check.
      *
@@ -57,7 +58,7 @@ class ProductMediaService
             return;
         }
 
-        $alreadyAttached = ProductImage::query()->whereIn('path', $paths)->pluck('path')->all();
+        $alreadyAttached = ProductImage::query()->where('product_id', $product->id)->whereIn('path', $paths)->pluck('path')->all();
         $paths = array_values(array_diff($paths, $alreadyAttached));
 
         if ($paths === []) {
