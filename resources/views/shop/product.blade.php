@@ -141,10 +141,6 @@
                         <p class="mt-2 text-sm text-amber-800">{{ __('This product has no size variants yet.') }}</p>
                     @endforelse
 
-                    <p id="product-stock-line" class="mt-2 hidden text-xs text-ink-600">
-                        <span class="font-semibold">{{ __('In stock:') }}</span>
-                        <span data-stock-val>0</span>
-                    </p>
                     <p id="product-oos-line" class="mt-2 hidden text-xs text-amber-800">{{ __('This combination is out of stock.') }}</p>
                     @error('size')
                         <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
