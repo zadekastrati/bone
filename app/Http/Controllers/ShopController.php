@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\OrderStatus;
 use App\Enums\TrainingTag;
 use App\Models\Category;
 use App\Models\Product;
@@ -13,7 +12,7 @@ use Illuminate\View\View;
 class ShopController extends Controller
 {
     /** @var list<string> */
-    private const SORT_OPTIONS = ['newest', 'oldest', 'price_asc', 'price_desc', 'popularity'];
+    private const SORT_OPTIONS = ['newest', 'oldest', 'price_asc', 'price_desc'];
 
     public function index(Request $request): View
     {
@@ -121,14 +120,6 @@ class ShopController extends Controller
             'oldest' => $query->orderBy('created_at')->orderBy('id'),
             'price_asc' => $query->orderBy('price')->orderBy('id'),
             'price_desc' => $query->orderByDesc('price')->orderBy('id'),
-            'popularity' => $query
-                ->withSum(['orderItems as popularity_count' => function (BuilderContract $q): void {
-                    $q->whereHas('order', function (BuilderContract $oq): void {
-                        $oq->where('status', '!=', OrderStatus::Cancelled);
-                    });
-                }], 'quantity')
-                ->orderByRaw('COALESCE(popularity_count, 0) DESC')
-                ->orderByDesc('created_at'),
             default => $query->orderByDesc('created_at')->orderBy('id'),
         };
     }
