@@ -19,9 +19,14 @@
                     this.files.push(file);
                 }
             });
+            // Reset the raw browser selection *before* rebuilding the input's
+            // FileList from this.files below — assigning .value = '' clears
+            // .files as a side effect in every browser, so doing it after
+            // syncInput() silently wiped out the very selection just synced,
+            // and the file never actually reached the server on submit.
+            event.target.value = '';
             this.syncInput();
             this.refreshPreviews();
-            event.target.value = '';
         },
         removeFile(index) {
             if (this.previews[index]?.url) {

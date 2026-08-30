@@ -11,6 +11,8 @@ class ImageResizer
      */
     public static function resize(string $original, int $maxDimension, int $quality = 78): string
     {
+        self::ensureEnoughMemoryFor($original);
+
         $source = @imagecreatefromstring($original);
         if ($source === false) {
             return $original;
@@ -35,5 +37,56 @@ class ImageResizer
         imagedestroy($resized);
 
         return $bytes;
+    }
+
+    /**
+     * GD decodes an image fully into memory before this class ever gets a
+     * chance to shrink it — a 24-30MP camera JPEG (common for real product
+     * photos, not the small test fixtures this was originally verified
+     * against) needs width x height x ~4 bytes just for the decoded bitmap,
+     * easily 100MB+, which silently exceeds a container's default PHP
+     * memory_limit (128M is a common stock default). That failure happens
+     * inside GD's C code as a hard fatal, not a catchable PHP exception, so
+     * there's no way to recover from it after the fact — it has to be
+     * prevented by ensuring enough headroom before imagecreatefromstring()
+     * ever runs. Formula follows WordPress's wp_raise_memory_limit(), the
+     * standard approach for this exact class of problem.
+     */
+    private static function ensureEnoughMemoryFor(string $original): void
+    {
+        $currentLimit = self::iniBytes(ini_get('memory_limit'));
+        if ($currentLimit === -1) {
+            return;
+        }
+
+        $info = @getimagesizefromstring($original);
+        if ($info === false) {
+            return;
+        }
+
+        [$width, $height] = $info;
+        $channels = $info['channels'] ?? 4;
+        $needed = (int) round($width * $height * ($channels + 1) * 1.65) + (16 * 1024 * 1024);
+
+        if ($needed > $currentLimit) {
+            @ini_set('memory_limit', (string) min($needed, 1024 * 1024 * 1024));
+        }
+    }
+
+    private static function iniBytes(string|false $value): int
+    {
+        if ($value === false || $value === '' || $value === '-1') {
+            return -1;
+        }
+
+        $unit = strtolower(substr($value, -1));
+        $number = (int) $value;
+
+        return match ($unit) {
+            'g' => $number * 1024 * 1024 * 1024,
+            'm' => $number * 1024 * 1024,
+            'k' => $number * 1024,
+            default => $number,
+        };
     }
 }
