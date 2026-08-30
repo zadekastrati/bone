@@ -10,12 +10,23 @@ class ProductVariantSyncService
 {
     /**
      * @param  list<array{id?: int|null, color: string, size: string, color_hex?: ?string, sku?: ?string, stock_quantity: int}>  $rows
+     * @return array<string, string> old color => new color, for colors that
+     *                                were cleanly renamed this sync (see
+     *                                resolveCleanRenames). The caller uses
+     *                                this to keep product_images.color and
+     *                                this same request's image upload/attach
+     *                                sections — both computed from the color
+     *                                names that existed before this sync ran
+     *                                — pointed at the right color instead of
+     *                                silently going stale.
      */
-    public function sync(Product $product, array $rows): void
+    public function sync(Product $product, array $rows): array
     {
-        DB::transaction(function () use ($product, $rows): void {
+        return DB::transaction(function () use ($product, $rows): array {
             assert(isset($product->id));
             $keepIds = [];
+            $colorChanges = [];
+
             foreach ($rows as $row) {
                 $payload = [
                     'color' => $row['color'],
@@ -37,8 +48,13 @@ class ProductVariantSyncService
                         ->whereKey((int) $row['id'])
                         ->first();
                     if ($variant !== null) {
+                        $oldColor = $variant->color;
                         $variant->update($payload);
                         $keepIds[] = $variant->id;
+
+                        if ($oldColor !== $payload['color']) {
+                            $colorChanges[] = ['from' => $oldColor, 'to' => $payload['color']];
+                        }
 
                         continue;
                     }
@@ -49,7 +65,49 @@ class ProductVariantSyncService
             }
 
             $product->variants()->whereNotIn('id', $keepIds)->delete();
+
+            return $this->resolveCleanRenames($product, $colorChanges);
         });
+    }
+
+    /**
+     * Of the colors that changed on existing rows this sync, only the ones
+     * renamed *cleanly* are safe to treat as a rename: every row that had
+     * the old color now consistently has the same new color, and no
+     * variant is left with the old color at all. A product's colors aren't
+     * a single field — they're whatever distinct "color" text repeats
+     * across its size rows — so if just one row of several sharing a color
+     * got hand-edited (a typo fixed on one size but not the others, say),
+     * that's not a rename of the color, and treating it as one would
+     * silently drag every other row's photos along with it.
+     *
+     * @param  list<array{from: string, to: string}>  $colorChanges
+     * @return array<string, string>
+     */
+    private function resolveCleanRenames(Product $product, array $colorChanges): array
+    {
+        if ($colorChanges === []) {
+            return [];
+        }
+
+        $newColorsByOld = [];
+        foreach ($colorChanges as $change) {
+            $newColorsByOld[$change['from']][] = $change['to'];
+        }
+
+        $currentColors = $product->variants()->pluck('color')->unique()->all();
+
+        $renames = [];
+        foreach ($newColorsByOld as $oldColor => $newColors) {
+            $newColors = array_unique($newColors);
+            if (count($newColors) !== 1 || in_array($oldColor, $currentColors, true)) {
+                continue;
+            }
+
+            $renames[$oldColor] = $newColors[0];
+        }
+
+        return $renames;
     }
 
     private function generateSku(Product $product, string $color, string $size): string

@@ -115,15 +115,34 @@ class ProductController extends Controller
         DB::transaction(function () use ($product, $data, $request): void {
             $product->update($data);
 
-            $this->variantSync->sync($product, $request->input('variants', []));
+            $colorRenames = $this->variantSync->sync($product, $request->input('variants', []));
+
+            if ($colorRenames !== []) {
+                // The image-gallery's per-color sections (headings, upload
+                // widgets, "choose from library" pickers) are rendered once
+                // at page load, keyed by the color names that existed then.
+                // If a color got renamed in the variants table on this same
+                // save, both the images already attached under the old name
+                // and this request's own upload/attach submissions (still
+                // keyed by that old name) need to follow the rename —
+                // otherwise the old photos go orphaned and the ones the
+                // admin just picked for "that section" silently never get
+                // attached anywhere.
+                foreach ($colorRenames as $from => $to) {
+                    ProductImage::query()
+                        ->where('product_id', $product->id)
+                        ->where('color', $from)
+                        ->update(['color' => $to]);
+                }
+            }
 
             $this->mediaService->deleteImages($product, $request->input('delete_image_ids', []));
 
             $this->mediaService->storeUploads($product, $request->file('images', []));
-            $this->storeVariantImages($product, $request);
+            $this->storeVariantImages($product, $request, $colorRenames);
 
             $this->mediaService->attachExisting($product, $request->input('attach_images', []));
-            $this->attachVariantImages($product, $request);
+            $this->attachVariantImages($product, $request, $colorRenames);
 
             $this->mediaService->setThumbnail($product, $request->input('thumbnail_image_id'));
         });
@@ -167,13 +186,21 @@ class ProductController extends Controller
     /**
      * Store images uploaded into a specific color's upload widget
      * (admin.products.partials.image-gallery), keyed by that color's
-     * exact variant color name. Unknown color keys are ignored.
+     * exact variant color name at the time the page was rendered. A key
+     * renamed this same save (see $colorRenames, from
+     * ProductVariantSyncService::sync) resolves to its new name instead of
+     * being treated as unknown; a key that matches neither is genuinely
+     * stale (its color was removed entirely) and is ignored.
+     *
+     * @param  array<string, string>  $colorRenames  old color => new color
      */
-    private function storeVariantImages(Product $product, Request $request): void
+    private function storeVariantImages(Product $product, Request $request, array $colorRenames = []): void
     {
         $validColors = $product->variants()->pluck('color')->unique()->all();
 
         foreach ((array) $request->file('variant_images', []) as $color => $files) {
+            $color = $colorRenames[$color] ?? $color;
+
             if (! in_array($color, $validColors, true)) {
                 continue;
             }
@@ -183,14 +210,20 @@ class ProductController extends Controller
     }
 
     /**
-     * Attach R2 library files picked into a specific color's section (admin.products.partials.image-gallery),
-     * keyed by that color's exact variant color name. Unknown color keys are ignored.
+     * Attach R2 library files picked into a specific color's section
+     * (admin.products.partials.image-gallery), keyed by that color's exact
+     * variant color name at the time the page was rendered. See
+     * storeVariantImages() above for why $colorRenames is applied first.
+     *
+     * @param  array<string, string>  $colorRenames  old color => new color
      */
-    private function attachVariantImages(Product $product, Request $request): void
+    private function attachVariantImages(Product $product, Request $request, array $colorRenames = []): void
     {
         $validColors = $product->variants()->pluck('color')->unique()->all();
 
         foreach ((array) $request->input('attach_variant_images', []) as $color => $paths) {
+            $color = $colorRenames[$color] ?? $color;
+
             if (! in_array($color, $validColors, true)) {
                 continue;
             }
