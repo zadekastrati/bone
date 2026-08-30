@@ -9,7 +9,7 @@ class ImageResizer
      * re-encodes it as JPEG. Returns the original bytes unchanged if GD
      * can't decode them (falls back gracefully instead of erroring).
      */
-    public static function resize(string $original, int $maxDimension, int $quality = 78): string
+    public static function resize(string $original, int $maxDimension, int $quality = 88): string
     {
         self::ensureEnoughMemoryFor($original);
 
@@ -24,12 +24,13 @@ class ImageResizer
         $targetWidth = max(1, (int) round($width * $scale));
         $targetHeight = max(1, (int) round($height * $scale));
 
-        $resized = imagescale($source, $targetWidth, $targetHeight);
+        // imagecopyresampled (bicubic-like) instead of imagescale()'s default
+        // IMG_BILINEAR_FIXED mode, which is visibly softer/blurrier — the
+        // cause of thumbnails looking noticeably lower quality than their
+        // full-resolution R2 originals despite no change to the source file.
+        $resized = imagecreatetruecolor($targetWidth, $targetHeight);
+        imagecopyresampled($resized, $source, 0, 0, 0, 0, $targetWidth, $targetHeight, $width, $height);
         imagedestroy($source);
-
-        if ($resized === false) {
-            return $original;
-        }
 
         ob_start();
         imagejpeg($resized, null, $quality);
