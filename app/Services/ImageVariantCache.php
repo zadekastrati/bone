@@ -15,14 +15,15 @@ class ImageVariantCache
      * "thumb" (320px) is sized for small tiles — admin gallery grids, the
      * library picker, the product-page thumbnail strip — all rendered well
      * under 200px, where 320px is already sharp even on retina screens.
-     * "grid" (800px) is for the shop's product grid cards, which render
-     * much larger (300-450px+ CSS width); reusing "thumb" there upscaled a
-     * 320px source into that space and looked visibly soft/blurry compared
-     * to the old full-resolution originals.
+     * "grid" (1600px) is for the shop's product grid cards, which render
+     * much larger (300-450px+ CSS width) — on a 2-3x retina screen (e.g.
+     * iPhone) that needs 700-1200px+ of real source pixels, so it matches
+     * "display"'s cap to stay just as sharp as the product page itself
+     * instead of being visibly softer than it.
      */
     public const VARIANTS = [
         'thumb' => 320,
-        'grid' => 800,
+        'grid' => 1600,
         'display' => 1600,
     ];
 
