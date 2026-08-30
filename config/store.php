@@ -21,16 +21,23 @@ return [
     |
     | Rates are EUR -> target currency (multiply a EUR amount by "rate").
     |
+    | The "rate" below each currency is a FALLBACK ONLY. The real, live rate
+    | is fetched from open.er-api.com by the hourly exchange-rates:refresh
+    | scheduled job (see App\Services\ExchangeRateService) and stored in the
+    | exchange_rates table; CurrencyService reads that table first and only
+    | drops back to the static number here if no live rate has ever been
+    | stored yet (a brand new deploy, before the first scheduled run) or the
+    | stored value is somehow invalid. Override a fallback via STORE_RATE_ALL
+    | / STORE_RATE_MKD in .env if needed.
+    |
     | MKD: the Macedonian denar has been de facto pegged to the euro by the
     | National Bank of North Macedonia since 2002, held within ~1% of
-    | 61.5 MKD/EUR for over two decades — 61.5 is a safe hardcoded default.
+    | 61.5 MKD/EUR for over two decades — 61.5 is a safe fallback.
     |
     | ALL: the Albanian lek floats freely and has moved a lot (~123 in 2022
-    | down to ~93-94 as of Aug 2026 amid a multi-year lek appreciation), so
-    | the default below WILL drift out of date. Override it via STORE_RATE_ALL
-    | in .env, and for a production store, replace the static config with a
-    | scheduled job that refreshes it from a rates API (e.g. exchangerate.host)
-    | instead of relying on a hardcoded number.
+    | down to ~92-93 as of Aug 2026 amid a multi-year lek appreciation) —
+    | exactly why this one shouldn't be a static number in normal operation,
+    | which is what the scheduled live refresh above is for.
     */
     'currencies' => [
         'EUR' => [
@@ -49,7 +56,7 @@ return [
             'decimal_separator' => ',',
             'thousands_separator' => '.',
             'symbol_position' => 'after',
-            'rate' => env('STORE_RATE_ALL', 93.5),
+            'rate' => env('STORE_RATE_ALL', 92.5),
         ],
         'MKD' => [
             'label' => 'Macedonian Denar',

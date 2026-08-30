@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ExchangeRate;
 use App\Models\User;
 
 class CurrencyService
@@ -106,8 +107,29 @@ class CurrencyService
     public function currencyConfig(?string $currencyCode = null): array
     {
         $currencies = config('store.currencies', []);
+        $base = config('store.currency', 'EUR');
         $code = $currencyCode ?? $this->currentCurrency();
 
-        return $currencies[$code] ?? $currencies[config('store.currency', 'EUR')];
+        $conf = $currencies[$code] ?? $currencies[$base];
+
+        if ($code !== $base) {
+            $conf['rate'] = $this->liveRate($code) ?? (float) $conf['rate'];
+        }
+
+        return $conf;
+    }
+
+    /**
+     * The most recently fetched live rate for $code (see
+     * ExchangeRateService, run on a schedule — never fetched here). Null
+     * when the scheduled job hasn't stored one yet (a brand new deploy) or
+     * the value on file is somehow invalid, in which case the caller falls
+     * back to the static config rate instead of showing no price at all.
+     */
+    private function liveRate(string $code): ?float
+    {
+        $rate = ExchangeRate::where('currency', $code)->value('rate');
+
+        return $rate !== null && (float) $rate > 0 ? (float) $rate : null;
     }
 }
