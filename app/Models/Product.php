@@ -217,6 +217,12 @@ class Product extends Model
      * one: "Black" if the product has it, otherwise the darkest available
      * color by hex luminance, otherwise just the first color alphabetically.
      * Null when the product has no colors at all.
+     *
+     * Only considers colors that actually have photos of their own (or can
+     * fall back to the product's shared pool via imagesForColor()) — picking
+     * a color with zero images here would make the gallery's initial view
+     * fall through to showing every color's photos unfiltered, which looks
+     * exactly like "colors aren't separated" even though they are.
      */
     public function defaultColor(): ?string
     {
@@ -226,17 +232,24 @@ class Product extends Model
             return null;
         }
 
-        $black = collect($colors)->first(fn (array $c): bool => mb_strtolower($c['name']) === 'black');
+        $withImages = collect($colors)->filter(
+            fn (array $c): bool => $this->imagesForColor($c['name'])->isNotEmpty()
+        );
+        if ($withImages->isEmpty()) {
+            $withImages = collect($colors);
+        }
+
+        $black = $withImages->first(fn (array $c): bool => mb_strtolower($c['name']) === 'black');
         if ($black !== null) {
             return $black['name'];
         }
 
-        $withHex = collect($colors)->filter(fn (array $c): bool => $c['hex'] !== null);
+        $withHex = $withImages->filter(fn (array $c): bool => $c['hex'] !== null);
         if ($withHex->isNotEmpty()) {
             return $withHex->sortBy(fn (array $c): float => self::hexLuminance($c['hex']))->first()['name'];
         }
 
-        return $colors[0]['name'];
+        return $withImages->first()['name'];
     }
 
     private static function hexLuminance(string $hex): float

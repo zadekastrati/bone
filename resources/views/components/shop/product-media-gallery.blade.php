@@ -89,11 +89,22 @@
             <div x-ref="stage" class="store-card overflow-hidden bg-ink-100 shadow-elevated">
                 <template x-for="(item, index) in items" :key="item.id">
                     <div x-show="active === index" x-cloak>
+                        {{--
+                            scale-[1.02]: Safari/iOS has a known object-fit:
+                            cover rendering bug that leaves a thin black
+                            sub-pixel line at the left/right edges when the
+                            media's dimensions don't divide evenly into the
+                            container's — invisible on other browsers, real on
+                            iPhone. Slightly overscaling the media so it
+                            overflows its box (clipped by the stage's own
+                            overflow-hidden) hides that gap without any
+                            visible zoom or layout change.
+                        --}}
                         <video
                             x-show="item.isVideo"
                             data-gallery-video
                             :src="item.url"
-                            class="aspect-[4/5] w-full object-cover"
+                            class="aspect-[4/5] w-full scale-[1.02] object-cover"
                             autoplay
                             loop
                             muted
@@ -106,7 +117,7 @@
                             :alt="item.alt"
                             :fetchpriority="index === active ? 'high' : 'low'"
                             decoding="async"
-                            class="aspect-[4/5] w-full object-cover"
+                            class="aspect-[4/5] w-full scale-[1.02] object-cover"
                         >
                     </div>
                 </template>
