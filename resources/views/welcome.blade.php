@@ -14,6 +14,7 @@
             loop
             playsinline
         >
+            <source src="{{ Storage::disk('public')->url('bone-selected3/Vertical_14 (1).mp4') }}" type="video/mp4" media="(max-width: 767px)" />
             <source src="{{ Storage::disk('public')->url('Horizontal_1.mp4') }}" type="video/mp4" />
         </video>
         <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10"></div>
