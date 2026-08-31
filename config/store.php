@@ -83,6 +83,10 @@ return [
             'MK' => ['label' => 'Macedonia', 'amount' => '6.00', 'currency' => 'MKD'],
         ],
         'default_country' => env('STORE_DEFAULT_COUNTRY', 'XK'),
+
+        // Orders with a subtotal strictly over this (EUR, the base store
+        // currency) ship free — exactly €100.00 still pays normal shipping.
+        'free_over' => env('STORE_FREE_SHIPPING_OVER', '100.00'),
     ],
 
     /*
