@@ -115,38 +115,65 @@ class UpdateProductRequest extends FormRequest
     }
 
     /**
-     * Guards against attaching the same R2 library file twice: once within this
-     * submission (picked in two color sections at once), and once against files
-     * already attached to *this* product (a stale picker list from before it was
-     * added here). Attaching a file already used on a different product is fine —
-     * the same photo is meant to be reusable across products. Also rejects paths
-     * that don't exist on disk.
+     * Guards against attaching the same R2 library file twice into the same
+     * color section: once within this submission (picked twice for that
+     * color), and once against files already attached to that exact
+     * product+color (a stale picker list from before it was added here).
+     * Checked per color/bucket (the null-color bucket is the shared "All
+     * colors" section, attach_images) rather than across the whole product,
+     * because the same photo is meant to be reusable across colors of one
+     * product (product photography is routinely reused across colorways) —
+     * as well as across different products entirely. Also rejects paths
+     * that don't exist on disk, checked once across every bucket.
      */
     private function validateAttachPaths(Validator $validator): void
     {
-        $paths = collect($this->input('attach_images', []))
-            ->merge(collect($this->input('attach_variant_images', []))->flatten())
-            ->filter(fn ($path) => is_string($path) && $path !== '')
-            ->values();
+        $buckets = [
+            ['color' => null, 'paths' => collect($this->input('attach_images', []))
+                ->filter(fn ($path) => is_string($path) && $path !== '')
+                ->values(),
+            ],
+        ];
 
-        if ($paths->isEmpty()) {
-            return;
+        foreach ((array) $this->input('attach_variant_images', []) as $color => $paths) {
+            $buckets[] = ['color' => $color, 'paths' => collect((array) $paths)
+                ->filter(fn ($path) => is_string($path) && $path !== '')
+                ->values(),
+            ];
         }
 
-        if ($paths->count() !== $paths->unique()->count()) {
-            $validator->errors()->add('attach_images', 'The same library file was selected more than once — remove the duplicate and try again.');
+        $allPaths = collect($buckets)->pluck('paths')->flatten()->unique()->values();
+
+        if ($allPaths->isEmpty()) {
+            return;
         }
 
         /** @var Product $product */
         $product = $this->route('product');
 
-        $alreadyAttached = \App\Models\ProductImage::query()->where('product_id', $product->id)->whereIn('path', $paths->all())->pluck('path');
-        if ($alreadyAttached->isNotEmpty()) {
-            $validator->errors()->add('attach_images', 'These files are already attached to this product: '.$alreadyAttached->implode(', ').'. Refresh the library and pick again.');
+        foreach ($buckets as $bucket) {
+            $paths = $bucket['paths'];
+            if ($paths->isEmpty()) {
+                continue;
+            }
+
+            if ($paths->count() !== $paths->unique()->count()) {
+                $validator->errors()->add('attach_images', 'The same library file was selected more than once — remove the duplicate and try again.');
+            }
+
+            $alreadyAttached = \App\Models\ProductImage::query()
+                ->where('product_id', $product->id)
+                ->where('color', $bucket['color'])
+                ->whereIn('path', $paths->all())
+                ->pluck('path');
+
+            if ($alreadyAttached->isNotEmpty()) {
+                $validator->errors()->add('attach_images', 'These files are already attached to this product under that color: '.$alreadyAttached->implode(', ').'. Refresh the library and pick again.');
+            }
         }
 
         $disk = \Illuminate\Support\Facades\Storage::disk('public');
-        $missing = $paths->reject(fn (string $path): bool => $disk->exists($path));
+        $missing = $allPaths->reject(fn (string $path): bool => $disk->exists($path));
         if ($missing->isNotEmpty()) {
             $validator->errors()->add('attach_images', 'These files were not found in storage: '.$missing->implode(', '));
         }
