@@ -28,7 +28,17 @@ class MediaController extends Controller
             return redirect(Storage::disk('public')->url($path));
         }
 
-        $cacheKey = "thumbnails/product-image-{$productImage->id}-{$variant}.jpg";
+        // Keyed by the file's own path (hashed), not the row's id: this "public"
+        // disk (R2) is shared across environments (local dev, staging,
+        // production) that each keep their own separate database, so the same
+        // numeric id can and does get assigned to a completely different photo
+        // in each one. An id-based cache key lets one environment's generated
+        // thumbnail silently get served for a different environment's photo
+        // that happens to reuse the same id. A path is the one thing that's
+        // actually globally unique per file, so it's the only safe cache key
+        // here — matching the same path-hash approach MediaLibraryController's
+        // library-picker thumbnail cache already uses.
+        $cacheKey = 'thumbnails/'.sha1($path).'-'.$variant.'.jpg';
         $bytes = $this->variantCache->resolve($path, $cacheKey, ImageVariantCache::VARIANTS[$variant]);
 
         abort_if($bytes === null, 404);

@@ -29,7 +29,7 @@ class WarmProductImageCacheCommand extends Command
 
             $variants = [];
             foreach (ImageVariantCache::VARIANTS as $variant => $maxDimension) {
-                $variants["thumbnails/product-image-{$image->id}-{$variant}.jpg"] = $maxDimension;
+                $variants['thumbnails/'.sha1($image->path).'-'.$variant.'.jpg'] = $maxDimension;
             }
 
             try {
