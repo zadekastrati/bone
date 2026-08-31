@@ -14,7 +14,17 @@
             loop
             playsinline
         >
-            <source src="{{ Storage::disk('public')->url('bone-selected3/Vertical_14 (1).mp4') }}" type="video/mp4" media="(max-width: 767px)" />
+            {{--
+                Encoded specifically for mobile startup speed: the original
+                mobile export was ~25 Mbps/60fps (70MB) — fine on desktop
+                wifi/broadband, but far more than typical phone networks can
+                sustain, causing the noticeable delay before autoplay/loop
+                could start smoothly. Re-encoded at 30fps/~2.2 Mbps (6MB,
+                same resolution/dimensions, audio stripped since the element
+                is muted anyway) — visually identical, ~11x lighter. Desktop's
+                source below is untouched.
+            --}}
+            <source src="{{ Storage::disk('public')->url('bone-selected3/vertical-hero-mobile.mp4') }}" type="video/mp4" media="(max-width: 767px)" />
             <source src="{{ Storage::disk('public')->url('Horizontal_1.mp4') }}" type="video/mp4" />
         </video>
         <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10"></div>
