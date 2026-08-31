@@ -8,6 +8,7 @@
     {{-- Hero: full-bleed campaign block (layout inspired by major athletic retail sites) --}}
     <section class="relative flex min-h-[85vh] flex-col justify-end overflow-hidden pb-20 pt-28 text-white sm:min-h-[90vh] sm:justify-center sm:pb-28 sm:pt-20 lg:pt-24">
         <video
+            id="hero-banner-video"
             class="absolute inset-0 h-full w-full object-cover"
             autoplay
             muted
@@ -27,6 +28,33 @@
             <source src="{{ Storage::disk('public')->url('bone-selected3/vertical-hero-mobile.mp4') }}" type="video/mp4" media="(max-width: 767px)" />
             <source src="{{ Storage::disk('public')->url('Horizontal_1.mp4') }}" type="video/mp4" />
         </video>
+        <script>
+            {{--
+                On a genuinely cold load (no cache yet), some mobile browsers
+                don't reliably honor the media="" match on <source> above —
+                they can briefly commit to/fetch the desktop landscape source
+                first (visible as the video looking "zoomed in", since a
+                landscape video cropped via object-cover into a portrait box
+                loses most of its width), before eventually settling on the
+                right one. A refresh doesn't show this because the correct
+                file is then already cache-warm. Setting .src directly here,
+                as early as possible (this script runs immediately after the
+                video tag, before the browser continues on to other page
+                resources), removes that ambiguity entirely — the browser
+                never has more than one candidate source to consider. The
+                <source> tags above are untouched and still serve as the
+                fallback for the rare case JS is unavailable.
+            --}}
+            (function () {
+                var video = document.getElementById('hero-banner-video');
+                if (!video) return;
+                var isMobile = window.matchMedia('(max-width: 767px)').matches;
+                video.src = isMobile
+                    ? @json(Storage::disk('public')->url('bone-selected3/vertical-hero-mobile.mp4'))
+                    : @json(Storage::disk('public')->url('Horizontal_1.mp4'));
+                video.load();
+            })();
+        </script>
         <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10"></div>
         <div class="relative mx-auto mt-8 w-full max-w-6xl px-4 sm:mt-14 sm:px-6 lg:px-8">
             <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] sm:text-xs">{{ __('Women\'s performance · gym to street') }}</p>
