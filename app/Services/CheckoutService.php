@@ -45,7 +45,7 @@ class CheckoutService
 
         $order = DB::transaction(function () use ($user, $data, $lines) {
             $subtotal = $this->cart->subtotal();
-            $shipping = $this->shippingAmountForCountry($data['shipping_country']);
+            $shipping = $this->shippingAmountForCountry($data['shipping_country'], $subtotal);
 
             $order = Order::create([
                 'user_id' => $user->id,
@@ -153,7 +153,7 @@ class CheckoutService
         return $order;
     }
 
-    private function shippingAmountForCountry(string $countryCode): string
+    private function shippingAmountForCountry(string $countryCode, string $subtotal): string
     {
         $code = strtoupper($countryCode);
         $countries = config('store.shipping.countries', []);
@@ -162,6 +162,19 @@ class CheckoutService
             throw new \InvalidArgumentException(__('Invalid shipping country.'));
         }
 
+        if ($this->qualifiesForFreeShipping($subtotal)) {
+            return '0.00';
+        }
+
         return (string) $countries[$code]['amount'];
+    }
+
+    /**
+     * Strictly over the threshold — an order of exactly the threshold amount
+     * still pays normal shipping.
+     */
+    private function qualifiesForFreeShipping(string $subtotal): bool
+    {
+        return bccomp($subtotal, (string) config('store.shipping.free_over', '100.00'), 2) > 0;
     }
 }

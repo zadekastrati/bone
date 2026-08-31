@@ -28,10 +28,11 @@ class CheckoutController extends Controller
         $subtotal = $this->cart->subtotal();
         $shippingCountries = config('store.shipping.countries', []);
         $defaultCountry = $this->currency->currentCountry();
-        $shipping = $this->shippingForCountry($defaultCountry);
+        $shipping = $this->shippingForCountry($defaultCountry, $subtotal);
         $total = bcadd($subtotal, $shipping, 2);
+        $freeShipping = $this->qualifiesForFreeShipping($subtotal);
         $shippingRateMap = collect($shippingCountries)
-            ->map(fn (array $c): string => (string) $c['amount'])
+            ->map(fn (array $c): string => $freeShipping ? '0.00' : (string) $c['amount'])
             ->all();
         $displayCurrency = $this->currency->currencyConfig();
 
@@ -70,8 +71,12 @@ class CheckoutController extends Controller
         return redirect()->route('orders.show', $order)->with('success', __('Order placed successfully. Thank you.'));
     }
 
-    private function shippingForCountry(string $countryCode): string
+    private function shippingForCountry(string $countryCode, string $subtotal): string
     {
+        if ($this->qualifiesForFreeShipping($subtotal)) {
+            return '0.00';
+        }
+
         $code = strtoupper($countryCode);
         $countries = config('store.shipping.countries', []);
         if (! isset($countries[$code])) {
@@ -81,5 +86,15 @@ class CheckoutController extends Controller
         }
 
         return (string) $countries[$code]['amount'];
+    }
+
+    /**
+     * Strictly over the threshold — an order of exactly the threshold amount
+     * still pays normal shipping. Mirrors CheckoutService's own check, which
+     * is what actually applies at order placement.
+     */
+    private function qualifiesForFreeShipping(string $subtotal): bool
+    {
+        return bccomp($subtotal, (string) config('store.shipping.free_over', '100.00'), 2) > 0;
     }
 }
