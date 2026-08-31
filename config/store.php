@@ -78,9 +78,9 @@ return [
     */
     'shipping' => [
         'countries' => [
-            'XK' => ['label' => 'Kosovo', 'amount' => '2.50', 'currency' => 'EUR'],
-            'AL' => ['label' => 'Albania', 'amount' => '6.00', 'currency' => 'ALL'],
-            'MK' => ['label' => 'Macedonia', 'amount' => '6.00', 'currency' => 'MKD'],
+            'XK' => ['label' => 'Kosovo', 'amount' => '3.00', 'currency' => 'EUR'],
+            'AL' => ['label' => 'Albania', 'amount' => '7.00', 'currency' => 'ALL'],
+            'MK' => ['label' => 'Macedonia', 'amount' => '7.00', 'currency' => 'MKD'],
         ],
         'default_country' => env('STORE_DEFAULT_COUNTRY', 'XK'),
 
