@@ -31,4 +31,51 @@
             <a href="{{ route('cart.index') }}" class="link-brand">{{ __('Back to cart') }}</a>
         </p>
     </div>
+
+    {{--
+        Verifying happens by clicking the emailed link, which normally opens
+        in a separate tab — this tab has no way to know that happened on its
+        own. Polling a tiny status endpoint while this page is open picks
+        that up and moves on automatically, without the shopper needing to
+        switch back here and refresh manually. Stops as soon as it succeeds
+        or the page is left.
+    --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var stopped = false;
+
+            function checkVerified() {
+                if (stopped) {
+                    return;
+                }
+
+                fetch(@json(route('verification.status')), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                })
+                    .then(function (response) { return response.ok ? response.json() : null; })
+                    .then(function (data) {
+                        if (data && data.verified) {
+                            stopped = true;
+                            window.location.href = @json(route('orders.index'));
+                        }
+                    })
+                    .catch(function () {
+                        // Next poll retries.
+                    });
+            }
+
+            var timer = setInterval(checkVerified, 4000);
+
+            document.addEventListener('visibilitychange', function () {
+                if (document.visibilityState === 'visible') {
+                    checkVerified();
+                }
+            });
+
+            window.addEventListener('beforeunload', function () {
+                stopped = true;
+                clearInterval(timer);
+            });
+        });
+    </script>
 @endsection
