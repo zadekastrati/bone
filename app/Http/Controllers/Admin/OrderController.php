@@ -64,7 +64,7 @@ class OrderController extends Controller
     {
         $this->authorize('view', $order);
 
-        $order->load(['items.variant.product.images', 'user']);
+        $order->load(['items.variant.product.images', 'items.product.images', 'user']);
 
         return view('admin.orders.partials.detail', compact('order'));
     }
