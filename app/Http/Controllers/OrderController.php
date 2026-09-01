@@ -43,4 +43,22 @@ class OrderController extends Controller
 
         return view('shop.orders.show', compact('order'));
     }
+
+    /**
+     * A guest has no account/policy to check against — the route's `signed`
+     * middleware is what proves this link is theirs. The extra user_id guard
+     * below keeps this guest-only path from ever exposing an account order,
+     * even if a signed URL for one somehow leaked.
+     */
+    public function guestConfirmation(Order $order): View
+    {
+        abort_if($order->user_id !== null, 404);
+
+        $order->load([
+            'items.variant.product' => fn ($q) => $q->withTrashed()->with('images'),
+            'items.product' => fn ($q) => $q->withTrashed()->with('images'),
+        ]);
+
+        return view('shop.orders.show', compact('order'));
+    }
 }

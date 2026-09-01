@@ -32,6 +32,8 @@ class OrderController extends Controller
             $term = '%'.$request->string('q')->trim().'%';
             $query->where(function ($q) use ($term): void {
                 $q->where('order_number', 'like', $term)
+                    ->orWhere('shipping_first_name', 'like', $term)
+                    ->orWhere('shipping_last_name', 'like', $term)
                     ->orWhereHas('user', function ($uq) use ($term): void {
                         $uq->where('first_name', 'like', $term)
                             ->orWhere('last_name', 'like', $term)
@@ -138,6 +140,8 @@ class OrderController extends Controller
             $term = '%'.$request->string('q')->trim().'%';
             $query->where(function ($q) use ($term): void {
                 $q->where('order_number', 'like', $term)
+                    ->orWhere('shipping_first_name', 'like', $term)
+                    ->orWhere('shipping_last_name', 'like', $term)
                     ->orWhereHas('user', function ($uq) use ($term): void {
                         $uq->where('first_name', 'like', $term)
                             ->orWhere('last_name', 'like', $term)

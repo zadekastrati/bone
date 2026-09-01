@@ -8,6 +8,7 @@ use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\CurrencyService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 
 class CheckoutController extends Controller
@@ -22,6 +23,10 @@ class CheckoutController extends Controller
     {
         if ($this->cart->lines()->isEmpty()) {
             return redirect()->route('cart.index')->with('error', __('Your cart is empty.'));
+        }
+
+        if ($redirect = $this->verifiedGuard()) {
+            return $redirect;
         }
 
         $lines = $this->cart->lines();
@@ -54,6 +59,10 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', __('Your cart is empty.'));
         }
 
+        if ($redirect = $this->verifiedGuard()) {
+            return $redirect;
+        }
+
         $validated = $request->validated();
         $pm = $validated['payment_method'];
         $validated['payment_method'] = $pm instanceof PaymentMethod
@@ -68,7 +77,30 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', $e->getMessage());
         }
 
-        return redirect()->route('orders.show', $order)->with('success', __('Order placed successfully. Thank you.'));
+        if ($request->user() !== null) {
+            return redirect()->route('orders.show', $order)->with('success', __('Order placed successfully. Thank you.'));
+        }
+
+        // No account to view "My orders" from — a signed link is the guest's
+        // only way back to this confirmation page.
+        return redirect()->to(URL::signedRoute('orders.guest-confirmation', ['order' => $order]))
+            ->with('success', __('Order placed successfully. Thank you.'));
+    }
+
+    /**
+     * Logged-in shoppers must still verify their email before checking out
+     * — unchanged from before guest checkout existed. Guests skip this
+     * entirely since there's no account/email to verify.
+     */
+    private function verifiedGuard(): ?RedirectResponse
+    {
+        $user = auth()->user();
+
+        if ($user !== null && ! $user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
+        return null;
     }
 
     private function shippingForCountry(string $countryCode, string $subtotal): string

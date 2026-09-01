@@ -69,6 +69,7 @@ Route::get('/robots.txt', function (): \Illuminate\Http\Response {
         'Disallow: /forgot-password',
         'Disallow: /profile',
         'Disallow: /orders',
+        'Disallow: /order-confirmation',
         '',
         'Sitemap: '.route('sitemap'),
     ];
@@ -134,6 +135,22 @@ Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
 Route::patch('/cart/{variant}', [CartController::class, 'update'])->name('cart.update')->whereNumber('variant');
 Route::delete('/cart/{variant}', [CartController::class, 'destroy'])->name('cart.destroy')->whereNumber('variant');
 
+// Guest checkout is allowed, so these sit outside the auth/verified groups —
+// CheckoutController itself still enforces the "logged-in users must have a
+// verified email" rule for authenticated shoppers (see its verifiedGuard()).
+Route::get('/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
+Route::post('/checkout', [CheckoutController::class, 'store'])
+    ->middleware(['throttle:30,1', 'throttle:guest-checkout'])
+    ->name('checkout.store');
+
+// A guest has no account to view "My orders" from, so their order
+// confirmation page is reached via a signed link handed out right after
+// checkout instead — the signature is what proves it's theirs, the same way
+// the email-verification link above does.
+Route::get('/order-confirmation/{order}', [OrderController::class, 'guestConfirmation'])
+    ->middleware('signed')
+    ->name('orders.guest-confirmation');
+
 Route::middleware('auth')->group(function (): void {
     Route::get('/email/verify', function (): View {
         return view('auth.verify-email');
@@ -180,10 +197,6 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/profile/phone/cancel', [ProfileController::class, 'cancelPhoneChange'])->name('profile.phone.cancel');
 
     Route::middleware('verified')->group(function (): void {
-        Route::get('/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
-        Route::post('/checkout', [CheckoutController::class, 'store'])
-            ->middleware('throttle:30,1')
-            ->name('checkout.store');
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     });

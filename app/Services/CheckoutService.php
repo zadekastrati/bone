@@ -36,7 +36,7 @@ class CheckoutService
      *     customer_notes: ?string
      * }  $data
      */
-    public function placeOrder(User $user, array $data): Order
+    public function placeOrder(?User $user, array $data): Order
     {
         $lines = $this->cart->lines();
         if ($lines->isEmpty()) {
@@ -48,7 +48,7 @@ class CheckoutService
             $shipping = $this->shippingAmountForCountry($data['shipping_country'], $subtotal);
 
             $order = Order::create([
-                'user_id' => $user->id,
+                'user_id' => $user?->id,
                 'status' => OrderStatus::Pending,
                 'payment_method' => $data['payment_method'],
                 'payment_status' => PaymentStatus::Pending,
@@ -128,14 +128,18 @@ class CheckoutService
             return $order->load('items');
         });
 
-        try {
-            Mail::to($user->email)->locale($user->locale ?? app()->getLocale())->send(new OrderPlacedMail($order));
-        } catch (\Throwable $e) {
-            Log::error('Order confirmation email failed', [
-                'order_id' => $order->id,
-                'user_id' => $user->id,
-                'exception' => $e->getMessage(),
-            ]);
+        // Guest orders have no email address on file (checkout collects no
+        // email field for guests) — there's simply nothing to send this to.
+        if ($user !== null) {
+            try {
+                Mail::to($user->email)->locale($user->locale ?? app()->getLocale())->send(new OrderPlacedMail($order));
+            } catch (\Throwable $e) {
+                Log::error('Order confirmation email failed', [
+                    'order_id' => $order->id,
+                    'user_id' => $user->id,
+                    'exception' => $e->getMessage(),
+                ]);
+            }
         }
 
         $notifyAddress = config('store.notification_email') ?: config('mail.from.address');

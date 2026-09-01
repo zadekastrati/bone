@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Checkout;
 
 use App\Enums\PaymentMethod;
+use App\Rules\ValidPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -10,7 +11,10 @@ class StoreCheckoutRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() !== null;
+        // Guest checkout is allowed — anyone may submit this form regardless
+        // of authentication. Rate limiting (route middleware) and the
+        // validation rules below carry the abuse/quality protection instead.
+        return true;
     }
 
     /**
@@ -23,7 +27,7 @@ class StoreCheckoutRequest extends FormRequest
         return [
             'shipping_first_name' => ['required', 'string', 'max:120'],
             'shipping_last_name' => ['required', 'string', 'max:120'],
-            'shipping_phone' => ['required', 'string', 'max:48', 'regex:/^[0-9+\s\-()]+$/'],
+            'shipping_phone' => ['required', 'string', 'max:48', new ValidPhoneNumber($this->input('shipping_country'))],
             'shipping_street' => ['required', 'string', 'max:255'],
             'shipping_building' => ['nullable', 'string', 'max:255'],
             'shipping_city' => ['required', 'string', 'max:120'],
@@ -43,7 +47,6 @@ class StoreCheckoutRequest extends FormRequest
     {
         return [
             'shipping_country.in' => __('Choose Kosovo, Albania, or North Macedonia.'),
-            'shipping_phone.regex' => __('Enter a valid phone number.'),
         ];
     }
 }
