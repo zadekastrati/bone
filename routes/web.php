@@ -25,6 +25,7 @@ use App\Enums\TrainingTag;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -151,6 +152,14 @@ Route::middleware('auth')->group(function (): void {
 
         return back()->with('status', 'verification-link-sent');
     })->middleware('throttle:6,1')->name('verification.send');
+
+    // Polled from the "Verify your email" page so a user who verifies via
+    // the emailed link in another tab sees this tab pick it up on its own —
+    // no separate real-time infrastructure (websockets/broadcasting) exists
+    // in this app, so a lightweight poll is the proportionate fix here.
+    Route::get('/email/verify/status', function (Request $request): JsonResponse {
+        return response()->json(['verified' => $request->user()->hasVerifiedEmail()]);
+    })->middleware('throttle:30,1')->name('verification.status');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
