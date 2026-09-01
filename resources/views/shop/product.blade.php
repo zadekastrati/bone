@@ -186,6 +186,20 @@
         </div>
     </div>
 
+    @if ($relatedProducts->isNotEmpty())
+        <section class="mt-16 border-t border-zinc-200/60 pt-12 sm:mt-20 sm:pt-16 lg:mt-24 lg:pt-20" aria-labelledby="related-products-heading">
+            <p class="ui-eyebrow">{{ __('Keep exploring') }}</p>
+            <h2 id="related-products-heading" class="section-title mt-1">{{ __('More to Explore') }}</h2>
+            <ul class="mt-10 grid list-none gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
+                @foreach ($relatedProducts as $relatedProduct)
+                    <li class="min-w-0">
+                        @include('shop.partials.product-grid-card', ['product' => $relatedProduct])
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
+
     @if (! $product->isSoldOut())
     <script>
         document.addEventListener('DOMContentLoaded', function () {
