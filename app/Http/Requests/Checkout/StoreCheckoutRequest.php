@@ -28,6 +28,10 @@ class StoreCheckoutRequest extends FormRequest
             'shipping_first_name' => ['required', 'string', 'max:120'],
             'shipping_last_name' => ['required', 'string', 'max:120'],
             'shipping_phone' => ['required', 'string', 'max:48', new ValidPhoneNumber($this->input('shipping_country'))],
+            // Required for guests (there's no account email to fall back to
+            // for their confirmation email); logged-in users already have
+            // one on file and don't see this field at all.
+            'guest_email' => [$this->user() === null ? 'required' : 'nullable', 'email', 'max:255'],
             'shipping_street' => ['required', 'string', 'max:255'],
             'shipping_building' => ['nullable', 'string', 'max:255'],
             'shipping_city' => ['required', 'string', 'max:120'],

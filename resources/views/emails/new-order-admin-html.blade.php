@@ -85,7 +85,7 @@
                                                 <td width="50%" style="padding:0 12px 0 0;vertical-align:top;">
                                                     <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#a58d78;">{{ __('Customer') }}</p>
                                                     <p style="margin:0;font-size:14px;font-weight:600;color:#3a2f28;">{{ $order->user->name ?? trim($order->shipping_first_name.' '.$order->shipping_last_name) }}</p>
-                                                    <p style="margin:2px 0 0;font-size:13px;color:#6c584a;">{{ $order->user->email ?? '' }}</p>
+                                                    <p style="margin:2px 0 0;font-size:13px;color:#6c584a;">{{ $order->user->email ?? $order->guest_email ?? '' }}</p>
                                                 </td>
                                                 <td width="50%" style="padding:0 0 0 12px;vertical-align:top;">
                                                     <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#a58d78;">{{ __('Payment') }}</p>

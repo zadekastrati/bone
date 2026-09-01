@@ -2,19 +2,21 @@
 
 namespace Tests\Feature;
 
+use App\Mail\OrderPlacedMail;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class CheckoutAccessTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function addVariantToCart(int $quantity = 1): ProductVariant
+    private function addVariantToCart(int $quantity = 1, string $price = '25.00'): ProductVariant
     {
         $category = Category::create([
             'name' => 'Test Category',
@@ -25,7 +27,7 @@ class CheckoutAccessTest extends TestCase
             'category_id' => $category->id,
             'name' => 'Test Product',
             'slug' => 'test-product-'.uniqid(),
-            'price' => '25.00',
+            'price' => $price,
             'is_active' => true,
         ]);
 
@@ -48,6 +50,7 @@ class CheckoutAccessTest extends TestCase
             'shipping_first_name' => 'Jane',
             'shipping_last_name' => 'Doe',
             'shipping_phone' => '044123456',
+            'guest_email' => 'jane@example.com',
             'shipping_street' => 'Mother Teresa Boulevard 12',
             'shipping_city' => 'Pristina',
             'shipping_country' => 'XK',
@@ -96,6 +99,104 @@ class CheckoutAccessTest extends TestCase
         $this->get($response->headers->get('Location'))
             ->assertOk()
             ->assertSee($order->order_number);
+    }
+
+    public function test_guest_order_stores_email_and_sends_confirmation(): void
+    {
+        Mail::fake();
+        $this->addVariantToCart();
+
+        $this->post(route('checkout.store'), $this->validCheckoutPayload());
+
+        $order = Order::query()->latest('id')->firstOrFail();
+        $this->assertSame('jane@example.com', $order->guest_email);
+        $this->assertNull($order->user_id);
+
+        // OrderPlacedMail implements ShouldQueueAfterCommit, so Mail::send()
+        // dispatches it to the queue rather than sending it inline.
+        Mail::assertQueued(OrderPlacedMail::class, function (OrderPlacedMail $mail) use ($order) {
+            return $mail->hasTo('jane@example.com') && $mail->order->is($order);
+        });
+    }
+
+    public function test_guest_checkout_requires_an_email(): void
+    {
+        Mail::fake();
+        $this->addVariantToCart();
+
+        $payload = $this->validCheckoutPayload();
+        unset($payload['guest_email']);
+
+        $this->post(route('checkout.store'), $payload)
+            ->assertSessionHasErrors('guest_email');
+
+        $this->assertSame(0, Order::query()->count());
+        Mail::assertNotQueued(OrderPlacedMail::class);
+    }
+
+    public function test_logged_in_checkout_does_not_require_the_guest_email_field(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create(['email_verified_at' => now()]);
+        $this->addVariantToCart();
+
+        $payload = $this->validCheckoutPayload();
+        unset($payload['guest_email']);
+
+        $response = $this->actingAs($user)->post(route('checkout.store'), $payload);
+
+        $order = Order::query()->latest('id')->firstOrFail();
+        $response->assertSessionDoesntHaveErrors('guest_email');
+        $this->assertSame($user->id, $order->user_id);
+        $this->assertNull($order->guest_email);
+
+        Mail::assertQueued(OrderPlacedMail::class, function (OrderPlacedMail $mail) use ($user, $order) {
+            return $mail->hasTo($user->email) && $mail->order->is($order);
+        });
+    }
+
+    public function test_guest_checkout_rejects_a_malformed_email(): void
+    {
+        $this->addVariantToCart();
+
+        $payload = $this->validCheckoutPayload();
+        $payload['guest_email'] = 'not-an-email';
+
+        $this->post(route('checkout.store'), $payload)
+            ->assertSessionHasErrors('guest_email');
+
+        $this->assertSame(0, Order::query()->count());
+    }
+
+    public function test_shipping_price_matches_configured_rate_per_country(): void
+    {
+        $rates = config('store.shipping.countries');
+        $phones = ['XK' => '044123456', 'AL' => '069 234 5678', 'MK' => '070123456'];
+
+        foreach ($phones as $country => $phone) {
+            $this->addVariantToCart();
+
+            $payload = $this->validCheckoutPayload();
+            $payload['shipping_country'] = $country;
+            $payload['shipping_phone'] = $phone;
+
+            $this->post(route('checkout.store'), $payload)->assertSessionDoesntHaveErrors();
+
+            $order = Order::query()->latest('id')->firstOrFail();
+            $this->assertSame($rates[$country]['amount'], $order->shipping_amount);
+        }
+    }
+
+    public function test_free_shipping_threshold_is_unchanged_by_guest_checkout(): void
+    {
+        // Subtotal strictly over the configured free-shipping threshold.
+        $this->addVariantToCart(1, '150.00');
+
+        $this->post(route('checkout.store'), $this->validCheckoutPayload());
+
+        $order = Order::query()->latest('id')->firstOrFail();
+        $this->assertSame('0.00', $order->shipping_amount);
+        $this->assertSame('150.00', $order->total);
     }
 
     public function test_guest_confirmation_page_rejects_an_unsigned_url(): void

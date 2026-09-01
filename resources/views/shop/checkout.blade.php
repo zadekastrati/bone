@@ -58,6 +58,16 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+                @guest
+                    <div>
+                        <label for="guest_email" class="form-label">{{ __('Email') }}</label>
+                        <p class="text-xs text-ink-500">{{ __('For your order confirmation and any updates about this order.') }}</p>
+                        <input type="email" name="guest_email" id="guest_email" value="{{ old('guest_email') }}" class="form-input mt-1.5 @error('guest_email') form-input-error @enderror" required autocomplete="email">
+                        @error('guest_email')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                @endguest
                 <div>
                     <label for="shipping_street" class="form-label">{{ __('Street / road') }}</label>
                     <input type="text" name="shipping_street" id="shipping_street" value="{{ old('shipping_street') }}" class="form-input @error('shipping_street') form-input-error @enderror" required autocomplete="address-line1" placeholder="{{ __('e.g. Mother Teresa Boulevard') }}">
@@ -98,6 +108,10 @@
                                 <option value="{{ $code }}">{{ __($info['label']) }}, <x-price :amount="$info['amount']" /> {{ __('shipping') }}</option>
                             @endforeach
                         </select>
+                        <p
+                            class="mt-1 text-sm font-semibold text-ink-800"
+                            x-text="parseFloat(shipping) === 0 ? '{{ __('Free shipping') }}' : '{{ __('Shipping cost') }}: ' + format(shipping)"
+                        ></p>
                         <p class="mt-1 text-xs text-ink-500">{{ __('Kosovo (XK), Albania (AL), or North Macedonia (MK) only.') }}</p>
                         @error('shipping_country')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

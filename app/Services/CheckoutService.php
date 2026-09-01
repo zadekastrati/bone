@@ -49,6 +49,9 @@ class CheckoutService
 
             $order = Order::create([
                 'user_id' => $user?->id,
+                // Only meaningful for guest orders — an account's own email
+                // is always used instead when one is logged in.
+                'guest_email' => $user === null ? ($data['guest_email'] ?? null) : null,
                 'status' => OrderStatus::Pending,
                 'payment_method' => $data['payment_method'],
                 'payment_status' => PaymentStatus::Pending,
@@ -128,15 +131,17 @@ class CheckoutService
             return $order->load('items');
         });
 
-        // Guest orders have no email address on file (checkout collects no
-        // email field for guests) — there's simply nothing to send this to.
-        if ($user !== null) {
+        // A guest only has an email on file if they chose to enter one —
+        // that field is optional, so there may be nothing to send this to.
+        $recipient = $user?->email ?? $order->guest_email;
+
+        if ($recipient !== null) {
             try {
-                Mail::to($user->email)->locale($user->locale ?? app()->getLocale())->send(new OrderPlacedMail($order));
+                Mail::to($recipient)->locale($user?->locale ?? app()->getLocale())->send(new OrderPlacedMail($order));
             } catch (\Throwable $e) {
                 Log::error('Order confirmation email failed', [
                     'order_id' => $order->id,
-                    'user_id' => $user->id,
+                    'user_id' => $user?->id,
                     'exception' => $e->getMessage(),
                 ]);
             }
