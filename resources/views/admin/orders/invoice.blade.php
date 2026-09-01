@@ -46,7 +46,7 @@
                             {{ $order->user->email }}
                         @else
                             {{ trim($order->shipping_first_name.' '.$order->shipping_last_name) }}<br>
-                            Guest checkout
+                            {{ $order->guest_email ?? 'Guest checkout' }}
                         @endif
                     </p>
                 </div>

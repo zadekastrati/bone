@@ -39,6 +39,9 @@
                         <a href="mailto:{{ $order->user->email }}" class="link-brand">{{ $order->user->email }}</a><br>
                     @else
                         {{ trim($order->shipping_first_name.' '.$order->shipping_last_name) }} <span class="text-ink-400">(Guest checkout)</span><br>
+                        @if ($order->guest_email)
+                            <a href="mailto:{{ $order->guest_email }}" class="link-brand">{{ $order->guest_email }}</a><br>
+                        @endif
                     @endif
                     <span class="text-ink-500">Phone: {{ $order->shipping_phone }}</span>
                 </p>
@@ -118,8 +121,9 @@
             <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" rel="noopener" class="btn-secondary justify-center">
                 Print invoice
             </a>
-            @if ($order->user)
-                <a href="mailto:{{ $order->user->email }}?subject={{ rawurlencode('Regarding your order '.$order->order_number) }}" class="btn-secondary justify-center">
+            @php $contactEmail = $order->user->email ?? $order->guest_email; @endphp
+            @if ($contactEmail)
+                <a href="mailto:{{ $contactEmail }}?subject={{ rawurlencode('Regarding your order '.$order->order_number) }}" class="btn-secondary justify-center">
                     Contact customer
                 </a>
             @else

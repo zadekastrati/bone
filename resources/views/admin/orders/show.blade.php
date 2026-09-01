@@ -9,7 +9,7 @@
         <span class="text-ink-800">{{ $order->order_number }}</span>
     </nav>
 
-    <x-page-header :title="'Order '.$order->order_number" :subtitle="'Customer: '.($order->user->email ?? trim($order->shipping_first_name.' '.$order->shipping_last_name).' (Guest)')">
+    <x-page-header :title="'Order '.$order->order_number" :subtitle="'Customer: '.($order->user->email ?? $order->guest_email ?? trim($order->shipping_first_name.' '.$order->shipping_last_name).' (Guest)')">
         <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
         <x-admin.badge :tone="$order->payment_status->tone()">{{ $order->payment_status->label() }}</x-admin.badge>
     </x-page-header>
