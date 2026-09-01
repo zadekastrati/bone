@@ -109,6 +109,19 @@ Route::get('media/product-images/{productImage}/{variant}', [MediaController::cl
     ])
     ->name('media.product-images.show');
 
+Route::get('media/category-images/{category}/{variant}', [MediaController::class, 'categoryImage'])
+    ->where('variant', 'thumb|display|grid')
+    ->withoutMiddleware([
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+        \App\Http\Middleware\ClearAbandonedRegistration::class,
+        \App\Http\Middleware\SetLocale::class,
+    ])
+    ->name('media.category-images.show');
+
 Route::prefix('shop')->name('shop.')->group(function (): void {
     Route::get('/', [ShopController::class, 'index'])->name('index');
     Route::get('/{category:slug}/{product:slug}', [ShopController::class, 'product'])->name('product');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\ProductImage;
 use App\Services\ImageVariantCache;
 use Illuminate\Http\RedirectResponse;
@@ -39,6 +40,33 @@ class MediaController extends Controller
         // here — matching the same path-hash approach MediaLibraryController's
         // library-picker thumbnail cache already uses.
         $cacheKey = 'thumbnails/'.sha1($path).'-'.$variant.'.jpg';
+        $bytes = $this->variantCache->resolve($path, $cacheKey, ImageVariantCache::VARIANTS[$variant]);
+
+        abort_if($bytes === null, 404);
+
+        return response($bytes, 200, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
+    }
+
+    public function categoryImage(Category $category, string $variant): Response|RedirectResponse
+    {
+        abort_unless(array_key_exists($variant, ImageVariantCache::VARIANTS), 404);
+        abort_if($category->image_path === null, 404);
+
+        $path = $category->image_path;
+        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        abort_unless(in_array($ext, self::RESIZABLE_EXTENSIONS, true), 404);
+
+        if (! function_exists('imagecreatefromstring')) {
+            return redirect(Storage::disk('public')->url($path));
+        }
+
+        // Own "-category-" cache-key namespace, kept entirely separate from
+        // productImage()'s — see the comment there on why this is path-hash
+        // based rather than id-based.
+        $cacheKey = 'thumbnails/'.sha1($path).'-category-'.$variant.'.jpg';
         $bytes = $this->variantCache->resolve($path, $cacheKey, ImageVariantCache::VARIANTS[$variant]);
 
         abort_if($bytes === null, 404);

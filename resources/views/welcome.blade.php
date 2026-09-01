@@ -102,8 +102,14 @@
             <div class="mt-12 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-5 lg:gap-6">
                 @foreach ($categories as $cat)
                     @php
+                        // gridImageUrl(): resized JPEG instead of the raw
+                        // multi-MB camera-original upload — this grid shows
+                        // every category's image at once, and the originals
+                        // were causing a multi-second stall on first paint
+                        // (desktop especially, where all columns are visible
+                        // simultaneously). Same visual result, just lighter.
                         $overlay = 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(250,246,241,0.86) 74%, rgba(247,241,235,0.94) 100%)';
-                        $bgImage = $cat->imageUrl() ? "{$overlay}, url('{$cat->imageUrl()}')" : $overlay;
+                        $bgImage = $cat->gridImageUrl() ? "{$overlay}, url('{$cat->gridImageUrl()}')" : $overlay;
                     @endphp
                     <a
                         href="{{ route('shop.category', $cat) }}"
