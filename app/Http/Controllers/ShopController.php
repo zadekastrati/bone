@@ -97,7 +97,19 @@ class ShopController extends Controller
 
         $defaultColor = $product->defaultColor();
 
-        return view('shop.product', compact('category', 'product', 'variantsByColor', 'stockByKey', 'imagesByColor', 'defaultColor'));
+        // One row per product (not variant), same category, active, excluding
+        // this product — mirrors the exact query shape category() above uses
+        // for its own listing.
+        $relatedProducts = $category->activeProducts()
+            ->where('id', '!=', $product->id)
+            ->with(['images'])
+            ->withSum('variants', 'stock_quantity')
+            ->orderByDesc('created_at')
+            ->orderBy('id')
+            ->limit(8)
+            ->get();
+
+        return view('shop.product', compact('category', 'product', 'variantsByColor', 'stockByKey', 'imagesByColor', 'defaultColor', 'relatedProducts'));
     }
 
     private function resolveSort(Request $request): string
