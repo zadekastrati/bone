@@ -159,6 +159,16 @@
                         @click="setSlide(index)"
                         :aria-label="'Show media ' + (index + 1)"
                     >
+                        {{--
+                            onloadedmetadata seeks to a hair past the start once
+                            metadata is available, forcing a frame to actually
+                            decode and paint. Without it, iOS Safari leaves a
+                            non-autoplaying, not-yet-played <video> blank —
+                            preload="metadata" alone doesn't get it to render a
+                            visible frame there the way it does on desktop
+                            browsers. Same technique already used for this exact
+                            reason in the admin product gallery grid.
+                        --}}
                         <video
                             x-show="item.isVideo"
                             :src="item.url"
@@ -166,6 +176,7 @@
                             muted
                             playsinline
                             preload="metadata"
+                            onloadedmetadata="this.currentTime=0.1"
                         ></video>
                         <img
                             x-show="!item.isVideo"
