@@ -53,8 +53,8 @@
                         <tr>
                             <td class="font-mono text-xs text-ink-900">{{ $order->order_number }}</td>
                             <td>
-                                <span class="font-medium text-ink-800">{{ $order->user->name ?? '—' }}</span>
-                                <span class="mt-0.5 block text-xs text-ink-500">{{ $order->user->email }}</span>
+                                <span class="font-medium text-ink-800">{{ $order->user->name ?? trim($order->shipping_first_name.' '.$order->shipping_last_name) }}</span>
+                                <span class="mt-0.5 block text-xs text-ink-500">{{ $order->user->email ?? 'Guest checkout' }}</span>
                             </td>
                             <td>
                                 <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>

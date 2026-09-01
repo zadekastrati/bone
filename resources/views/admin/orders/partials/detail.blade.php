@@ -34,8 +34,12 @@
             <div>
                 <h3 class="text-xs font-bold uppercase tracking-mega text-ink-500">Customer</h3>
                 <p class="mt-2 text-sm leading-relaxed text-ink-700">
-                    {{ $order->user->name }}<br>
-                    <a href="mailto:{{ $order->user->email }}" class="link-brand">{{ $order->user->email }}</a><br>
+                    @if ($order->user)
+                        {{ $order->user->name }}<br>
+                        <a href="mailto:{{ $order->user->email }}" class="link-brand">{{ $order->user->email }}</a><br>
+                    @else
+                        {{ trim($order->shipping_first_name.' '.$order->shipping_last_name) }} <span class="text-ink-400">(Guest checkout)</span><br>
+                    @endif
                     <span class="text-ink-500">Phone: {{ $order->shipping_phone }}</span>
                 </p>
             </div>
@@ -114,9 +118,15 @@
             <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" rel="noopener" class="btn-secondary justify-center">
                 Print invoice
             </a>
-            <a href="mailto:{{ $order->user->email }}?subject={{ rawurlencode('Regarding your order '.$order->order_number) }}" class="btn-secondary justify-center">
-                Contact customer
-            </a>
+            @if ($order->user)
+                <a href="mailto:{{ $order->user->email }}?subject={{ rawurlencode('Regarding your order '.$order->order_number) }}" class="btn-secondary justify-center">
+                    Contact customer
+                </a>
+            @else
+                <a href="tel:{{ $order->shipping_phone }}" class="btn-secondary justify-center">
+                    Call customer
+                </a>
+            @endif
             <a href="{{ route('admin.orders.show', $order) }}" class="admin-action-link text-center">
                 Open full order page →
             </a>

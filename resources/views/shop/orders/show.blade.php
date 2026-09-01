@@ -5,8 +5,10 @@
 
 @section('content')
     <nav class="crumbs" aria-label="Breadcrumb">
-        <a href="{{ route('orders.index') }}">{{ __('Orders') }}</a>
-        <span class="mx-1.5 text-ink-300">/</span>
+        @auth
+            <a href="{{ route('orders.index') }}">{{ __('Orders') }}</a>
+            <span class="mx-1.5 text-ink-300">/</span>
+        @endauth
         <span class="text-ink-800">{{ $order->order_number }}</span>
     </nav>
 

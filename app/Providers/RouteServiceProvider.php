@@ -28,6 +28,16 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
+        // Extra, tighter throttle for unauthenticated checkout submissions
+        // only — logged-in shoppers already have accounts (and the general
+        // 30/min checkout throttle) discouraging spam, so this one is a
+        // no-op for them and only bites repeated guest order attempts.
+        RateLimiter::for('guest-checkout', function (Request $request) {
+            return $request->user()
+                ? Limit::none()
+                : Limit::perMinutes(15, 5)->by($request->ip());
+        });
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')

@@ -41,8 +41,13 @@
                 <div>
                     <h2 class="text-xs font-bold uppercase tracking-mega text-ink-500">Billed to</h2>
                     <p class="mt-2 text-sm leading-relaxed text-ink-700">
-                        {{ $order->user->name }}<br>
-                        {{ $order->user->email }}
+                        @if ($order->user)
+                            {{ $order->user->name }}<br>
+                            {{ $order->user->email }}
+                        @else
+                            {{ trim($order->shipping_first_name.' '.$order->shipping_last_name) }}<br>
+                            Guest checkout
+                        @endif
                     </p>
                 </div>
                 <div>
