@@ -10,6 +10,7 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'product_variant_id',
+        'product_id',
         'product_name',
         'color',
         'size',
@@ -36,5 +37,18 @@ class OrderItem extends Model
     public function variant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
+    }
+
+    /**
+     * Direct link to the product, independent of product_variant_id — that
+     * FK goes null the moment the exact ordered variant is later deleted
+     * (e.g. the product's variants get edited), even though the product
+     * itself, and its images, are untouched. This is what actually stays
+     * resolvable for as long as the product exists, so it's what the order
+     * thumbnail should be read from.
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
     }
 }

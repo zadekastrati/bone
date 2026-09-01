@@ -14,7 +14,10 @@ class OrderController extends Controller
 
         $query = Order::query()
             ->withCount('items')
-            ->with(['items.variant.product' => fn ($q) => $q->withTrashed()->with('images')])
+            ->with([
+                'items.variant.product' => fn ($q) => $q->withTrashed()->with('images'),
+                'items.product' => fn ($q) => $q->withTrashed()->with('images'),
+            ])
             ->latest();
 
         if (! $request->user()->isAdmin()) {
@@ -34,6 +37,7 @@ class OrderController extends Controller
 
         $order->load([
             'items.variant.product' => fn ($q) => $q->withTrashed()->with('images'),
+            'items.product' => fn ($q) => $q->withTrashed()->with('images'),
             'user',
         ]);
 

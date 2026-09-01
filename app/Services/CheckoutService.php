@@ -110,6 +110,7 @@ class CheckoutService
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_variant_id' => $variant->id,
+                    'product_id' => $variant->product_id,
                     'product_name' => $variant->product->name,
                     'color' => $variant->color,
                     'size' => $variant->size,

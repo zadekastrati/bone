@@ -175,7 +175,11 @@
                     <ul class="divide-y divide-zinc-200/70">
                         @foreach ($orders as $order)
                             @php
-                                $thumb = $order->items->first()?->variant?->product?->thumbnailImage();
+                                // product_id is the stable link (see OrderItem::product()) —
+                                // product_variant_id can go null if that exact variant is
+                                // later deleted, e.g. when the product's variants are edited.
+                                $__firstItem = $order->items->first();
+                                $thumb = ($__firstItem?->product ?? $__firstItem?->variant?->product)?->thumbnailImage();
                             @endphp
                             <li>
                                 <a href="{{ route('orders.show', $order) }}" class="flex items-center gap-4 px-8 py-4 transition hover:bg-zinc-50">

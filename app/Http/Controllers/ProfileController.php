@@ -38,7 +38,10 @@ class ProfileController extends Controller
         $orders = Order::query()
             ->where('user_id', $user->id)
             ->withCount('items')
-            ->with(['items.variant.product' => fn ($q) => $q->withTrashed()->with('images')])
+            ->with([
+                'items.variant.product' => fn ($q) => $q->withTrashed()->with('images'),
+                'items.product' => fn ($q) => $q->withTrashed()->with('images'),
+            ])
             ->latest()
             ->take(10)
             ->get();

@@ -19,7 +19,10 @@
                 <ul class="mt-4 divide-y divide-ink-100 text-sm">
                     @foreach ($order->items as $item)
                         @php
-                            $thumb = $item->variant?->product?->thumbnailImage();
+                            // product_id is the stable link (see OrderItem::product()) —
+                            // product_variant_id can go null if that exact variant is
+                            // later deleted, e.g. when the product's variants are edited.
+                            $thumb = ($item->product ?? $item->variant?->product)?->thumbnailImage();
                         @endphp
                         <li class="flex flex-wrap items-center justify-between gap-3 py-4">
                             <div class="flex items-center gap-4">

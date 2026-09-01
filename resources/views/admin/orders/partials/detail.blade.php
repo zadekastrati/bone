@@ -8,7 +8,8 @@
             <h3 class="text-xs font-bold uppercase tracking-mega text-ink-500">Items</h3>
             <ul class="mt-3 divide-y divide-ink-100 text-sm">
                 @foreach ($order->items as $item)
-                    @php $thumb = $item->variant?->product?->thumbnailImage(); @endphp
+                    {{-- product_id is the stable link (see OrderItem::product()) — product_variant_id can go null if that exact variant is later deleted, e.g. when the product's variants are edited. --}}
+                    @php $thumb = ($item->product ?? $item->variant?->product)?->thumbnailImage(); @endphp
                     <li class="flex flex-wrap items-center justify-between gap-4 py-3">
                         <div class="flex items-center gap-3">
                             <x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" size="sm" />
