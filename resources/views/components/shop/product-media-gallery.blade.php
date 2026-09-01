@@ -103,7 +103,7 @@
                         <video
                             x-show="item.isVideo"
                             data-gallery-video
-                            :src="item.url"
+                            :src="item.isVideo ? item.url : null"
                             class="aspect-[4/5] w-full scale-[1.02] object-cover"
                             autoplay
                             loop
@@ -171,7 +171,7 @@
                         --}}
                         <video
                             x-show="item.isVideo"
-                            :src="item.url"
+                            :src="item.isVideo ? item.url : null"
                             class="aspect-square size-full object-cover"
                             muted
                             playsinline
