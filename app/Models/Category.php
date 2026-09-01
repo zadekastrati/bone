@@ -44,4 +44,24 @@ class Category extends Model
             ? Storage::disk('public')->url($this->image_path)
             : null;
     }
+
+    /**
+     * Resized JPEG (max 1600px edge) instead of the raw camera-original
+     * upload (routinely 2-4MB+ each) — for card-sized displays like the
+     * homepage "Shop by category" grid, where every category's image paints
+     * at once. Mirrors ProductImage::gridUrl().
+     */
+    public function gridImageUrl(): ?string
+    {
+        if ($this->image_path === null) {
+            return null;
+        }
+
+        $ext = strtolower(pathinfo($this->image_path, PATHINFO_EXTENSION));
+        if (! in_array($ext, ['jpeg', 'jpg', 'png', 'webp'], true)) {
+            return $this->imageUrl();
+        }
+
+        return route('media.category-images.show', [$this, 'grid']);
+    }
 }
