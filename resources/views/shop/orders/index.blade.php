@@ -29,8 +29,12 @@
                             // product_id is the stable link (see OrderItem::product()) —
                             // product_variant_id can go null if that exact variant is
                             // later deleted, e.g. when the product's variants are edited.
+                            // Shows the photo for the color the customer actually
+                            // ordered (item->color), not just the product's generic
+                            // thumbnail, which could be a different color entirely.
                             $__firstItem = $order->items->first();
-                            $thumb = ($__firstItem?->product ?? $__firstItem?->variant?->product)?->thumbnailImage();
+                            $__product = $__firstItem?->product ?? $__firstItem?->variant?->product;
+                            $thumb = $__product?->imagesForColor($__firstItem->color)->first() ?? $__product?->thumbnailImage();
                         @endphp
                         <tr>
                             <td class="w-20"><x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" :alt="$order->items->first()?->product_name ?? ''" size="cartRow" /></td>

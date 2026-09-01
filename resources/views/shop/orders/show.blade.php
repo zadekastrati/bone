@@ -22,7 +22,11 @@
                             // product_id is the stable link (see OrderItem::product()) —
                             // product_variant_id can go null if that exact variant is
                             // later deleted, e.g. when the product's variants are edited.
-                            $thumb = ($item->product ?? $item->variant?->product)?->thumbnailImage();
+                            // Shows the photo for the color the customer actually
+                            // ordered (item->color), not just the product's generic
+                            // thumbnail, which could be a different color entirely.
+                            $__product = $item->product ?? $item->variant?->product;
+                            $thumb = $__product?->imagesForColor($item->color)->first() ?? $__product?->thumbnailImage();
                         @endphp
                         <li class="flex flex-wrap items-center justify-between gap-3 py-4">
                             <div class="flex items-center gap-4">
