@@ -223,6 +223,12 @@ class Product extends Model
      * a color with zero images here would make the gallery's initial view
      * fall through to showing every color's photos unfiltered, which looks
      * exactly like "colors aren't separated" even though they are.
+     *
+     * Whichever color the product's thumbnail photo belongs to (see
+     * thumbnailImage()) wins first, ahead of the black/luminance/alphabetical
+     * fallbacks below — that thumbnail is what's shown on every product card
+     * across the site, so opening the product to a different color than the
+     * one just clicked would look like the wrong product loaded.
      */
     public function defaultColor(): ?string
     {
@@ -237,6 +243,14 @@ class Product extends Model
         );
         if ($withImages->isEmpty()) {
             $withImages = collect($colors);
+        }
+
+        $thumbnailColor = $this->thumbnailImage()?->color;
+        if ($thumbnailColor !== null) {
+            $matchingThumbnailColor = $withImages->first(fn (array $c): bool => $c['name'] === $thumbnailColor);
+            if ($matchingThumbnailColor !== null) {
+                return $matchingThumbnailColor['name'];
+            }
         }
 
         $black = $withImages->first(fn (array $c): bool => mb_strtolower($c['name']) === 'black');
