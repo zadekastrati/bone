@@ -55,15 +55,15 @@
                                         <table role="presentation" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td style="width:48px;height:48px;border-radius:12px;background-color:#000000;overflow:hidden;">
-                                                    <img src="{{ asset('logo.jpeg') }}" width="48" height="48" alt="{{ config('app.name') }}" style="display:block;width:48px;height:48px;border-radius:12px;object-fit:cover;">
+                                                    <img src="{{ asset('email-logo-icon.jpg') }}" width="48" height="48" alt="{{ config('app.name') }}" style="display:block;width:48px;height:48px;border-radius:12px;object-fit:cover;">
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td align="center" style="font-size:15px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#3a2f28;">
-                                        {{ config('app.name') }}
+                                    <td align="center">
+                                        <img src="{{ asset('email-logo-wordmark.png') }}" width="130" height="52" alt="{{ config('app.name') }}" style="display:block;width:130px;height:52px;">
                                     </td>
                                 </tr>
                             </table>
