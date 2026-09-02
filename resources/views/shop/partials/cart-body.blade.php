@@ -103,10 +103,8 @@
             </div>
             <x-store.currency-disclaimer :amount="$subtotal" class="text-right" />
             @guest
-                <p class="text-right text-sm text-ink-600">{{ __('Log in or register to enter shipping details and place your order.') }}</p>
-                <div class="flex flex-wrap justify-end gap-3">
-                    <a href="{{ route('login') }}" class="btn-primary">{{ __('Log in') }}</a>
-                    <a href="{{ route('register') }}" class="btn-secondary">{{ __('Register') }}</a>
+                <div class="flex justify-end">
+                    <a href="{{ route('checkout.create') }}" class="btn-primary min-w-[14rem] px-10 py-3 text-center">{{ __('Proceed to checkout') }}</a>
                 </div>
             @else
                 @if (auth()->user()->hasVerifiedEmail())
