@@ -105,7 +105,7 @@
                             required
                         >
                             @foreach ($shippingCountries as $code => $info)
-                                <option value="{{ $code }}">{{ __($info['label']) }}, <x-price :amount="$info['amount']" /> {{ __('shipping') }}</option>
+                                <option value="{{ $code }}">{{ __($info['label']) }}</option>
                             @endforeach
                         </select>
                         <p
