@@ -55,6 +55,7 @@ class CheckoutAccessTest extends TestCase
             'shipping_city' => 'Pristina',
             'shipping_country' => 'XK',
             'payment_method' => 'cash_on_delivery',
+            'terms_accepted' => '1',
         ];
     }
 
@@ -267,6 +268,35 @@ class CheckoutAccessTest extends TestCase
             $this->post(route('checkout.store'), $payload)
                 ->assertSessionDoesntHaveErrors('shipping_phone');
         }
+    }
+
+    public function test_checkout_requires_terms_and_refund_policy_consent(): void
+    {
+        $this->addVariantToCart();
+
+        $payload = $this->validCheckoutPayload();
+        unset($payload['terms_accepted']);
+
+        $this->post(route('checkout.store'), $payload)
+            ->assertSessionHasErrors('terms_accepted');
+
+        $this->assertSame(0, Order::query()->count());
+    }
+
+    public function test_checkout_consent_is_required_regardless_of_payment_method(): void
+    {
+        foreach (\App\Enums\PaymentMethod::cases() as $method) {
+            $this->addVariantToCart();
+
+            $payload = $this->validCheckoutPayload();
+            $payload['payment_method'] = $method->value;
+            unset($payload['terms_accepted']);
+
+            $this->post(route('checkout.store'), $payload)
+                ->assertSessionHasErrors('terms_accepted');
+        }
+
+        $this->assertSame(0, Order::query()->count());
     }
 
     public function test_repeated_guest_checkout_attempts_are_rate_limited(): void

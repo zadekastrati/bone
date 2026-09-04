@@ -151,6 +151,21 @@
                 </div>
             </div>
 
+            <div>
+                <label class="flex items-start gap-3 text-sm text-ink-700">
+                    <input type="checkbox" name="terms_accepted" id="terms_accepted" value="1" class="mt-1" {{ old('terms_accepted') ? 'checked' : '' }} required>
+                    <span>
+                        {!! __('I agree to the :terms and :returns.', [
+                            'terms' => '<a href="'.route('terms').'" target="_blank" rel="noopener" class="font-medium text-accent-700 underline hover:text-accent-600">'.__('Terms & Conditions').'</a>',
+                            'returns' => '<a href="'.route('returns').'" target="_blank" rel="noopener" class="font-medium text-accent-700 underline hover:text-accent-600">'.__('Return & Refund Policy').'</a>',
+                        ]) !!}
+                    </span>
+                </label>
+                @error('terms_accepted')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
             <div class="flex flex-wrap gap-3">
                 <button type="submit" class="btn-primary px-10 py-3">{{ __('Place order') }}</button>
                 <a href="{{ route('cart.index') }}" class="btn-secondary px-6 py-3">{{ __('Back to cart') }}</a>
