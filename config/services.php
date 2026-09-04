@@ -34,7 +34,10 @@ return [
     // Quipu/ProCredit "3DSS2" card payment gateway. Auth is mutual TLS: the
     // cert's Common Name must equal merchant_id. Never point these at real
     // production credentials outside a dedicated production environment.
+    // Only ever read server-side (QuipuPaymentService, CheckoutController) —
+    // never pass this array or any of its values to a view/JS payload.
     'quipu' => [
+        'enabled' => (bool) env('QUIPU_CARD_PAYMENTS_ENABLED', false),
         'merchant_id' => env('QUIPU_MERCHANT_ID'),
         'order_endpoint' => env('QUIPU_ORDER_ENDPOINT'),
         'cert_path' => env('QUIPU_CERT_PATH'),

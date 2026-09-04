@@ -6,6 +6,7 @@ use App\Enums\PaymentMethod;
 use App\Rules\ValidPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class StoreCheckoutRequest extends FormRequest
 {
@@ -54,5 +55,16 @@ class StoreCheckoutRequest extends FormRequest
             'shipping_country.in' => __('Choose Kosovo, Albania, or North Macedonia.'),
             'terms_accepted.accepted' => __('You must agree to the Terms & Conditions and Return & Refund Policy to place an order.'),
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $isCard = $this->input('payment_method') === PaymentMethod::Card->value;
+
+            if ($isCard && ! config('services.quipu.enabled')) {
+                $validator->errors()->add('payment_method', __('Card payment is not currently available. Please choose a different payment method.'));
+            }
+        });
     }
 }

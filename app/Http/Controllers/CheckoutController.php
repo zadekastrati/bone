@@ -7,7 +7,9 @@ use App\Http\Requests\Checkout\StoreCheckoutRequest;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\CurrencyService;
+use App\Services\QuipuPaymentService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 
@@ -16,7 +18,8 @@ class CheckoutController extends Controller
     public function __construct(
         private readonly CartService $cart,
         private readonly CheckoutService $checkout,
-        private readonly CurrencyService $currency
+        private readonly CurrencyService $currency,
+        private readonly QuipuPaymentService $quipu
     ) {}
 
     public function create(): View|RedirectResponse
@@ -40,6 +43,9 @@ class CheckoutController extends Controller
             ->map(fn (array $c): string => $freeShipping ? '0.00' : (string) $c['amount'])
             ->all();
         $displayCurrency = $this->currency->currencyConfig();
+        $paymentMethods = collect(PaymentMethod::cases())
+            ->reject(fn (PaymentMethod $m): bool => $m === PaymentMethod::Card && ! config('services.quipu.enabled'))
+            ->values();
 
         return view('shop.checkout', compact(
             'lines',
@@ -49,7 +55,8 @@ class CheckoutController extends Controller
             'defaultCountry',
             'shippingCountries',
             'shippingRateMap',
-            'displayCurrency'
+            'displayCurrency',
+            'paymentMethods'
         ));
     }
 
@@ -75,6 +82,30 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', $e->getMessage());
         } catch (\RuntimeException $e) {
             return redirect()->route('cart.index')->with('error', $e->getMessage());
+        }
+
+        if ($validated['payment_method'] === PaymentMethod::Card) {
+            try {
+                $gatewayOrder = $this->quipu->createOrder(
+                    $order,
+                    route('payment.quipu.return', $order),
+                    $request
+                );
+
+                $order->forceFill([
+                    'payment_gateway_order_id' => $gatewayOrder['id'],
+                    'payment_gateway_order_password' => $gatewayOrder['password'],
+                ])->save();
+
+                return redirect()->away($this->quipu->buildRedirectUrl($gatewayOrder));
+            } catch (\Throwable $e) {
+                Log::error('Quipu order creation failed', [
+                    'order_id' => $order->id,
+                    'exception' => $e->getMessage(),
+                ]);
+
+                return redirect()->route('cart.index')->with('error', __('Card payment is temporarily unavailable. Please choose a different payment method.'));
+            }
         }
 
         if ($request->user() !== null) {

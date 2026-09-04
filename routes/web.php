@@ -18,6 +18,7 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
@@ -70,6 +71,7 @@ Route::get('/robots.txt', function (): \Illuminate\Http\Response {
         'Disallow: /profile',
         'Disallow: /orders',
         'Disallow: /order-confirmation',
+        'Disallow: /payment',
         '',
         'Sitemap: '.route('sitemap'),
     ];
@@ -150,6 +152,11 @@ Route::post('/checkout', [CheckoutController::class, 'store'])
 Route::get('/order-confirmation/{order}', [OrderController::class, 'guestConfirmation'])
     ->middleware('signed')
     ->name('orders.guest-confirmation');
+
+// Where the Quipu hosted payment page redirects the customer back to after a
+// card payment attempt. Only a holding page for now — see PaymentController.
+Route::get('/payment/quipu/return/{order}', [PaymentController::class, 'quipuReturn'])
+    ->name('payment.quipu.return');
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/email/verify', function (): View {
