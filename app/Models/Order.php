@@ -21,6 +21,8 @@ class Order extends Model
         'status',
         'payment_method',
         'payment_status',
+        'payment_gateway_order_id',
+        'payment_gateway_order_password',
         'shipping_first_name',
         'shipping_last_name',
         'shipping_phone',

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\PaymentStatus;
 use App\Mail\OrderPlacedMail;
 use App\Models\Category;
 use App\Models\Order;
@@ -9,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -267,6 +269,91 @@ class CheckoutAccessTest extends TestCase
             $this->post(route('checkout.store'), $payload)
                 ->assertSessionDoesntHaveErrors('shipping_phone');
         }
+    }
+
+    public function test_card_payment_option_is_hidden_when_the_feature_flag_is_disabled(): void
+    {
+        config(['services.quipu.enabled' => false]);
+        $this->addVariantToCart();
+
+        $this->get(route('checkout.create'))
+            ->assertOk()
+            ->assertDontSee('Card (Visa/Mastercard)');
+    }
+
+    public function test_card_payment_option_is_shown_when_the_feature_flag_is_enabled(): void
+    {
+        config(['services.quipu.enabled' => true]);
+        $this->addVariantToCart();
+
+        $this->get(route('checkout.create'))
+            ->assertOk()
+            ->assertSee('Card (Visa/Mastercard)');
+    }
+
+    public function test_checkout_rejects_card_payment_when_the_feature_flag_is_disabled(): void
+    {
+        config(['services.quipu.enabled' => false]);
+        $this->addVariantToCart();
+
+        $payload = $this->validCheckoutPayload();
+        $payload['payment_method'] = 'card';
+
+        $this->post(route('checkout.store'), $payload)
+            ->assertSessionHasErrors('payment_method');
+
+        $this->assertSame(0, Order::query()->count());
+    }
+
+    public function test_card_payment_creates_a_pending_order_without_a_confirmation_email_and_redirects_to_the_gateway(): void
+    {
+        config(['services.quipu.enabled' => true]);
+        Mail::fake();
+        Http::fake([
+            '*3dss2test.quipu.de*' => Http::response([
+                'order' => [
+                    'id' => 555,
+                    'password' => 'secret-pass',
+                    // Realistically bare — the gateway returns just the base
+                    // card-entry page, with no id/password query string.
+                    'hppUrl' => 'https://3dss2test.quipu.de/flex',
+                    'status' => 'Preparing',
+                ],
+            ], 200),
+        ]);
+        $this->addVariantToCart();
+
+        $payload = $this->validCheckoutPayload();
+        $payload['payment_method'] = 'card';
+
+        $response = $this->post(route('checkout.store'), $payload);
+
+        $order = Order::query()->latest('id')->firstOrFail();
+        $this->assertTrue($order->payment_status === PaymentStatus::Pending);
+        $this->assertSame('555', (string) $order->payment_gateway_order_id);
+        $this->assertSame('secret-pass', $order->payment_gateway_order_password);
+
+        $response->assertRedirect('https://3dss2test.quipu.de/flex?id=555&password=secret-pass');
+        Mail::assertNotQueued(OrderPlacedMail::class);
+    }
+
+    public function test_card_payment_gateway_failure_does_not_crash_checkout(): void
+    {
+        config(['services.quipu.enabled' => true]);
+        Http::fake([
+            '*3dss2test.quipu.de*' => Http::response(['error' => 'bad request'], 400),
+        ]);
+        $this->addVariantToCart();
+
+        $payload = $this->validCheckoutPayload();
+        $payload['payment_method'] = 'card';
+
+        $response = $this->post(route('checkout.store'), $payload);
+
+        $response->assertRedirect(route('cart.index'));
+        // The order was already created before the gateway call failed —
+        // it just stays pending/unlinked for an admin to follow up on.
+        $this->assertSame(1, Order::query()->count());
     }
 
     public function test_repeated_guest_checkout_attempts_are_rate_limited(): void

@@ -127,13 +127,15 @@
 
             <fieldset class="checkout-fieldset">
                 <legend class="checkout-fieldset__legend">{{ __('Payment') }}</legend>
-                @foreach (\App\Enums\PaymentMethod::cases() as $method)
+                @foreach ($paymentMethods as $method)
                     <label class="flex cursor-pointer items-start gap-4 rounded-2xl border border-ink-200/70 bg-white/90 p-5 shadow-sm transition hover:border-ink-300/90 has-[:checked]:border-accent-400 has-[:checked]:bg-accent-50/25 has-[:checked]:shadow-md has-[:checked]:ring-2 has-[:checked]:ring-accent-500/20">
                         <input type="radio" name="payment_method" value="{{ $method->value }}" class="mt-1" {{ old('payment_method', \App\Enums\PaymentMethod::BankTransfer->value) === $method->value ? 'checked' : '' }} required>
                         <span>
                             <span class="font-semibold text-ink-950">{{ $method->label() }}</span>
                             @if ($method === \App\Enums\PaymentMethod::BankTransfer)
                                 <span class="mt-1 block text-sm text-ink-600">{{ __('You will receive IBAN / reference details on the confirmation page. Mark as paid only after your transfer clears.') }}</span>
+                            @elseif ($method === \App\Enums\PaymentMethod::Card)
+                                <span class="mt-1 block text-sm text-ink-600">{{ __("You'll be redirected to our secure payment page to enter your card details.") }}</span>
                             @else
                                 <span class="mt-1 block text-sm text-ink-600">{{ __('Pay the courier when your parcel arrives.') }}</span>
                             @endif
