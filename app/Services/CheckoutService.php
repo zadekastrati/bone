@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Mail\NewOrderAdminMail;
 use App\Mail\OrderPlacedMail;
@@ -135,7 +136,11 @@ class CheckoutService
         // that field is optional, so there may be nothing to send this to.
         $recipient = $user?->email ?? $order->guest_email;
 
-        if ($recipient !== null) {
+        // Card orders aren't confirmed yet at this point (payment_status is
+        // still Pending) — the confirmation email is sent once payment
+        // actually succeeds instead, so it can include the approval code,
+        // card brand, and last 4 digits the bank requires on the invoice.
+        if ($recipient !== null && $order->payment_method !== PaymentMethod::Card) {
             try {
                 Mail::to($recipient)->locale($user?->locale ?? app()->getLocale())->send(new OrderPlacedMail($order));
             } catch (\Throwable $e) {
