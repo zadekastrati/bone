@@ -41,6 +41,7 @@ class StoreCheckoutRequest extends FormRequest
             'shipping_delivery_notes' => ['nullable', 'string', 'max:2000'],
             'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
             'customer_notes' => ['nullable', 'string', 'max:1000'],
+            'terms_accepted' => ['accepted'],
         ];
     }
 
@@ -51,6 +52,7 @@ class StoreCheckoutRequest extends FormRequest
     {
         return [
             'shipping_country.in' => __('Choose Kosovo, Albania, or North Macedonia.'),
+            'terms_accepted.accepted' => __('You must agree to the Terms & Conditions and Return & Refund Policy to place an order.'),
         ];
     }
 }
