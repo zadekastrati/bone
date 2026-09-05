@@ -49,6 +49,25 @@
             </div>
 
             <div class="admin-panel p-6">
+                <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-900">Payment</h2>
+                <p class="mt-3 text-sm leading-relaxed text-ink-700">
+                    {{ $order->payment_method->label() }}
+                    @if ($order->payment_method === \App\Enums\PaymentMethod::Card && $order->payment_card_brand)
+                        <br>
+                        <span class="text-ink-500">
+                            {{ $order->payment_card_brand }} ····{{ $order->payment_card_last_four }}
+                            @if ($order->payment_approval_code)
+                                · Approval {{ $order->payment_approval_code }}
+                            @endif
+                            @if ($order->payment_confirmed_at)
+                                · Confirmed {{ $order->payment_confirmed_at->format('M j, Y H:i') }}
+                            @endif
+                        </span>
+                    @endif
+                </p>
+            </div>
+
+            <div class="admin-panel p-6">
                 <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink-900">Shipping address</h2>
                 <p class="mt-3 text-sm leading-relaxed text-ink-700">
                     {{ $order->shipping_first_name }} {{ $order->shipping_last_name }}<br>
