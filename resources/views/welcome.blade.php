@@ -58,7 +58,7 @@
         <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10"></div>
         <div class="relative mx-auto mt-8 w-full max-w-6xl px-4 sm:mt-14 sm:px-6 lg:px-8">
             <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] sm:text-xs">{{ __('Women\'s performance · gym to street') }}</p>
-            <h1 class="font-display max-w-4xl font-bold uppercase {{ app()->getLocale() === 'sq' ? 'mt-8 text-4xl leading-[1.3] sm:text-6xl md:text-7xl lg:text-8xl' : 'mt-5 text-5xl leading-[0.9] sm:text-7xl md:text-8xl lg:text-9xl' }} tracking-tight text-balance text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.55)]">
+            <h1 class="font-display max-w-4xl font-bold uppercase {{ app()->getLocale() === 'sq' ? 'mt-10 text-4xl leading-[1.3] sm:mt-14 sm:text-6xl md:mt-16 md:text-7xl lg:mt-20 lg:text-8xl' : 'mt-5 text-5xl leading-[0.9] sm:text-7xl md:text-8xl lg:text-9xl' }} tracking-tight text-balance text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.55)]">
                 {!! __('Become your<br class="hidden sm:inline" /> personal best') !!}
             </h1>
             <p class="mx-auto mt-8 max-w-xl text-base leading-relaxed text-white/90 text-pretty sm:mx-0 sm:text-lg sm:leading-relaxed">
