@@ -193,6 +193,23 @@
                                         </td>
                                     </tr>
                                 </table>
+                            @elseif ($order->payment_method === \App\Enums\PaymentMethod::Card && $order->payment_card_brand)
+                                {{-- Card payment details — only present once Quipu has confirmed the
+                                     payment, since this email itself is deferred until then. --}}
+                                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;background-color:#f6efe8;border-radius:12px;">
+                                    <tr>
+                                        <td style="padding:16px 20px;">
+                                            <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8f674b;">{{ __('Payment details') }}</p>
+                                            <p style="margin:0;font-size:14px;line-height:1.7;color:#3a2f28;">
+                                                {{ $order->payment_card_brand }} &middot;&middot;&middot;&middot;{{ $order->payment_card_last_four }}<br>
+                                                {{ __('Approval code') }}: <span style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;">{{ $order->payment_approval_code }}</span><br>
+                                                @if ($order->payment_confirmed_at)
+                                                    {{ __('Paid on :date', ['date' => $order->payment_confirmed_at->copy()->timezone(config('store.display_timezone'))->format('M j, Y \a\t H:i')]) }}
+                                                @endif
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
                             @endif
 
                             {{-- CTA --}}
