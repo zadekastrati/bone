@@ -136,6 +136,10 @@
                                 <span class="mt-1 block text-sm text-ink-600">{{ __('You will receive IBAN / reference details on the confirmation page. Mark as paid only after your transfer clears.') }}</span>
                             @elseif ($method === \App\Enums\PaymentMethod::Card)
                                 <span class="mt-1 block text-sm text-ink-600">{{ __("You'll be redirected to our secure payment page to enter your card details.") }}</span>
+                                <span class="mt-2 flex items-center gap-3">
+                                    <img src="{{ asset('images/visa-verified.png') }}" alt="Verified by Visa" class="h-6 w-auto">
+                                    <img src="{{ asset('images/mastercard-securecode.png') }}" alt="MasterCard SecureCode" class="h-6 w-auto">
+                                </span>
                             @else
                                 <span class="mt-1 block text-sm text-ink-600">{{ __('Pay the courier when your parcel arrives.') }}</span>
                             @endif

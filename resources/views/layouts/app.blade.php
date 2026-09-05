@@ -284,6 +284,10 @@
             <div class="border-t border-zinc-200/70 py-7">
                 <div class="page-shell flex flex-col items-center justify-between gap-4 text-center text-[11px] leading-relaxed text-ink-500 sm:flex-row sm:text-left">
                     <p class="text-balance">&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('All rights reserved.') }}</p>
+                    <div class="flex items-center gap-3">
+                        <img src="{{ asset('images/visa-verified.png') }}" alt="Verified by Visa" class="h-5 w-auto">
+                        <img src="{{ asset('images/mastercard-securecode.png') }}" alt="MasterCard SecureCode" class="h-5 w-auto">
+                    </div>
                 </div>
             </div>
         </footer>
