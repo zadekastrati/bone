@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Services\QuipuPaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request as HttpClientRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -147,6 +148,28 @@ class QuipuPaymentConfirmationTest extends TestCase
 
         $this->assertSame(PaymentStatus::Pending, $status);
         $this->assertSame(PaymentStatus::Pending, $order->fresh()->payment_status);
+    }
+
+    /**
+     * DD-78: the verification request must ask for the token and
+     * transaction detail levels the integration was built against —
+     * without tokenDetailLevel=2 the response has no srcToken/card brand,
+     * and without tranDetailLevel=1 it has no trans[] approval code/regTime.
+     */
+    public function test_get_order_details_request_uses_the_required_detail_levels(): void
+    {
+        Http::fake(['*3dss2test.quipu.de*' => Http::response($this->fullyPaidResponse(), 200)]);
+
+        $order = $this->makeCardOrder();
+
+        app(QuipuPaymentService::class)->confirmPayment($order);
+
+        Http::assertSent(function (HttpClientRequest $request) use ($order) {
+            return str_contains($request->url(), (string) $order->payment_gateway_order_id)
+                && $request['tokenDetailLevel'] === 2
+                && $request['tranDetailLevel'] === 1
+                && $request['password'] === $order->payment_gateway_order_password;
+        });
     }
 
     public function test_confirm_payment_is_idempotent_and_never_reprocesses_a_resolved_order(): void
