@@ -58,6 +58,7 @@ class CheckoutAccessTest extends TestCase
             'shipping_city' => 'Pristina',
             'shipping_country' => 'XK',
             'payment_method' => 'cash_on_delivery',
+            'terms_accepted' => true,
         ];
     }
 

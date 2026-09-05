@@ -23,6 +23,10 @@ class Order extends Model
         'payment_status',
         'payment_gateway_order_id',
         'payment_gateway_order_password',
+        'payment_approval_code',
+        'payment_card_brand',
+        'payment_card_last_four',
+        'payment_confirmed_at',
         'shipping_first_name',
         'shipping_last_name',
         'shipping_phone',
@@ -53,6 +57,7 @@ class Order extends Model
         'shipping_amount' => 'decimal:2',
         'total' => 'decimal:2',
         'shipped_at' => 'datetime',
+        'payment_confirmed_at' => 'datetime',
     ];
 
     protected static function booted(): void
