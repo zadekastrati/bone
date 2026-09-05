@@ -60,7 +60,7 @@
                                 · Approval {{ $order->payment_approval_code }}
                             @endif
                             @if ($order->payment_confirmed_at)
-                                · Confirmed {{ $order->payment_confirmed_at->format('M j, Y H:i') }}
+                                · Confirmed {{ $order->payment_confirmed_at->copy()->timezone(config('store.display_timezone'))->format('M j, Y H:i') }}
                             @endif
                         </span>
                     @endif
