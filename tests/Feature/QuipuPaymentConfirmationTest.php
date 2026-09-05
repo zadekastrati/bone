@@ -205,4 +205,26 @@ class QuipuPaymentConfirmationTest extends TestCase
             ->assertOk()
             ->assertSee('Payment not completed');
     }
+
+    /**
+     * DD-77: forged STATUS/ID/code query params must never be able to
+     * fake a payment — the gateway response is the only source of truth.
+     * The gateway here says the payment was actually declined, so a
+     * forged "success" callback must still end up Failed, not Paid.
+     */
+    public function test_forged_callback_query_params_cannot_fake_a_successful_payment(): void
+    {
+        $response = $this->fullyPaidResponse();
+        $response['order']['status'] = 'Declined';
+
+        Http::fake(['*3dss2test.quipu.de*' => Http::response($response, 200)]);
+
+        $order = $this->makeCardOrder();
+
+        $this->get(route('payment.quipu.return', $order).'?STATUS=Success&ID='.$order->payment_gateway_order_id.'&code=00')
+            ->assertOk()
+            ->assertSee('Payment not completed');
+
+        $this->assertSame(PaymentStatus::Failed, $order->fresh()->payment_status);
+    }
 }
