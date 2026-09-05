@@ -77,8 +77,19 @@ EXPOSE 80
 # runs on does anything to the container between "image built" and
 # "container started" that re-enables a conflicting MPM — build-time alone
 # wasn't enough to stop "AH00534: More than one MPM loaded" in that case.
-CMD mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/testing storage/framework/views storage/logs bootstrap/cache \
+#
+# The Quipu mTLS certificate/key/CA never touch the repo or the image build —
+# they're only ever passed in as base64 env vars (QUIPU_*_B64) and decoded to
+# real files here, at container start, same reasoning as the storage/ mkdir
+# above: nothing written to disk survives a redeploy, so it has to be
+# recreated every time the container boots, not baked in once.
+CMD mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/testing storage/framework/views storage/logs storage/app/quipu bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
+    && if [ -n "$QUIPU_CERT_B64" ]; then echo "$QUIPU_CERT_B64" | base64 -d > storage/app/quipu/cert.pem; fi \
+    && if [ -n "$QUIPU_KEY_B64" ]; then echo "$QUIPU_KEY_B64" | base64 -d > storage/app/quipu/key.pem; fi \
+    && if [ -n "$QUIPU_CA_B64" ]; then echo "$QUIPU_CA_B64" | base64 -d > storage/app/quipu/ca.pem; fi \
+    && chown -R www-data:www-data storage/app/quipu \
+    && (chmod 600 storage/app/quipu/key.pem || true) \
     && (a2dismod mpm_event || true) \
     && (a2dismod mpm_worker || true) \
     && a2enmod mpm_prefork \
