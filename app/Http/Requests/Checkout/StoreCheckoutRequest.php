@@ -61,9 +61,14 @@ class StoreCheckoutRequest extends FormRequest
     {
         $validator->after(function (Validator $validator): void {
             $isCard = $this->input('payment_method') === PaymentMethod::Card->value;
+            $isBankTransfer = $this->input('payment_method') === PaymentMethod::BankTransfer->value;
 
             if ($isCard && ! config('services.quipu.enabled')) {
                 $validator->errors()->add('payment_method', __('Card payment is not currently available. Please choose a different payment method.'));
+            }
+
+            if ($isBankTransfer) {
+                $validator->errors()->add('payment_method', __('Bank transfer is not currently available. Please choose a different payment method.'));
             }
         });
     }

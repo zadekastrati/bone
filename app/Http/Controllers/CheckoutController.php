@@ -44,7 +44,8 @@ class CheckoutController extends Controller
             ->all();
         $displayCurrency = $this->currency->currencyConfig();
         $paymentMethods = collect(PaymentMethod::cases())
-            ->reject(fn (PaymentMethod $m): bool => $m === PaymentMethod::Card && ! config('services.quipu.enabled'))
+            ->reject(fn (PaymentMethod $m): bool => $m === PaymentMethod::BankTransfer
+                || ($m === PaymentMethod::Card && ! config('services.quipu.enabled')))
             ->values();
 
         return view('shop.checkout', compact(
