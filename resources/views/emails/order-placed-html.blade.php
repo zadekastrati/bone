@@ -201,6 +201,9 @@
                                         <td style="padding:16px 20px;">
                                             <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8f674b;">{{ __('Payment details') }}</p>
                                             <p style="margin:0;font-size:14px;line-height:1.7;color:#3a2f28;">
+                                                @if ($order->payment_gateway_order_id)
+                                                    {{ __('Order ID') }}: <span style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;">{{ $order->payment_gateway_order_id }}</span><br>
+                                                @endif
                                                 {{ $order->payment_card_brand }} &middot;&middot;&middot;&middot;{{ $order->payment_card_last_four }}<br>
                                                 {{ __('Approval code') }}: <span style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;">{{ $order->payment_approval_code }}</span><br>
                                                 @if ($order->payment_confirmed_at)

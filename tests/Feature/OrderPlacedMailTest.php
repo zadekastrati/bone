@@ -38,6 +38,7 @@ class OrderPlacedMailTest extends TestCase
         $order = $this->makeOrder([
             'payment_method' => 'card',
             'payment_status' => 'paid',
+            'payment_gateway_order_id' => '24390',
             'payment_approval_code' => '151139',
             'payment_card_brand' => 'Visa',
             'payment_card_last_four' => '3572',
@@ -47,6 +48,7 @@ class OrderPlacedMailTest extends TestCase
         $html = (new OrderPlacedMail($order))->render();
 
         $this->assertStringContainsString($order->order_number, $html);
+        $this->assertStringContainsString('24390', $html);
         $this->assertStringContainsString('Visa', $html);
         $this->assertStringContainsString('3572', $html);
         $this->assertStringContainsString('151139', $html);
