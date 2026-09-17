@@ -97,16 +97,17 @@ class ShopController extends Controller
 
         $defaultColor = $product->defaultColor();
 
-        // One row per product (not variant), same category, active, excluding
-        // this product — mirrors the exact query shape category() above uses
-        // for its own listing.
-        $relatedProducts = $category->activeProducts()
+        // One row per product (not variant), mixed across every category —
+        // "More to Explore" is meant to surface the wider catalog rather than
+        // just this product's own category.
+        $relatedProducts = Product::query()
+            ->where('is_active', true)
             ->where('id', '!=', $product->id)
-            ->with(['images'])
+            ->with(['images', 'category'])
             ->withSum('variants', 'stock_quantity')
             ->orderByDesc('created_at')
             ->orderBy('id')
-            ->limit(8)
+            ->limit(16)
             ->get();
 
         return view('shop.product', compact('category', 'product', 'variantsByColor', 'stockByKey', 'imagesByColor', 'defaultColor', 'relatedProducts'));
