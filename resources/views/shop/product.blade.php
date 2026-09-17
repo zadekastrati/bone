@@ -190,13 +190,65 @@
         <section class="mt-16 border-t border-zinc-200/60 pt-12 sm:mt-20 sm:pt-16 lg:mt-24 lg:pt-20" aria-labelledby="related-products-heading">
             <p class="ui-eyebrow">{{ __('Keep exploring') }}</p>
             <h2 id="related-products-heading" class="section-title mt-1">{{ __('More to Explore') }}</h2>
-            <ul class="mt-10 grid list-none gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
-                @foreach ($relatedProducts as $relatedProduct)
-                    <li class="min-w-0">
-                        @include('shop.partials.product-grid-card', ['product' => $relatedProduct])
-                    </li>
-                @endforeach
-            </ul>
+
+            <div
+                class="relative mt-10"
+                x-data="{
+                    canScrollLeft: false,
+                    canScrollRight: false,
+                    update() {
+                        const el = this.$refs.track;
+                        if (! el) return;
+                        this.canScrollLeft = el.scrollLeft > 4;
+                        this.canScrollRight = el.scrollLeft < el.scrollWidth - el.clientWidth - 4;
+                    },
+                    scrollByAmount(dir) {
+                        const el = this.$refs.track;
+                        if (! el) return;
+                        el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: 'smooth' });
+                    },
+                }"
+                x-init="$nextTick(() => update())"
+            >
+                <ul
+                    x-ref="track"
+                    x-on:scroll.passive="update()"
+                    class="no-scrollbar flex touch-pan-x list-none snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 sm:gap-4"
+                >
+                    @foreach ($relatedProducts as $relatedProduct)
+                        <li class="shrink-0">
+                            @include('shop.partials.related-product-card', ['product' => $relatedProduct])
+                        </li>
+                    @endforeach
+                </ul>
+
+                <div class="pointer-events-none absolute inset-y-0 -left-2 -right-2 hidden items-center justify-between sm:flex">
+                    <button
+                        type="button"
+                        class="pointer-events-auto inline-flex size-10 items-center justify-center rounded-full bg-white/95 text-ink-900 shadow-md ring-1 ring-ink-200/70 transition hover:bg-white"
+                        x-show="canScrollLeft"
+                        x-cloak
+                        @click="scrollByAmount(-1)"
+                        aria-label="{{ __('Previous products') }}"
+                    >
+                        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6" />
+                        </svg>
+                    </button>
+                    <button
+                        type="button"
+                        class="pointer-events-auto inline-flex size-10 items-center justify-center rounded-full bg-white/95 text-ink-900 shadow-md ring-1 ring-ink-200/70 transition hover:bg-white"
+                        x-show="canScrollRight"
+                        x-cloak
+                        @click="scrollByAmount(1)"
+                        aria-label="{{ __('Next products') }}"
+                    >
+                        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m9 18 6-6-6-6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </section>
     @endif
 

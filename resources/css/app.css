@@ -698,3 +698,18 @@
     }
 
 }
+
+@layer utilities {
+    /*
+     | Hides the scrollbar on horizontally-scrolling carousels (e.g. "More to
+     | Explore") while keeping native touch/wheel scrolling fully functional.
+     */
+    .no-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+}
