@@ -222,10 +222,10 @@
                     @endforeach
                 </ul>
 
-                <div class="pointer-events-none absolute inset-y-0 -left-2 -right-2 hidden items-center justify-between sm:flex">
+                <div class="pointer-events-none absolute inset-y-0 -left-2 -right-2 hidden sm:block">
                     <button
                         type="button"
-                        class="pointer-events-auto inline-flex size-10 items-center justify-center rounded-full bg-white/95 text-ink-900 shadow-md ring-1 ring-ink-200/70 transition hover:bg-white"
+                        class="pointer-events-auto absolute left-0 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-ink-900 shadow-md ring-1 ring-ink-200/70 transition hover:bg-white"
                         x-show="canScrollLeft"
                         x-cloak
                         @click="scrollByAmount(-1)"
@@ -237,7 +237,7 @@
                     </button>
                     <button
                         type="button"
-                        class="pointer-events-auto inline-flex size-10 items-center justify-center rounded-full bg-white/95 text-ink-900 shadow-md ring-1 ring-ink-200/70 transition hover:bg-white"
+                        class="pointer-events-auto absolute right-0 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-ink-900 shadow-md ring-1 ring-ink-200/70 transition hover:bg-white"
                         x-show="canScrollRight"
                         x-cloak
                         @click="scrollByAmount(1)"
