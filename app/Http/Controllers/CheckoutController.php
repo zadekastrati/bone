@@ -105,6 +105,8 @@ class CheckoutController extends Controller
                     'exception' => $e->getMessage(),
                 ]);
 
+                $this->checkout->releaseFailedCardOrder($order);
+
                 return redirect()->route('cart.index')->with('error', __('Card payment is temporarily unavailable. Please choose a different payment method.'));
             }
         }
