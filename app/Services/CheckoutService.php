@@ -168,6 +168,41 @@ class CheckoutService
         return $order;
     }
 
+    /**
+     * placeOrder() already committed the order, decremented stock, and
+     * cleared the cart by the time the Quipu gateway call can fail —
+     * without this, the customer is left staring at an empty cart with no
+     * idea whether they were charged, and the reserved stock never comes
+     * back. This undoes those side effects so checkout is safe to retry.
+     */
+    public function releaseFailedCardOrder(Order $order): void
+    {
+        $order->loadMissing('items');
+
+        DB::transaction(function () use ($order) {
+            foreach ($order->items as $item) {
+                ProductVariant::query()
+                    ->whereKey($item->product_variant_id)
+                    ->increment('stock_quantity', $item->quantity);
+            }
+
+            $order->forceFill([
+                'status' => OrderStatus::Cancelled,
+                'payment_status' => PaymentStatus::Failed,
+            ])->save();
+        });
+
+        foreach ($order->items as $item) {
+            try {
+                $this->cart->add($item->product_variant_id, $item->quantity);
+            } catch (\Throwable $e) {
+                // Variant went out of stock or was deactivated in the few
+                // seconds between order creation and the gateway failure —
+                // nothing to restore for this line.
+            }
+        }
+    }
+
     private function shippingAmountForCountry(string $countryCode, string $subtotal): string
     {
         $code = strtoupper($countryCode);

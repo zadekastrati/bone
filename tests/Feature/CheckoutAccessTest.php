@@ -353,9 +353,30 @@ class CheckoutAccessTest extends TestCase
         $response = $this->post(route('checkout.store'), $payload);
 
         $response->assertRedirect(route('cart.index'));
-        // The order was already created before the gateway call failed —
-        // it just stays pending/unlinked for an admin to follow up on.
         $this->assertSame(1, Order::query()->count());
+    }
+
+    public function test_card_payment_gateway_failure_cancels_the_order_and_restores_stock_and_cart(): void
+    {
+        config(['services.quipu.enabled' => true]);
+        Http::fake([
+            '*3dss2test.quipu.de*' => Http::response(['error' => 'bad request'], 400),
+        ]);
+        $variant = $this->addVariantToCart(2);
+
+        $payload = $this->validCheckoutPayload();
+        $payload['payment_method'] = 'card';
+
+        $this->post(route('checkout.store'), $payload);
+
+        $order = Order::query()->latest('id')->firstOrFail();
+        $this->assertTrue($order->status === \App\Enums\OrderStatus::Cancelled);
+        $this->assertTrue($order->payment_status === PaymentStatus::Failed);
+
+        $variant->refresh();
+        $this->assertSame(10, $variant->stock_quantity);
+
+        $this->assertSame(2, $this->app->make(\App\Services\CartService::class)->count());
     }
 
     public function test_quipu_create_order_request_matches_the_official_specification(): void

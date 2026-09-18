@@ -43,7 +43,7 @@ class QuipuVerifyConnectionCommand extends Command
                 'timeout' => 15,
             ])->post($config['order_endpoint'], [
                 'order' => [
-                    'typeRid' => '1',
+                    'typeRid' => $config['order_type_rid'],
                     'amount' => '0.01',
                     'currency' => 'EUR',
                     'description' => 'Connectivity check ('.config('app.env').')',

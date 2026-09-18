@@ -31,7 +31,7 @@ class QuipuPaymentService
             'timeout' => 20,
         ])->post($config['order_endpoint'], [
             'order' => [
-                'typeRid' => '1',
+                'typeRid' => $config['order_type_rid'],
                 // The order model's total is a decimal:2 cast, so this is
                 // already a "10.00"-style string — the format the gateway
                 // expects for order creation (not the cents-style integer
