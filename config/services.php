@@ -43,6 +43,13 @@ return [
         'cert_path' => env('QUIPU_CERT_PATH'),
         'key_path' => env('QUIPU_KEY_PATH'),
         'ca_path' => env('QUIPU_CA_PATH'),
+        // The order "type" a merchant account is configured with on Quipu's
+        // side — not a universal constant. The shared test account accepts
+        // "1"; a real production account gets its own value assigned by the
+        // bank (visible as a named "Bill type" in the eCommerce Merchant
+        // Portal), so this must stay overridable per environment rather
+        // than hardcoded.
+        'order_type_rid' => env('QUIPU_ORDER_TYPE_RID', '1'),
     ],
 
 ];
