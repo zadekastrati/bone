@@ -62,7 +62,7 @@ class CartController extends Controller
 
         $model = ProductVariant::query()->with('product')->findOrFail($variant);
 
-        if (! $model->product->is_active || $model->product->trashed()) {
+        if (! $this->cart->isVariantAvailable($model)) {
             $message = __('This product is no longer available.');
 
             return $request->wantsJson()

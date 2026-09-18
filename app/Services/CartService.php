@@ -29,7 +29,7 @@ class CartService
 
         $variant = ProductVariant::query()->with('product')->findOrFail($variantId);
 
-        if (! $variant->product->is_active || $variant->product->trashed()) {
+        if (! $this->isVariantAvailable($variant)) {
             abort(422, 'This product is not available.');
         }
 
@@ -62,7 +62,7 @@ class CartService
 
         $variant = ProductVariant::query()->with('product')->findOrFail($variantId);
 
-        if (! $variant->product->is_active || $variant->product->trashed()) {
+        if (! $this->isVariantAvailable($variant)) {
             abort(422, 'This product is not available.');
         }
 
@@ -107,7 +107,7 @@ class CartService
         foreach ($contents as $variantId => $qty) {
             $id = (int) $variantId;
             $variant = $variants->get($id);
-            if ($variant === null || ! $variant->product->is_active || $variant->product->trashed()) {
+            if ($variant === null || ! $this->isVariantAvailable($variant)) {
                 continue;
             }
 
@@ -130,5 +130,20 @@ class CartService
         }
 
         return $sum;
+    }
+
+    /**
+     * product() is a plain belongsTo with no withTrashed(), so its query
+     * already carries Product's SoftDeletingScope — the moment a product
+     * is deleted (soft or force), $variant->product comes back null rather
+     * than a trashed model, even though the variant itself can still be
+     * sitting in a customer's cart session. Treat that the same as
+     * unavailable rather than crashing on a null property access.
+     */
+    public function isVariantAvailable(ProductVariant $variant): bool
+    {
+        return $variant->product !== null
+            && $variant->product->is_active
+            && ! $variant->product->trashed();
     }
 }
