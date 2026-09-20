@@ -86,7 +86,7 @@
                                     name="color"
                                     value="{{ $c['name'] }}"
                                     class="product-color-input sr-only"
-                                    {{ old('color') === $c['name'] ? 'checked' : '' }}
+                                    {{ old('color', $requestedColor) === $c['name'] ? 'checked' : '' }}
                                     required
                                 >
                                 @if (! empty($c['hex']))
@@ -186,7 +186,7 @@
         </div>
     </div>
 
-    @if ($relatedProducts->isNotEmpty())
+    @if ($relatedProductSlides->isNotEmpty())
         <section class="mt-16 border-t border-zinc-200/60 pt-12 sm:mt-20 sm:pt-16 lg:mt-24 lg:pt-20" aria-labelledby="related-products-heading">
             <p class="ui-eyebrow">{{ __('Keep exploring') }}</p>
             <h2 id="related-products-heading" class="section-title mt-1">{{ __('More to Explore') }}</h2>
@@ -215,9 +215,9 @@
                     x-on:scroll.passive="update()"
                     class="no-scrollbar flex touch-pan-x list-none snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 sm:gap-4"
                 >
-                    @foreach ($relatedProducts as $relatedProduct)
+                    @foreach ($relatedProductSlides as $slide)
                         <li class="shrink-0">
-                            @include('shop.partials.related-product-card', ['product' => $relatedProduct])
+                            @include('shop.partials.related-product-card', ['product' => $slide['product'], 'color' => $slide['color'], 'image' => $slide['image']])
                         </li>
                     @endforeach
                 </ul>
