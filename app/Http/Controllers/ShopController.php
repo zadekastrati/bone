@@ -78,7 +78,7 @@ class ShopController extends Controller
         return view('shop.category', compact('category', 'products', 'sort'));
     }
 
-    public function product(Category $category, Product $product): View
+    public function product(Request $request, Category $category, Product $product): View
     {
         abort_unless($product->category_id === $category->id, 404);
 
@@ -95,22 +95,48 @@ class ShopController extends Controller
         $imagesByColor = collect($product->availableColors())
             ->mapWithKeys(fn ($c) => [$c['name'] => $product->imagesForColor($c['name'])]);
 
-        $defaultColor = $product->defaultColor();
+        // Lets a link (e.g. a specific color's card in "More to Explore")
+        // land directly on that color instead of the product's usual
+        // default — only honored when it's a real color of this product.
+        $requestedColor = collect($product->availableColors())
+            ->pluck('name')
+            ->first(fn (string $name): bool => $name === $request->query('color'));
 
-        // One row per product (not variant), mixed across every category —
-        // "More to Explore" is meant to surface the wider catalog rather than
-        // just this product's own category.
+        $defaultColor = $requestedColor ?? $product->defaultColor();
+
+        // Mixed across every category — "More to Explore" is meant to surface
+        // the wider catalog rather than just this product's own category.
         $relatedProducts = Product::query()
             ->where('is_active', true)
             ->where('id', '!=', $product->id)
-            ->with(['images', 'category'])
+            ->with(['images', 'category', 'variants'])
             ->withSum('variants', 'stock_quantity')
             ->orderByDesc('created_at')
             ->orderBy('id')
             ->limit(16)
             ->get();
 
-        return view('shop.product', compact('category', 'product', 'variantsByColor', 'stockByKey', 'imagesByColor', 'defaultColor', 'relatedProducts'));
+        // One slide per product/color combination (not just its default
+        // color), so shoppers can browse every color without having to open
+        // each product first. Built from the relations already eager-loaded
+        // above instead of Product::availableColors()/imagesForColor() to
+        // avoid re-querying per related product.
+        $relatedProductSlides = $relatedProducts->flatMap(function (Product $relatedProduct) {
+            $colorNames = $relatedProduct->variants->pluck('color')->unique()->values();
+
+            if ($colorNames->isEmpty()) {
+                return collect([['product' => $relatedProduct, 'color' => null, 'image' => $relatedProduct->thumbnailImage()]]);
+            }
+
+            return $colorNames->map(function (string $colorName) use ($relatedProduct) {
+                $colorImages = $relatedProduct->images->where('color', $colorName)->values();
+                $image = $colorImages->isNotEmpty() ? $colorImages->first() : $relatedProduct->thumbnailImage();
+
+                return ['product' => $relatedProduct, 'color' => $colorName, 'image' => $image];
+            });
+        })->values();
+
+        return view('shop.product', compact('category', 'product', 'variantsByColor', 'stockByKey', 'imagesByColor', 'defaultColor', 'requestedColor', 'relatedProductSlides'));
     }
 
     private function resolveSort(Request $request): string
