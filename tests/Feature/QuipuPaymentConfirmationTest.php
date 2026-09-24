@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Mail\OrderPlacedMail;
 use App\Models\Order;
@@ -249,5 +250,38 @@ class QuipuPaymentConfirmationTest extends TestCase
             ->assertSee('Payment not completed');
 
         $this->assertSame(PaymentStatus::Failed, $order->fresh()->payment_status);
+    }
+
+    /**
+     * Regression test for the race with orders:expire-abandoned-card-payments:
+     * if an order stops being Pending (e.g. expired, stock already released)
+     * in the time it takes confirmPayment() to hear back from Quipu, the
+     * late "yes, it was actually paid" result must never overwrite it back
+     * to Paid on top of stock that's already been restored elsewhere.
+     */
+    public function test_a_late_confirmation_cannot_overwrite_an_order_that_was_expired_in_the_meantime(): void
+    {
+        Mail::fake();
+        Http::fake(['*3dss2test.quipu.de*' => Http::response($this->fullyPaidResponse(), 200)]);
+
+        $order = $this->makeCardOrder();
+
+        // Simulates the expiration sweep resolving this order concurrently,
+        // underneath the in-memory $order object below (which was already
+        // loaded as Pending before this happens) — the same TOCTOU window
+        // that exists between confirmPayment()'s initial Pending check and
+        // its final write, since getOrderDetails() is a real network call.
+        Order::query()->whereKey($order->id)->update([
+            'status' => OrderStatus::Cancelled,
+            'payment_status' => PaymentStatus::Failed,
+        ]);
+
+        $status = app(QuipuPaymentService::class)->confirmPayment($order);
+
+        $this->assertSame(PaymentStatus::Failed, $status);
+        $this->assertSame(OrderStatus::Cancelled, $order->fresh()->status);
+        $this->assertSame(PaymentStatus::Failed, $order->fresh()->payment_status);
+        $this->assertNull($order->fresh()->payment_approval_code);
+        Mail::assertNothingQueued();
     }
 }

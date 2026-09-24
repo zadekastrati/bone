@@ -167,7 +167,33 @@ class QuipuPaymentService
             'payment_card_brand' => $transaction['cardBrand'],
             'payment_card_last_four' => $transaction['cardLastFour'],
             'payment_confirmed_at' => $confirmedAt,
-        ])->save();
+        ]);
+
+        // Guards against a narrow race with the abandoned-order expiration
+        // sweep (orders:expire-abandoned-card-payments): if this order
+        // stopped being Pending in the time it took to hear back from Quipu
+        // above — i.e. it was just expired and its stock already released
+        // — this conditional update is a safe no-op instead of blindly
+        // overwriting it back to Paid on top of stock that's already gone
+        // back into inventory. Quipu did genuinely charge the customer in
+        // that case, so it's logged for manual reconciliation rather than
+        // silently discarded or auto-corrected.
+        $updated = Order::query()
+            ->whereKey($order->id)
+            ->where('payment_status', PaymentStatus::Pending)
+            ->update($order->getDirty());
+
+        if ($updated === 0) {
+            Log::critical('Quipu confirmed a real payment for an order that was no longer Pending (likely expired and had its stock released) — needs manual reconciliation', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'gateway_order_id' => $order->payment_gateway_order_id,
+                'approval_code' => $transaction['approvalCode'],
+                'amount' => $order->total,
+            ]);
+
+            return $order->fresh()->payment_status;
+        }
 
         $this->sendConfirmationEmail($order);
 
