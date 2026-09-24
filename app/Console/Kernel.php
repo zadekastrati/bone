@@ -24,6 +24,11 @@ class Kernel extends ConsoleKernel
         // is briefly down, a network blip), the next one an hour later
         // retries instead of the store running on a stale rate all day.
         $schedule->command('exchange-rates:refresh')->hourly()->withoutOverlapping();
+
+        // Releases stock reserved by card orders the customer abandoned
+        // (redirected to Quipu's hosted payment page, never completed it)
+        // instead of holding it forever — see config('store.orders').
+        $schedule->command('orders:expire-abandoned-card-payments')->hourly()->withoutOverlapping();
     }
 
     /**

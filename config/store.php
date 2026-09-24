@@ -104,4 +104,18 @@ return [
         'instructions' => env('STORE_BANK_INSTRUCTIONS', 'Use your order number as the payment reference. Transfer may take 1–2 business days.'),
     ],
 
+    'orders' => [
+        /*
+        | A card order still Pending this long is treated as abandoned — the
+        | customer never completed (or gave up on) Quipu's hosted payment
+        | page. Its reserved stock is released by the scheduled
+        | orders:expire-abandoned-card-payments command (see
+        | App\Console\Kernel) so it isn't held hostage forever. Deliberately
+        | generous: comfortably longer than both a real checkout session and
+        | Quipu's own hosted-page session lifetime, so this should never
+        | collide with a customer who's still legitimately paying.
+        */
+        'abandoned_card_payment_minutes' => (int) env('STORE_ABANDONED_CARD_ORDER_MINUTES', 60),
+    ],
+
 ];
