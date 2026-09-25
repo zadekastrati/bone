@@ -28,7 +28,18 @@ class Kernel extends ConsoleKernel
         // Releases stock reserved by card orders the customer abandoned
         // (redirected to Quipu's hosted payment page, never completed it)
         // instead of holding it forever — see config('store.orders').
-        $schedule->command('orders:expire-abandoned-card-payments')->hourly()->withoutOverlapping();
+        //
+        // everyFiveMinutes(), not hourly(): hourly() only matches the exact
+        // :00 minute of the hour, and the external trigger invoking
+        // schedule:run (a Railway cron job, 5-minute minimum interval) isn't
+        // guaranteed to land on that precise minute every time — a missed
+        // window would silently delay expiry by up to another hour. Running
+        // this check every 5 minutes instead means any one missed tick is
+        // caught by the next one a few minutes later. The command's own
+        // 30-minute abandonment threshold (config('store.orders')) is what
+        // actually controls when an order expires — this only controls how
+        // often that check runs.
+        $schedule->command('orders:expire-abandoned-card-payments')->everyFiveMinutes()->withoutOverlapping();
     }
 
     /**
