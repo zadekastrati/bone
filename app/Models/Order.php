@@ -38,6 +38,8 @@ class Order extends Model
         'shipping_country',
         'shipping_delivery_notes',
         'subtotal',
+        'discount_code_id',
+        'discount_amount',
         'shipping_amount',
         'total',
         'tracking_number',
@@ -54,6 +56,7 @@ class Order extends Model
         'payment_method' => PaymentMethod::class,
         'payment_status' => PaymentStatus::class,
         'subtotal' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
         'shipping_amount' => 'decimal:2',
         'total' => 'decimal:2',
         'shipped_at' => 'datetime',
@@ -82,6 +85,11 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function discountCode(): BelongsTo
+    {
+        return $this->belongsTo(DiscountCode::class);
     }
 
     public function shippingFullName(): string

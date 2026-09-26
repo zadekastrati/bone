@@ -173,6 +173,12 @@
                                     <td style="padding:4px 0;font-size:14px;color:#6c584a;">{{ __('Subtotal') }}</td>
                                     <td align="right" style="padding:4px 0;font-size:14px;color:#3a2f28;">{{ config('store.currency_symbol') }}{{ number_format((float) $order->subtotal, 2) }}</td>
                                 </tr>
+                                @if ((float) $order->discount_amount > 0)
+                                    <tr>
+                                        <td style="padding:4px 0;font-size:14px;color:#6c584a;">{{ __('Discount') }}</td>
+                                        <td align="right" style="padding:4px 0;font-size:14px;color:#3a2f28;">-{{ config('store.currency_symbol') }}{{ number_format((float) $order->discount_amount, 2) }}</td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <td style="padding:4px 0;font-size:14px;color:#6c584a;">{{ __('Shipping') }}</td>
                                     <td align="right" style="padding:4px 0;font-size:14px;color:#3a2f28;">{{ config('store.currency_symbol') }}{{ number_format((float) $order->shipping_amount, 2) }}</td>

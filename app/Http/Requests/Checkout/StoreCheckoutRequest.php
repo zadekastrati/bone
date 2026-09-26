@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Checkout;
 
+use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
+use App\Models\DiscountCode;
+use App\Models\Order;
 use App\Rules\ValidPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -42,6 +45,7 @@ class StoreCheckoutRequest extends FormRequest
             'shipping_delivery_notes' => ['nullable', 'string', 'max:2000'],
             'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
             'customer_notes' => ['nullable', 'string', 'max:1000'],
+            'discount_code' => ['nullable', 'string', 'max:32'],
             'terms_accepted' => ['accepted'],
         ];
     }
@@ -70,6 +74,56 @@ class StoreCheckoutRequest extends FormRequest
             if ($isBankTransfer) {
                 $validator->errors()->add('payment_method', __('Bank transfer is not currently available. Please choose a different payment method.'));
             }
+
+            $this->validateDiscountCode($validator);
         });
+    }
+
+    /**
+     * This is a best-effort check for a fast, specific error message — the
+     * authoritative, race-safe check happens again in CheckoutService inside
+     * the order transaction (two people can't be validated here at the exact
+     * same instant and both pass, only one of them can ever win the code).
+     */
+    private function validateDiscountCode(Validator $validator): void
+    {
+        $code = $this->string('discount_code')->trim()->upper();
+
+        if ($code->isEmpty()) {
+            return;
+        }
+
+        $discountCode = DiscountCode::query()->where('code', $code->value())->first();
+
+        if ($discountCode === null) {
+            $validator->errors()->add('discount_code', __('This discount code is not valid.'));
+
+            return;
+        }
+
+        if ($discountCode->isUsed()) {
+            $validator->errors()->add('discount_code', __('This discount code has already been used.'));
+
+            return;
+        }
+
+        $email = $this->user()?->email ?? $this->input('guest_email');
+
+        $hasPriorOrder = Order::query()
+            ->where('status', '!=', OrderStatus::Cancelled)
+            ->where(function ($query) use ($email): void {
+                if ($this->user() !== null) {
+                    $query->where('user_id', $this->user()->id);
+                }
+
+                if ($email) {
+                    $query->orWhere('guest_email', $email);
+                }
+            })
+            ->exists();
+
+        if ($hasPriorOrder) {
+            $validator->errors()->add('discount_code', __('This discount code is only valid on your first order.'));
+        }
     }
 }

@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Models\ContactMessage;
+use App\Models\DiscountCode;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Policies\CategoryPolicy;
 use App\Policies\ContactMessagePolicy;
+use App\Policies\DiscountCodePolicy;
 use App\Policies\OrderPolicy;
 use App\Policies\ProductPolicy;
 use App\Policies\UserPolicy;
@@ -27,6 +29,7 @@ class AuthServiceProvider extends ServiceProvider
         Product::class => ProductPolicy::class,
         Order::class => OrderPolicy::class,
         ContactMessage::class => ContactMessagePolicy::class,
+        DiscountCode::class => DiscountCodePolicy::class,
     ];
 
     /**

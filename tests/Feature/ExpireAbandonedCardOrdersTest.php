@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Models\Category;
+use App\Models\DiscountCode;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -158,6 +159,29 @@ class ExpireAbandonedCardOrdersTest extends TestCase
         $this->assertSame(OrderStatus::Pending, $order->status);
         $this->assertSame(PaymentStatus::Pending, $order->payment_status);
         $this->assertSame(7, $variant->fresh()->stock_quantity);
+    }
+
+    public function test_expiring_an_order_releases_its_discount_code_back_to_unused(): void
+    {
+        $code = DiscountCode::create([
+            'code' => 'CORE-TESTEXP',
+            'percent_off' => 30,
+        ]);
+
+        $variant = $this->makeVariant(stock: 10);
+        $order = $this->makeOrderWithReservedStock($variant, reservedQty: 3, overrides: [
+            'created_at' => now()->subMinutes(90),
+            'discount_code_id' => $code->id,
+        ]);
+
+        // Simulates the order having claimed the code at checkout time.
+        $code->update(['used_at' => now(), 'used_by_order_id' => $order->id]);
+
+        $this->artisan('orders:expire-abandoned-card-payments')->assertSuccessful();
+
+        $code->refresh();
+        $this->assertNull($code->used_at);
+        $this->assertNull($code->used_by_order_id);
     }
 
     public function test_running_the_command_twice_never_restores_stock_more_than_once(): void

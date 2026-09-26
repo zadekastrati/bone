@@ -29,7 +29,7 @@
             }
         }'
     >
-        <form method="POST" action="{{ route('checkout.store') }}" class="space-y-8 lg:col-span-3">
+        <form id="checkout-form" method="POST" action="{{ route('checkout.store') }}" class="space-y-8 lg:col-span-3">
             @csrf
 
             <fieldset class="checkout-fieldset">
@@ -195,6 +195,22 @@
                         </li>
                     @endforeach
                 </ul>
+                <div class="border-t border-ink-200/80 pt-4">
+                    <label for="discount_code" class="form-label">{{ __('Discount code') }} <span class="font-normal text-ink-400">({{ __('optional') }})</span></label>
+                    <input
+                        type="text"
+                        name="discount_code"
+                        id="discount_code"
+                        form="checkout-form"
+                        value="{{ old('discount_code') }}"
+                        class="form-input mt-1.5 uppercase @error('discount_code') form-input-error @enderror"
+                        placeholder="{{ __('Enter code') }}"
+                        autocomplete="off"
+                    >
+                    @error('discount_code')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
                 <div class="border-t border-ink-200/80 pt-4 text-sm">
                     <div class="flex justify-between text-ink-600">
                         <span>{{ __('Subtotal') }}</span>
