@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Models\DiscountCode;
 use App\Models\Order;
 use App\Models\ProductVariant;
 use Illuminate\Console\Command;
@@ -70,6 +71,15 @@ class ExpireAbandonedCardOrdersCommand extends Command
                 ProductVariant::query()
                     ->whereKey($item->product_variant_id)
                     ->increment('stock_quantity', $item->quantity);
+            }
+
+            // Mirrors the stock restore above — the code isn't "spent" if the
+            // order it was attached to never actually went through.
+            if ($order->discount_code_id !== null) {
+                DiscountCode::query()
+                    ->whereKey($order->discount_code_id)
+                    ->where('used_by_order_id', $order->id)
+                    ->update(['used_at' => null, 'used_by_order_id' => null]);
             }
 
             Log::info('Expired an abandoned card order and released its reserved stock', [

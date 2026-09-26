@@ -50,6 +50,12 @@
                         <span>{{ __('Subtotal') }}</span>
                         <span><x-price :amount="$order->subtotal" /></span>
                     </div>
+                    @if ((float) $order->discount_amount > 0)
+                        <div class="mt-2 flex justify-between text-ink-600">
+                            <span>{{ __('Discount') }}</span>
+                            <span>-<x-price :amount="$order->discount_amount" /></span>
+                        </div>
+                    @endif
                     <div class="mt-2 flex justify-between text-ink-600">
                         <span>{{ __('Shipping') }}</span>
                         <span><x-price :amount="$order->shipping_amount" /></span>

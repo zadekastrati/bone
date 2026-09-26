@@ -96,6 +96,12 @@
                         <span>Subtotal</span>
                         <span>{{ config('store.currency_symbol') }}{{ number_format((float) $order->subtotal, 2) }}</span>
                     </div>
+                    @if ((float) $order->discount_amount > 0)
+                        <div class="flex justify-between text-ink-600">
+                            <span>Discount{{ $order->discountCode ? ' ('.$order->discountCode->code.')' : '' }}</span>
+                            <span>-{{ config('store.currency_symbol') }}{{ number_format((float) $order->discount_amount, 2) }}</span>
+                        </div>
+                    @endif
                     <div class="flex justify-between text-ink-600">
                         <span>Shipping</span>
                         <span>{{ config('store.currency_symbol') }}{{ number_format((float) $order->shipping_amount, 2) }}</span>
