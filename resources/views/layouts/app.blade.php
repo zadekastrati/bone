@@ -16,7 +16,7 @@
     @endphp
     <title>{{ $__seoTitle }}</title>
     <meta name="description" content="{{ $__seoDescription }}">
-    <link rel="icon" type="image/jpeg" href="{{ asset('logo.jpeg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('email-logo-icon.png') }}">
     <link rel="canonical" href="{{ url()->current() }}">
     @if (trim($__env->yieldContent('noindex')) !== '')
         <meta name="robots" content="noindex, nofollow">
