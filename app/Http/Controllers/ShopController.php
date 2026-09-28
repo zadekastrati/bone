@@ -30,7 +30,7 @@ class ShopController extends Controller
                 Product::query()
                     ->where('is_active', true)
                     ->search($q)
-                    ->with(['category', 'images'])
+                    ->with(['category', 'images', 'variants'])
                     ->withSum('variants', 'stock_quantity'),
                 $sort
             )->paginate(12)->appends($request->query());
@@ -41,7 +41,7 @@ class ShopController extends Controller
                 Product::query()
                     ->where('is_active', true)
                     ->when($training !== null, fn (BuilderContract $query) => $query->whereJsonContains('training_tags', $training->value))
-                    ->with(['category', 'images'])
+                    ->with(['category', 'images', 'variants'])
                     ->withSum('variants', 'stock_quantity'),
                 $sort
             )->paginate(12)->appends($request->query())
@@ -70,7 +70,7 @@ class ShopController extends Controller
 
         $products = $this->applySort(
             $category->activeProducts()
-                ->with(['images'])
+                ->with(['images', 'variants'])
                 ->withSum('variants', 'stock_quantity'),
             $sort
         )->paginate(12)->appends($request->query());
