@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/jpeg" href="{{ asset('logo.jpeg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('email-logo-icon.png') }}">
     <title>Invoice {{ $order->order_number }} - {{ config('app.name', 'Laravel') }}</title>
     @vite(['resources/css/app.css'])
     <style>
