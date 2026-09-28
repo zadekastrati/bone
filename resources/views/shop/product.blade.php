@@ -34,6 +34,17 @@
             ],
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
     </script>
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => __('Shop'), 'item' => route('shop.index')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => $category->name, 'item' => route('shop.category', $category)],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $product->name, 'item' => route('shop.product', [$category, $product])],
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
+    </script>
 @endsection
 
 @section('content')

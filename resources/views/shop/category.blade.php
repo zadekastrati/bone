@@ -6,6 +6,20 @@
     ? \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($category->description))), 160)
     : __('Shop :category at :store.', ['category' => $category->name, 'store' => config('app.name')]))
 
+@section('structured_data')
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => __('Home'), 'item' => route('home')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => __('Shop'), 'item' => route('shop.index')],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $category->name, 'item' => route('shop.category', $category)],
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
+    </script>
+@endsection
+
 @section('content')
     <nav class="crumbs" aria-label="Breadcrumb">
         <a href="{{ route('home') }}">{{ __('Home') }}</a>
