@@ -32,6 +32,40 @@
     <meta name="twitter:description" content="{{ $__seoDescription }}">
     <meta name="twitter:image" content="{{ $__seoImage }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{--
+        Sitewide, not per-page: this is what tells Google "this whole domain
+        is one business/brand called boné" (Organization) and enables the
+        sitelinks search box under the homepage result (WebSite). It's
+        separate from, and coexists with, any page-specific structured data
+        (e.g. Product schema) yielded below — multiple JSON-LD blocks on one
+        page is normal and expected, not a conflict.
+    --}}
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => config('app.name'),
+            'url' => url('/'),
+            'logo' => asset('logo.png'),
+            'sameAs' => [
+                'https://www.instagram.com/bone.active?igsi=M215OG4wZG1uYzI3',
+                'https://www.facebook.com/profile.php?id=61593204533823',
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
+    </script>
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => config('app.name'),
+            'url' => url('/'),
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => route('shop.index').'?q={search_term_string}',
+                'query-input' => 'required name=search_term_string',
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
+    </script>
     @yield('structured_data')
 </head>
 @inject('cartService', \App\Services\CartService::class)
