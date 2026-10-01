@@ -273,6 +273,24 @@ class QuipuPaymentConfirmationTest extends TestCase
         $response->assertRedirect(route('orders.show', $order));
     }
 
+    /**
+     * DD-93: the pending page must auto-retry (reload itself) and tell the
+     * customer how to get help, rather than leaving them stranded on a
+     * static "we're confirming" message with no next step.
+     */
+    public function test_callback_route_shows_an_auto_refreshing_pending_page_on_gateway_error(): void
+    {
+        Http::fake(['*3dss2test.quipu.de*' => Http::response(['error' => 'timeout'], 500)]);
+
+        $order = $this->makeCardOrder();
+
+        $this->get(route('payment.quipu.return', $order))
+            ->assertOk()
+            ->assertSee('Confirming your payment')
+            ->assertSee('window.location.reload()', false)
+            ->assertSee(route('contact'), false);
+    }
+
     public function test_callback_route_shows_failure_page_on_decline(): void
     {
         $response = $this->fullyPaidResponse();
