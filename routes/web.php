@@ -16,6 +16,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\InternalCronController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OrderController;
@@ -59,6 +60,13 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
+// Pinged externally (e.g. cron-job.org) every few minutes as the scheduler
+// trigger for orders:expire-abandoned-card-payments — see InternalCronController
+// for why: Railway's own cron service for this was unreliable in production.
+Route::get('/internal/cron/expire-abandoned-orders', [InternalCronController::class, 'expireAbandonedOrders'])
+    ->middleware('throttle:30,1')
+    ->name('internal.cron.expire-abandoned-orders');
 
 Route::get('/robots.txt', function (): \Illuminate\Http\Response {
     $lines = [

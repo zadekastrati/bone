@@ -38,6 +38,16 @@ return [
         'measurement_id' => env('GA_MEASUREMENT_ID'),
     ],
 
+    // Shared secret for the GET /internal/cron/expire-abandoned-orders route
+    // (InternalCronController) — an externally-pinged alternative to relying
+    // on Railway's own scheduler/cron service for orders:expire-abandoned-
+    // card-payments. Left unset locally/in tests on purpose: the route
+    // refuses every request (even one with an empty secret) while this is
+    // blank, so it fails closed instead of open.
+    'internal_cron' => [
+        'secret' => env('INTERNAL_CRON_SECRET'),
+    ],
+
     // Quipu/ProCredit "3DSS2" card payment gateway. Auth is mutual TLS: the
     // cert's Common Name must equal merchant_id. Never point these at real
     // production credentials outside a dedicated production environment.
