@@ -5,7 +5,12 @@ namespace Tests\Feature;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Mail\OrderPlacedMail;
+use App\Models\Category;
+use App\Models\DiscountCode;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\User;
 use App\Services\QuipuPaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -107,6 +112,58 @@ class QuipuPaymentConfirmationTest extends TestCase
         $this->assertSame(PaymentStatus::Failed, $status);
         $this->assertSame(PaymentStatus::Failed, $order->fresh()->payment_status);
         Mail::assertNothingQueued();
+    }
+
+    /**
+     * DD-93: a decline is definitive the instant Quipu confirms it, so the
+     * reserved stock (and any claimed discount code) must come back right
+     * away — not sit locked until the next abandoned-order sweep, which
+     * would never even catch it since payment_status leaves Pending here.
+     */
+    public function test_confirm_payment_releases_reserved_stock_and_discount_code_immediately_on_decline(): void
+    {
+        $category = Category::create(['name' => 'Test Category', 'slug' => 'test-category-'.uniqid()]);
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Test Product',
+            'slug' => 'test-product-'.uniqid(),
+            'price' => '20.00',
+            'is_active' => true,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'color' => 'Black',
+            'size' => 'M',
+            'stock_quantity' => 7,
+        ]);
+        $code = DiscountCode::create(['code' => 'CORE-TESTDECLINE', 'percent_off' => 30]);
+
+        $order = $this->makeCardOrder(['discount_code_id' => $code->id]);
+        $code->update(['used_at' => now(), 'used_by_order_id' => $order->id]);
+        OrderItem::create([
+            'order_id' => $order->id,
+            'product_variant_id' => $variant->id,
+            'product_id' => $variant->product_id,
+            'product_name' => 'Test Product',
+            'color' => $variant->color,
+            'size' => $variant->size,
+            'sku' => $variant->sku,
+            'quantity' => 2,
+            'unit_price' => '20.00',
+            'line_total' => '40.00',
+        ]);
+
+        $response = $this->fullyPaidResponse();
+        $response['order']['status'] = 'Declined';
+        Http::fake(['*3dss2test.quipu.de*' => Http::response($response, 200)]);
+
+        app(QuipuPaymentService::class)->confirmPayment($order);
+
+        $this->assertSame(9, $variant->fresh()->stock_quantity);
+        $this->assertSame(OrderStatus::Cancelled, $order->fresh()->status);
+        $code->refresh();
+        $this->assertNull($code->used_at);
+        $this->assertNull($code->used_by_order_id);
     }
 
     public function test_confirm_payment_marks_order_failed_when_amount_does_not_match(): void

@@ -2,11 +2,15 @@
 
 namespace App\Services;
 
+use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Mail\OrderPlacedMail;
+use App\Models\DiscountCode;
 use App\Models\Order;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -147,7 +151,7 @@ class QuipuPaymentService
         }
 
         if (! $this->isPaid($data) || ! $this->amountAndCurrencyMatch($order, $data)) {
-            $order->forceFill(['payment_status' => PaymentStatus::Failed])->save();
+            $this->declineAndReleaseStock($order);
 
             return PaymentStatus::Failed;
         }
@@ -198,6 +202,51 @@ class QuipuPaymentService
         $this->sendConfirmationEmail($order);
 
         return PaymentStatus::Paid;
+    }
+
+    /**
+     * A decline is definitive the instant Quipu confirms it — unlike silent
+     * abandonment (the customer just closes the tab, no callback ever
+     * arrives), there's nothing further worth waiting for. So the reserved
+     * stock is released right now instead of sitting locked until the next
+     * orders:expire-abandoned-card-payments sweep — which, now that
+     * payment_status is about to leave Pending, would never pick this order
+     * up anyway. Mirrors that command's own release logic exactly, guarded
+     * the same race-safe way (only acts while still Pending).
+     */
+    private function declineAndReleaseStock(Order $order): void
+    {
+        DB::transaction(function () use ($order): void {
+            $updated = Order::query()
+                ->whereKey($order->id)
+                ->where('payment_status', PaymentStatus::Pending)
+                ->update([
+                    'status' => OrderStatus::Cancelled,
+                    'payment_status' => PaymentStatus::Failed,
+                ]);
+
+            if ($updated === 0) {
+                return;
+            }
+
+            foreach ($order->items as $item) {
+                ProductVariant::query()
+                    ->whereKey($item->product_variant_id)
+                    ->increment('stock_quantity', $item->quantity);
+            }
+
+            if ($order->discount_code_id !== null) {
+                DiscountCode::query()
+                    ->whereKey($order->discount_code_id)
+                    ->where('used_by_order_id', $order->id)
+                    ->update(['used_at' => null, 'used_by_order_id' => null]);
+            }
+
+            Log::info('Released reserved stock immediately after a declined card payment', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+            ]);
+        });
     }
 
     /**
