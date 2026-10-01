@@ -26,7 +26,7 @@
             @php
                 $v = $line['variant'];
                 $p = $v->product;
-                $thumb = $p->images->first();
+                $thumb = $p->imagesForColor($v->color)->first();
             @endphp
             <article class="flex gap-5 py-8 sm:gap-8 sm:py-10">
                 <a
