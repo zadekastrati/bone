@@ -239,18 +239,20 @@ class CheckoutAccessTest extends TestCase
         $this->assertSame(0, Order::query()->count());
     }
 
-    public function test_checkout_rejects_a_phone_number_from_the_wrong_country(): void
+    public function test_checkout_accepts_a_phone_number_from_a_different_country_than_shipping(): void
     {
         $this->addVariantToCart();
 
         $payload = $this->validCheckoutPayload();
-        // A well-formed, valid US number — but the order ships to Kosovo (XK).
+        // A well-formed, valid US number — order still ships to Kosovo (XK).
+        // Foreign residents shipping within XK/AL/MK may use a phone number
+        // from their home country, so this must be accepted.
         $payload['shipping_phone'] = '+14155552671';
 
         $this->post(route('checkout.store'), $payload)
-            ->assertSessionHasErrors('shipping_phone');
+            ->assertSessionDoesntHaveErrors('shipping_phone');
 
-        $this->assertSame(0, Order::query()->count());
+        $this->assertSame(1, Order::query()->count());
     }
 
     public function test_checkout_accepts_valid_numbers_for_each_supported_country(): void
