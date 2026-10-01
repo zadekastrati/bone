@@ -31,6 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Google Analytics (GA4). Left unset locally/in tests on purpose — the
+    // tracking snippet only renders when this is configured, so local
+    // development never sends page views into production's real analytics.
+    'google_analytics' => [
+        'measurement_id' => env('GA_MEASUREMENT_ID'),
+    ],
+
     // Quipu/ProCredit "3DSS2" card payment gateway. Auth is mutual TLS: the
     // cert's Common Name must equal merchant_id. Never point these at real
     // production credentials outside a dedicated production environment.

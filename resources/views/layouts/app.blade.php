@@ -32,6 +32,15 @@
     <meta name="twitter:description" content="{{ $__seoDescription }}">
     <meta name="twitter:image" content="{{ $__seoImage }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if (config('services.google_analytics.measurement_id'))
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google_analytics.measurement_id') }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', '{{ config('services.google_analytics.measurement_id') }}');
+        </script>
+    @endif
     {{--
         Sitewide, not per-page: this is what tells Google "this whole domain
         is one business/brand called boné" (Organization) and enables the
