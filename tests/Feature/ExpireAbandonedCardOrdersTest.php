@@ -11,6 +11,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class ExpireAbandonedCardOrdersTest extends TestCase
@@ -57,6 +58,8 @@ class ExpireAbandonedCardOrdersTest extends TestCase
             'status' => OrderStatus::Pending,
             'payment_method' => 'card',
             'payment_status' => PaymentStatus::Pending,
+            'payment_gateway_order_id' => (string) random_int(100000, 999999),
+            'payment_gateway_order_password' => 'secret-pass',
             'shipping_first_name' => 'Test',
             'shipping_last_name' => 'Buyer',
             'shipping_street' => 'Test street',
@@ -95,8 +98,27 @@ class ExpireAbandonedCardOrdersTest extends TestCase
         return $order;
     }
 
+    /**
+     * Shape matches a real Quipu order-details response (see
+     * QuipuPaymentConfirmationTest) — this command now re-confirms with
+     * Quipu before expiring anything, so every candidate order needs one of
+     * these faked to reach the point being tested at all.
+     */
+    private function fakeDeclinedResponse(string $total = '75.00'): void
+    {
+        Http::fake(['*3dss2test.quipu.de*' => Http::response([
+            'order' => [
+                'status' => 'Declined',
+                'amount' => (float) $total,
+                'currency' => 'EUR',
+            ],
+        ], 200)]);
+    }
+
     public function test_expires_abandoned_pending_card_order_and_restores_its_exact_reserved_stock(): void
     {
+        $this->fakeDeclinedResponse();
+
         $variant = $this->makeVariant(stock: 10);
         $order = $this->makeOrderWithReservedStock($variant, reservedQty: 3, overrides: [
             'created_at' => now()->subMinutes(90),
@@ -125,6 +147,8 @@ class ExpireAbandonedCardOrdersTest extends TestCase
         $this->assertSame(OrderStatus::Pending, $order->status);
         $this->assertSame(PaymentStatus::Pending, $order->payment_status);
         $this->assertSame(7, $variant->fresh()->stock_quantity);
+        // Still within the threshold — Quipu must never even be asked.
+        Http::assertNothingSent();
     }
 
     public function test_never_releases_stock_or_changes_status_for_an_already_paid_order(): void
@@ -163,6 +187,8 @@ class ExpireAbandonedCardOrdersTest extends TestCase
 
     public function test_expiring_an_order_releases_its_discount_code_back_to_unused(): void
     {
+        $this->fakeDeclinedResponse();
+
         $code = DiscountCode::create([
             'code' => 'CORE-TESTEXP',
             'percent_off' => 30,
@@ -186,6 +212,8 @@ class ExpireAbandonedCardOrdersTest extends TestCase
 
     public function test_running_the_command_twice_never_restores_stock_more_than_once(): void
     {
+        $this->fakeDeclinedResponse();
+
         $variant = $this->makeVariant(stock: 10);
         $order = $this->makeOrderWithReservedStock($variant, reservedQty: 3, overrides: [
             'created_at' => now()->subMinutes(90),
@@ -197,5 +225,59 @@ class ExpireAbandonedCardOrdersTest extends TestCase
         $order->refresh();
         $this->assertSame(PaymentStatus::Failed, $order->payment_status);
         $this->assertSame(10, $variant->fresh()->stock_quantity);
+    }
+
+    /**
+     * DD-93: the whole point of re-confirming with Quipu before expiring —
+     * an order that was actually paid must never be cancelled just because
+     * it sat past the timeout (e.g. the confirmation callback never fired).
+     */
+    public function test_does_not_expire_an_order_that_quipu_confirms_was_actually_paid(): void
+    {
+        Http::fake(['*3dss2test.quipu.de*' => Http::response([
+            'order' => [
+                'status' => 'FullyPaid',
+                'amount' => 75.00,
+                'currency' => 'EUR',
+                'trans' => [['approvalCode' => '123456', 'regTime' => null]],
+                'srcToken' => ['displayName' => '1111******2222', 'card' => ['brand' => 'Visa']],
+            ],
+        ], 200)]);
+
+        $variant = $this->makeVariant(stock: 10);
+        $order = $this->makeOrderWithReservedStock($variant, reservedQty: 3, overrides: [
+            'created_at' => now()->subMinutes(90),
+        ]);
+
+        $this->artisan('orders:expire-abandoned-card-payments')->assertSuccessful();
+
+        $order->refresh();
+        $this->assertSame(OrderStatus::Pending, $order->status);
+        $this->assertSame(PaymentStatus::Paid, $order->payment_status);
+        // Reserved stock stays reserved — the order is genuinely fulfilled.
+        $this->assertSame(7, $variant->fresh()->stock_quantity);
+    }
+
+    /**
+     * DD-93: if Quipu can't be reached right now (network hiccup, timeout),
+     * the order must be left Pending for the next sweep to retry — never
+     * expired on a guess, since that risks releasing the stock of an order
+     * that was actually charged.
+     */
+    public function test_leaves_an_order_pending_when_quipu_cannot_be_reached(): void
+    {
+        Http::fake(['*3dss2test.quipu.de*' => Http::response(['error' => 'timeout'], 500)]);
+
+        $variant = $this->makeVariant(stock: 10);
+        $order = $this->makeOrderWithReservedStock($variant, reservedQty: 3, overrides: [
+            'created_at' => now()->subMinutes(90),
+        ]);
+
+        $this->artisan('orders:expire-abandoned-card-payments')->assertSuccessful();
+
+        $order->refresh();
+        $this->assertSame(OrderStatus::Pending, $order->status);
+        $this->assertSame(PaymentStatus::Pending, $order->payment_status);
+        $this->assertSame(7, $variant->fresh()->stock_quantity);
     }
 }

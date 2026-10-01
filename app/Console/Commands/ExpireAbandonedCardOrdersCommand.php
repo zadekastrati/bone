@@ -2,21 +2,22 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
-use App\Models\DiscountCode;
 use App\Models\Order;
-use App\Models\ProductVariant;
+use App\Services\QuipuPaymentService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ExpireAbandonedCardOrdersCommand extends Command
 {
     protected $signature = 'orders:expire-abandoned-card-payments';
 
     protected $description = 'Cancel Pending card orders abandoned long enough to be safe, releasing their reserved stock exactly once.';
+
+    public function __construct(private readonly QuipuPaymentService $quipu)
+    {
+        parent::__construct();
+    }
 
     public function handle(): int
     {
@@ -33,7 +34,16 @@ class ExpireAbandonedCardOrdersCommand extends Command
         $expired = 0;
 
         foreach ($candidates as $order) {
-            if ($this->expire($order)) {
+            // Re-confirms with Quipu one more time before giving up on this
+            // order — not just a blind timeout. If Quipu can't be reached
+            // right now, this leaves the order Pending for the next sweep to
+            // retry, rather than risk cancelling (and releasing the stock
+            // of) an order that was actually paid. A definite "paid" or
+            // "failed" answer is handled entirely by confirmPayment() itself
+            // (QuipuPaymentService::declineAndReleaseStock() mirrors exactly
+            // what this command used to do inline) — nothing further needed
+            // here either way.
+            if ($this->quipu->confirmPayment($order) === PaymentStatus::Failed) {
                 $expired++;
             }
         }
@@ -41,53 +51,5 @@ class ExpireAbandonedCardOrdersCommand extends Command
         $this->info("Expired {$expired} abandoned card order(s).");
 
         return self::SUCCESS;
-    }
-
-    /**
-     * The conditional update below is the only thing that decides whether
-     * this order actually gets expired, and it only succeeds while the row
-     * is still Pending at that exact instant — so stock is restored once
-     * and only once, this is safe if two runs of this command ever overlap,
-     * and a payment that resolves the order concurrently (via
-     * QuipuPaymentService::confirmPayment(), which uses the same guarded
-     * pattern) always wins instead of being silently overwritten.
-     */
-    private function expire(Order $order): bool
-    {
-        return DB::transaction(function () use ($order): bool {
-            $updated = Order::query()
-                ->whereKey($order->id)
-                ->where('payment_status', PaymentStatus::Pending)
-                ->update([
-                    'status' => OrderStatus::Cancelled,
-                    'payment_status' => PaymentStatus::Failed,
-                ]);
-
-            if ($updated === 0) {
-                return false;
-            }
-
-            foreach ($order->items as $item) {
-                ProductVariant::query()
-                    ->whereKey($item->product_variant_id)
-                    ->increment('stock_quantity', $item->quantity);
-            }
-
-            // Mirrors the stock restore above — the code isn't "spent" if the
-            // order it was attached to never actually went through.
-            if ($order->discount_code_id !== null) {
-                DiscountCode::query()
-                    ->whereKey($order->discount_code_id)
-                    ->where('used_by_order_id', $order->id)
-                    ->update(['used_at' => null, 'used_by_order_id' => null]);
-            }
-
-            Log::info('Expired an abandoned card order and released its reserved stock', [
-                'order_id' => $order->id,
-                'order_number' => $order->order_number,
-            ]);
-
-            return true;
-        });
     }
 }

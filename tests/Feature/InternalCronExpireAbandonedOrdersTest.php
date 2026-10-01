@@ -10,6 +10,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class InternalCronExpireAbandonedOrdersTest extends TestCase
@@ -56,6 +57,8 @@ class InternalCronExpireAbandonedOrdersTest extends TestCase
             'subtotal' => '75.00',
             'shipping_amount' => '0.00',
             'total' => '75.00',
+            'payment_gateway_order_id' => (string) random_int(100000, 999999),
+            'payment_gateway_order_password' => 'secret-pass',
         ]);
         $order->forceFill(['created_at' => now()->subMinutes(90)])->save();
 
@@ -102,6 +105,12 @@ class InternalCronExpireAbandonedOrdersTest extends TestCase
     public function test_the_route_expires_abandoned_card_orders_with_the_correct_secret(): void
     {
         config(['services.internal_cron.secret' => 'the-real-secret']);
+
+        // DD-93: the expiry command now re-confirms with Quipu before
+        // cancelling anything, so this needs a faked decline to reach it.
+        Http::fake(['*3dss2test.quipu.de*' => Http::response([
+            'order' => ['status' => 'Declined', 'amount' => 75.00, 'currency' => 'EUR'],
+        ], 200)]);
 
         $order = $this->makeAbandonedCardOrder();
 
