@@ -77,6 +77,24 @@ class CheckoutAccessTest extends TestCase
             ->assertSee('Place order');
     }
 
+    /**
+     * DD-94: the "Place order" button must ship with its double-submission
+     * guard (disable-on-submit + a visible "Placing order…" state) — a
+     * frontend behavior, so this only confirms the markup is actually
+     * rendered rather than silently missing; the interactive behavior was
+     * verified manually in a real browser.
+     */
+    public function test_checkout_page_ships_the_double_submission_guard(): void
+    {
+        $this->addVariantToCart();
+
+        $this->get(route('checkout.create'))
+            ->assertOk()
+            ->assertSee('submitting ? $event.preventDefault() : (submitting = true)', false)
+            ->assertSee(':disabled="submitting"', false)
+            ->assertSee('Placing order…');
+    }
+
     public function test_unverified_user_is_redirected_from_checkout(): void
     {
         $user = User::factory()->unverified()->create();

@@ -29,7 +29,14 @@
             }
         }'
     >
-        <form id="checkout-form" method="POST" action="{{ route('checkout.store') }}" class="space-y-8 lg:col-span-3">
+        <form
+            id="checkout-form"
+            method="POST"
+            action="{{ route('checkout.store') }}"
+            class="space-y-8 lg:col-span-3"
+            x-data="{ submitting: false }"
+            @submit="submitting ? $event.preventDefault() : (submitting = true)"
+        >
             @csrf
 
             <fieldset class="checkout-fieldset">
@@ -171,7 +178,18 @@
             </div>
 
             <div class="flex flex-wrap gap-3">
-                <button type="submit" class="btn-primary px-10 py-3">{{ __('Place order') }}</button>
+                <button
+                    type="submit"
+                    class="btn-primary px-10 py-3 disabled:cursor-not-allowed disabled:opacity-70"
+                    :disabled="submitting"
+                    :aria-busy="submitting.toString()"
+                >
+                    <span x-show="!submitting">{{ __('Place order') }}</span>
+                    <span x-show="submitting" x-cloak class="inline-flex items-center gap-2">
+                        <x-icons.spinner class="size-4 animate-spin" />
+                        {{ __('Placing order…') }}
+                    </span>
+                </button>
                 <a href="{{ route('cart.index') }}" class="btn-secondary px-6 py-3">{{ __('Back to cart') }}</a>
             </div>
         </form>
