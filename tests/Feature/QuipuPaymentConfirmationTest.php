@@ -230,6 +230,39 @@ class QuipuPaymentConfirmationTest extends TestCase
         });
     }
 
+    /**
+     * DD-94 regression test: simulates genuine concurrency, not just a
+     * sequential re-visit — both $order instances are loaded fresh from the
+     * DB *before* either confirmation runs, each independently believing the
+     * order is still Pending (exactly what two near-simultaneous requests to
+     * the payment return URL would each see). Only one may ever send the
+     * confirmation email or perform the Paid transition.
+     */
+    public function test_simultaneous_confirmation_attempts_never_send_more_than_one_email(): void
+    {
+        Mail::fake();
+        Http::fake(['*3dss2test.quipu.de*' => Http::response($this->fullyPaidResponse(), 200)]);
+
+        $created = $this->makeCardOrder();
+
+        // Two independent model instances, both still Pending as far as they
+        // know — neither has seen the other's (about to happen) write.
+        $orderA = Order::find($created->id);
+        $orderB = Order::find($created->id);
+
+        $statusA = app(QuipuPaymentService::class)->confirmPayment($orderA);
+        $statusB = app(QuipuPaymentService::class)->confirmPayment($orderB);
+
+        $this->assertSame(PaymentStatus::Paid, $statusA);
+        $this->assertSame(PaymentStatus::Paid, $statusB);
+        $this->assertSame(PaymentStatus::Paid, $created->fresh()->payment_status);
+        Mail::assertQueued(OrderPlacedMail::class, 1);
+        // The lock means the second call re-checks the (by then updated)
+        // status before ever calling Quipu again — not just one email sent,
+        // but no redundant second network round-trip either.
+        Http::assertSentCount(1);
+    }
+
     public function test_confirm_payment_is_idempotent_and_never_reprocesses_a_resolved_order(): void
     {
         Mail::fake();

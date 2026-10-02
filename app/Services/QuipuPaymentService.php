@@ -9,7 +9,9 @@ use App\Mail\OrderPlacedMail;
 use App\Models\DiscountCode;
 use App\Models\Order;
 use App\Models\ProductVariant;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -129,8 +131,40 @@ class QuipuPaymentService
      * has already left Pending is a no-op and just returns its current
      * status, so a customer refreshing the return page (or Quipu retrying
      * the callback) can't double-process or double-email.
+     *
+     * The DB-level guard inside (the conditional update further down,
+     * WHERE payment_status = Pending) already made it impossible to send
+     * two emails for the same order even under real concurrency — only one
+     * of two simultaneous UPDATEs can ever match that WHERE clause. This
+     * lock is an additional layer on top, not a replacement for that: it
+     * serializes concurrent requests for the *same order* so the second one
+     * re-checks the (by then already up to date) status before doing
+     * anything, instead of redundantly hitting Quipu's API a second time and
+     * tripping the "needs manual reconciliation" critical log below, which
+     * was written for a different, genuinely abnormal case (the order
+     * expiring mid-request) — not for two ordinary near-simultaneous
+     * confirmation attempts on the same order.
      */
     public function confirmPayment(Order $order): PaymentStatus
+    {
+        $lock = Cache::lock('quipu-confirm-payment:'.$order->id, 15);
+
+        try {
+            return $lock->block(10, fn () => $this->confirmPaymentLocked($order->fresh() ?? $order));
+        } catch (LockTimeoutException) {
+            // Another request for this exact order is still being confirmed
+            // — leave it Pending rather than block the customer indefinitely
+            // or risk racing it; the payment-pending page's auto-refresh (or
+            // the next abandoned-order sweep) will simply try again shortly.
+            Log::warning('Timed out waiting for another in-progress confirmation of the same order', [
+                'order_id' => $order->id,
+            ]);
+
+            return PaymentStatus::Pending;
+        }
+    }
+
+    private function confirmPaymentLocked(Order $order): PaymentStatus
     {
         if ($order->payment_status !== PaymentStatus::Pending) {
             return $order->payment_status;
