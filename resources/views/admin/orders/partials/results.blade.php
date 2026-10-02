@@ -7,6 +7,7 @@
                     <th>Order</th>
                     <th>Customer</th>
                     <th>Date</th>
+                    <th>Payment</th>
                     <th>Status</th>
                     <th>Total</th>
                     <th></th>
@@ -35,6 +36,7 @@
                             <span class="mt-0.5 block text-xs text-ink-500">{{ $order->user->email ?? $order->guest_email ?? 'Guest checkout' }}</span>
                         </td>
                         <td class="text-ink-600">{{ $order->created_at->format('M j, Y H:i') }}</td>
+                        <td class="text-ink-700">{{ $order->payment_method->label() }}</td>
                         <td x-ref="badgeSlot">
                             <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
                         </td>
@@ -54,7 +56,7 @@
                         </td>
                     </tr>
                     <tr x-show="open" x-cloak>
-                        <td colspan="7" class="!p-0 border-t border-zinc-200/70 bg-zinc-50/80">
+                        <td colspan="8" class="!p-0 border-t border-zinc-200/70 bg-zinc-50/80">
                             <div x-show="loading" class="flex items-center gap-2 px-6 py-8 text-sm text-ink-500">
                                 <x-icons.spinner class="size-4 animate-spin" /> Loading order details…
                             </div>
@@ -65,7 +67,7 @@
             @empty
                 <tbody>
                     <tr>
-                        <td colspan="7" class="data-table-empty text-ink-500">No orders found.</td>
+                        <td colspan="8" class="data-table-empty text-ink-500">No orders found.</td>
                     </tr>
                 </tbody>
             @endforelse
