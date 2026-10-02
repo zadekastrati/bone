@@ -85,6 +85,7 @@
             <div class="mt-2 flex flex-wrap items-center gap-2">
                 <x-admin.badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-admin.badge>
                 <x-admin.badge :tone="$order->payment_status->tone()">{{ $order->payment_status->label() }}</x-admin.badge>
+                <x-admin.badge>{{ $order->payment_method->label() }}</x-admin.badge>
             </div>
         </div>
 
