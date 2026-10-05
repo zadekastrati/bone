@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Mail;
 
 class QuipuPaymentService
 {
+    public function __construct(
+        private readonly TelegramNotifier $telegram
+    ) {}
+
     /**
      * Create an order at the Quipu/ProCredit gateway (mutual TLS + Merchant
      * ID) and return its id/password/hppUrl so the customer can be
@@ -234,6 +238,7 @@ class QuipuPaymentService
         }
 
         $this->sendConfirmationEmail($order);
+        $this->telegram->sendNewOrderAlert($order);
 
         return PaymentStatus::Paid;
     }

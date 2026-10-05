@@ -123,4 +123,34 @@ class TelegramOrderAlertTest extends TestCase
 
         Http::assertNothingSent();
     }
+
+    /**
+     * A card order isn't actually confirmed at placement — the customer
+     * still has to complete payment on Quipu's hosted page, which they
+     * might abandon. Alerting here would mean a phone buzzing for orders
+     * that never go through; QuipuPaymentService::confirmPayment() sends
+     * this alert instead, once payment actually succeeds.
+     */
+    public function test_card_order_does_not_send_a_telegram_alert_at_placement(): void
+    {
+        config([
+            'services.telegram.bot_token' => 'test-token',
+            'services.telegram.chat_ids' => ['111'],
+            'services.quipu.enabled' => true,
+        ]);
+        Http::fake([
+            '*3dss2test.quipu.de*' => Http::response([
+                'order' => ['id' => 555, 'password' => 'secret-pass', 'hppUrl' => 'https://3dss2test.quipu.de/flex', 'status' => 'Preparing'],
+            ], 200),
+            'api.telegram.org/*' => Http::response(['ok' => true], 200),
+        ]);
+        $this->addVariantToCart();
+
+        $payload = $this->validCheckoutPayload();
+        $payload['payment_method'] = 'card';
+
+        $this->post(route('checkout.store'), $payload);
+
+        Http::assertNotSent(fn (HttpClientRequest $request) => str_contains($request->url(), 'api.telegram.org'));
+    }
 }

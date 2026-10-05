@@ -193,7 +193,14 @@ class CheckoutService
             }
         }
 
-        $this->telegram->sendNewOrderAlert($order);
+        // Card orders aren't confirmed yet at this point — same reasoning
+        // as OrderPlacedMail above. QuipuPaymentService::confirmPayment()
+        // sends this alert instead, once payment actually succeeds, so a
+        // phone doesn't light up for an order that's then abandoned at the
+        // card entry page.
+        if ($order->payment_method !== PaymentMethod::Card) {
+            $this->telegram->sendNewOrderAlert($order);
+        }
 
         return $order;
     }

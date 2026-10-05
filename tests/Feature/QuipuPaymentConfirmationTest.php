@@ -97,6 +97,31 @@ class QuipuPaymentConfirmationTest extends TestCase
         Mail::assertQueued(OrderPlacedMail::class);
     }
 
+    /**
+     * The Telegram alert for a card order is deliberately deferred until
+     * here (see CheckoutService::placeOrder()) rather than firing at
+     * placement, so a phone doesn't buzz for an order that's then
+     * abandoned at the card entry page.
+     */
+    public function test_confirm_payment_sends_a_telegram_alert_on_success(): void
+    {
+        config([
+            'services.telegram.bot_token' => 'test-token',
+            'services.telegram.chat_ids' => ['111'],
+        ]);
+        Http::fake([
+            '*3dss2test.quipu.de*' => Http::response($this->fullyPaidResponse(), 200),
+            'api.telegram.org/*' => Http::response(['ok' => true], 200),
+        ]);
+
+        $order = $this->makeCardOrder();
+
+        app(QuipuPaymentService::class)->confirmPayment($order);
+
+        Http::assertSent(fn (HttpClientRequest $request) => str_contains($request->url(), 'api.telegram.org')
+            && str_contains($request['text'], $order->order_number));
+    }
+
     public function test_confirm_payment_marks_order_failed_when_gateway_status_is_not_fully_paid(): void
     {
         $response = $this->fullyPaidResponse();
