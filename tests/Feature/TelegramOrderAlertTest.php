@@ -68,11 +68,49 @@ class TelegramOrderAlertTest extends TestCase
 
         $this->post(route('checkout.store'), $this->validCheckoutPayload());
 
+        $order = \App\Models\Order::query()->latest('id')->firstOrFail();
+
         Http::assertSentCount(2);
-        Http::assertSent(fn (HttpClientRequest $request) => $request->url() === 'https://api.telegram.org/bottest-token/sendMessage'
-            && $request['chat_id'] === '111'
-            && str_contains($request['text'], 'Jane Doe'));
+        Http::assertSent(function (HttpClientRequest $request) use ($order) {
+            $text = $request['text'];
+
+            return $request->url() === 'https://api.telegram.org/bottest-token/sendMessage'
+                && $request['chat_id'] === '111'
+                && $request['parse_mode'] === 'HTML'
+                && str_contains($text, 'NEW ORDER')
+                && str_contains($text, $order->order_number)
+                && str_contains($text, 'Jane Doe')
+                && str_contains($text, '044123456')
+                && str_contains($text, 'jane@example.com')
+                && str_contains($text, 'Mother Teresa Boulevard 12')
+                && str_contains($text, 'Test Product (Black, M) ×1')
+                && str_contains($text, 'Shipping: '.config('store.currency_symbol').number_format((float) $order->shipping_amount, 2))
+                && str_contains($text, '€25.00')
+                && str_contains($text, 'Cash on delivery');
+        });
         Http::assertSent(fn (HttpClientRequest $request) => $request['chat_id'] === '222');
+    }
+
+    public function test_telegram_message_escapes_html_special_characters_in_customer_input(): void
+    {
+        config([
+            'services.telegram.bot_token' => 'test-token',
+            'services.telegram.chat_ids' => ['111'],
+        ]);
+        Http::fake(['api.telegram.org/*' => Http::response(['ok' => true], 200)]);
+        $this->addVariantToCart();
+
+        $payload = $this->validCheckoutPayload();
+        $payload['shipping_last_name'] = 'O\'Brien <script>';
+
+        $this->post(route('checkout.store'), $payload);
+
+        Http::assertSent(function (HttpClientRequest $request) {
+            $text = $request['text'];
+
+            return ! str_contains($text, '<script>')
+                && str_contains($text, 'O&#039;Brien &lt;script&gt;');
+        });
     }
 
     public function test_no_telegram_request_is_made_when_unconfigured(): void
