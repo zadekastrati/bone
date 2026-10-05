@@ -38,6 +38,14 @@ return [
         'measurement_id' => env('GA_MEASUREMENT_ID'),
     ],
 
+    // Meta Pixel (Facebook/Instagram ads tracking) — same reasoning as
+    // google_analytics above: left unset locally/in tests on purpose so the
+    // base PageView snippet only renders, and only ever reports real
+    // traffic, once this is configured in production.
+    'meta_pixel' => [
+        'id' => env('META_PIXEL_ID'),
+    ],
+
     // Shared secret for the GET /internal/cron/expire-abandoned-orders route
     // (InternalCronController) — an externally-pinged alternative to relying
     // on Railway's own scheduler/cron service for orders:expire-abandoned-
