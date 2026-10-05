@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Mail;
 class CheckoutService
 {
     public function __construct(
-        private readonly CartService $cart
+        private readonly CartService $cart,
+        private readonly TelegramNotifier $telegram
     ) {}
 
     /**
@@ -191,6 +192,8 @@ class CheckoutService
                 ]);
             }
         }
+
+        $this->telegram->sendNewOrderAlert($order);
 
         return $order;
     }

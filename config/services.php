@@ -77,4 +77,13 @@ return [
         'order_type_rid' => env('QUIPU_ORDER_TYPE_RID', '1'),
     ],
 
+    // Telegram bot used to ping admins' phones on new orders — a free
+    // alternative to SMS. TELEGRAM_CHAT_IDS is a comma-separated list so
+    // more than one person (e.g. the store owner, alongside whoever's
+    // testing) can receive the same alert.
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'chat_ids' => array_filter(array_map('trim', explode(',', (string) env('TELEGRAM_CHAT_IDS', '')))),
+    ],
+
 ];
