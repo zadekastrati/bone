@@ -202,7 +202,7 @@
                         @php
                             $v = $line['variant'];
                             $product = $v->product;
-                            $thumb = $product->thumbnailImage();
+                            $thumb = $product->imagesForColor($v->color)->first();
                         @endphp
                         <li class="flex items-start justify-between gap-4">
                             <span class="flex min-w-0 items-start gap-3">
