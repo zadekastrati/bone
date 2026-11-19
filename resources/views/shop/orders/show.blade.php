@@ -140,4 +140,18 @@
     <div class="mt-10">
         <a href="{{ route('shop.index') }}" class="btn-secondary">{{ __('Continue shopping') }}</a>
     </div>
+
+    {{-- Fires once, only on the redirect right after checkout (session('success')
+         is a one-time flash) — not on later visits to this same order from "My
+         orders", which would otherwise double-count the purchase in Meta. --}}
+    @if (session('success') && config('services.meta_pixel.id'))
+        <script>
+            fbq('track', 'Purchase', {
+                value: {{ $order->total }},
+                currency: 'EUR',
+                content_ids: [{{ $order->id }}],
+                content_type: 'product',
+            });
+        </script>
+    @endif
 @endsection
