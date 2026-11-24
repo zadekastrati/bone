@@ -43,3 +43,4 @@ compose.override.yml
 # OS/editor cruft that can leak local usernames/paths
 .DS_Store
 Thumbs.db
+*.stackdump
