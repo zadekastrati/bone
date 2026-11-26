@@ -7,6 +7,7 @@
 @endphp
 <article class="store-card-interactive group/card w-36 shrink-0 snap-start overflow-hidden sm:w-44">
     <a href="{{ $productUrl }}" class="relative block aspect-[4/5] overflow-hidden bg-gradient-to-b from-white to-ink-100/80">
+        <x-sale-badge :product="$product" size="sm" />
         @if ($product->isSoldOut())
             <span class="pointer-events-none absolute left-1.5 top-1.5 z-20 inline-flex items-center rounded-full bg-ink-950/90 px-2 py-1 shadow-soft backdrop-blur-sm" aria-hidden="true">
                 <span class="text-[8px] font-bold uppercase leading-none tracking-[0.12em] text-white">{{ __('Sold out') }}</span>
@@ -28,7 +29,7 @@
             <a href="{{ $productUrl }}" class="transition hover:text-accent-600">{{ $product->name }}</a>
         </h3>
         <p class="pt-0.5 font-display text-sm font-semibold tabular-nums tracking-tight text-ink-950">
-            <x-price :amount="$product->price" />
+            <x-product-price :product="$product" />
         </p>
     </div>
 </article>
