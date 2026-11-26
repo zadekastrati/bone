@@ -98,7 +98,10 @@ class ApplyBlackFridaySaleCommand extends Command
     {
         $dryRun = (bool) $this->option('dry-run');
 
-        $saleStartsAt = Carbon::parse('2026-11-27 00:00:00', 'Europe/Belgrade')->utc();
+        // Starts the moment this command actually runs (so the display goes
+        // live immediately, whenever that is) — the end date stays fixed,
+        // since that's the real intended cutoff regardless of start timing.
+        $saleStartsAt = now();
         $saleEndsAt = Carbon::parse('2026-11-29 00:00:00', 'Europe/Belgrade')->utc();
 
         $this->info($dryRun ? 'DRY RUN — no changes will be written.' : 'LIVE RUN — changes will be written now.');
