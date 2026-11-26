@@ -85,6 +85,34 @@ class SalePricingTest extends TestCase
             ->assertDontSee('-30%');
     }
 
+    public function test_cart_page_shows_the_strikethrough_original_price_and_discount(): void
+    {
+        $product = $this->makeProduct([
+            'price' => '17.50',
+            'original_price' => '25.00',
+            'discount_percent' => 30,
+            'sale_starts_at' => now()->subDay(),
+            'sale_ends_at' => now()->addDay(),
+        ]);
+
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'color' => 'Black',
+            'size' => 'M',
+            'stock_quantity' => 10,
+        ]);
+
+        $this->withSession(['store_cart' => [$variant->id => 2]]);
+
+        $this->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee('-30%')
+            ->assertSee('17.50') // per-unit sale price
+            ->assertSee('25.00') // per-unit original price, struck through
+            ->assertSee('50.00') // line total original (25.00 x 2), struck through
+            ->assertSee('35.00'); // line total actually charged (17.50 x 2)
+    }
+
     public function test_checkout_order_summary_shows_the_strikethrough_original_price_and_discount(): void
     {
         $product = $this->makeProduct([
