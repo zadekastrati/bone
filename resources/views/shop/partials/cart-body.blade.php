@@ -48,7 +48,7 @@
                             {{ $v->size }} <span class="text-ink-300">|</span> {{ $v->color }}
                         </p>
                         <p class="font-display text-sm font-semibold tabular-nums text-ink-950">
-                            <x-price :amount="$p->price" />
+                            <x-product-price :product="$p" />
                             <span class="text-xs font-normal text-ink-500">{{ __('each') }}</span>
                         </p>
                         @if ($v->stock_quantity < 1)
@@ -77,7 +77,17 @@
                         </form>
 
                         <p class="font-display text-base font-semibold tabular-nums text-ink-950">
-                            <x-price :amount="$line['line_total']" />
+                            @if ($p->isOnSale())
+                                <span class="block text-xs text-ink-500 line-through decoration-2 decoration-ink-500">
+                                    <x-price :amount="$p->original_price * $line['quantity']" />
+                                </span>
+                                <span class="text-red-600">
+                                    <x-price :amount="$line['line_total']" />
+                                </span>
+                                <span class="ml-1 text-xs font-bold text-red-600">{{ __('-:percent%', ['percent' => $p->discount_percent]) }}</span>
+                            @else
+                                <x-price :amount="$line['line_total']" />
+                            @endif
                             @if ($line['quantity'] > 1)
                                 <span class="block text-xs font-normal text-ink-500">{{ __('line total') }}</span>
                             @endif
