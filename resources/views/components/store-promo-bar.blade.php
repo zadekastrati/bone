@@ -1,9 +1,14 @@
 {{-- Gymshark-style rotating promo strip (demo copy — not affiliated with any third-party brand) --}}
 @php
-    $blackFridayActive = now()->between(
-        \Illuminate\Support\Carbon::parse('2026-11-27 00:00:00', 'Europe/Belgrade'),
-        \Illuminate\Support\Carbon::parse('2026-11-29 00:00:00', 'Europe/Belgrade'),
-    );
+    // Driven by real product data, not a fixed date — so this banner turns
+    // on the instant any product's sale actually goes active (whenever that
+    // command runs), and off the instant the last one's sale_ends_at passes,
+    // rather than assuming everything starts/ends at one hardcoded moment.
+    $blackFridayActive = \App\Models\Product::query()
+        ->whereNotNull('discount_percent')
+        ->where('sale_starts_at', '<=', now())
+        ->where('sale_ends_at', '>=', now())
+        ->exists();
 
     $items = [
         ['text' => __('Free shipping on orders over :amount', ['amount' => config('store.currency_symbol') . '100'])],
