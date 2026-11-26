@@ -64,9 +64,14 @@
         <div>
             <p class="ui-eyebrow">{{ $category->name }}</p>
             <h1 class="font-display mt-3 text-3xl font-bold uppercase tracking-tight text-ink-950 sm:text-4xl sm:tracking-wide">{{ $product->name }}</h1>
-            <p class="mt-4 text-2xl font-semibold text-ink-900">
-                <x-price :amount="$product->price" />
+            <p class="mt-4 flex flex-wrap items-baseline gap-2 text-2xl font-semibold text-ink-900">
+                <x-product-price :product="$product" />
                 <span class="text-sm font-medium text-ink-500">{{ app(\App\Services\CurrencyService::class)->currentCurrency() }}</span>
+                @if ($product->isOnSale())
+                    <span class="rounded-full bg-accent-600 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                        {{ __('-:percent%', ['percent' => $product->discount_percent]) }}
+                    </span>
+                @endif
             </p>
             <x-store.currency-disclaimer :amount="$product->price" class="mt-1.5" />
 

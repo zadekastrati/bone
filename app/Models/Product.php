@@ -31,6 +31,10 @@ class Product extends Model
         'style_code',
         'description',
         'price',
+        'original_price',
+        'discount_percent',
+        'sale_starts_at',
+        'sale_ends_at',
         'is_active',
         'training_tags',
     ];
@@ -40,6 +44,10 @@ class Product extends Model
      */
     protected $casts = [
         'price' => 'decimal:2',
+        'original_price' => 'decimal:2',
+        'discount_percent' => 'integer',
+        'sale_starts_at' => 'datetime',
+        'sale_ends_at' => 'datetime',
         'is_active' => 'boolean',
         'training_tags' => 'array',
     ];
@@ -149,6 +157,26 @@ class Product extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Whether the "was €X, now €Y, -Z%" sale display should show right now.
+     * Purely a display check — `price` is already the real charged amount
+     * regardless of this, set directly by whoever applies the sale, so this
+     * never affects what checkout charges. Needs all four fields present:
+     * a half-configured sale (e.g. a badge % but no end date) never shows.
+     */
+    public function isOnSale(): bool
+    {
+        if ($this->original_price === null || $this->discount_percent === null) {
+            return false;
+        }
+
+        if ($this->sale_starts_at === null || $this->sale_ends_at === null) {
+            return false;
+        }
+
+        return now()->between($this->sale_starts_at, $this->sale_ends_at);
     }
 
     public function primaryImage(): ?ProductImage

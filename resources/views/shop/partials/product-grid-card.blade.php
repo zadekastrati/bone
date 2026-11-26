@@ -29,6 +29,7 @@
     @endif
 >
     <a href="{{ route('shop.product', [$product->category, $product]) }}" class="relative block aspect-[4/5] overflow-hidden bg-gradient-to-b from-white to-ink-100/80">
+        <x-sale-badge :product="$product" />
         @if ($product->isSoldOut())
             {{-- Top-left on the image: visible while browsing shop (no click needed) --}}
             <span class="pointer-events-none absolute left-2 top-2 z-20 inline-flex items-center gap-1.5 rounded-full bg-ink-950/90 px-3 py-1.5 shadow-soft backdrop-blur-sm sm:left-3 sm:top-3" aria-hidden="true">
@@ -78,7 +79,7 @@
             <a href="{{ route('shop.product', [$product->category, $product]) }}" class="transition hover:text-accent-600">{{ $product->name }}</a>
         </h3>
         <p class="pt-2 font-display text-lg font-semibold tabular-nums tracking-tight text-ink-950">
-            <x-price :amount="$product->price" />
+            <x-product-price :product="$product" />
         </p>
     </div>
 </article>
