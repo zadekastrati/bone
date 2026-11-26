@@ -68,7 +68,7 @@
                 <x-product-price :product="$product" />
                 <span class="text-sm font-medium text-ink-500">{{ app(\App\Services\CurrencyService::class)->currentCurrency() }}</span>
                 @if ($product->isOnSale())
-                    <span class="rounded-full bg-accent-600 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                    <span class="rounded-full bg-red-600 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
                         {{ __('-:percent%', ['percent' => $product->discount_percent]) }}
                     </span>
                 @endif
