@@ -209,7 +209,19 @@
                                 <x-product-image-thumb :path="$thumb?->path" :thumb-src="$thumb?->thumbUrl()" :alt="$product->name" size="sm" />
                                 <span class="min-w-0 leading-snug">{{ $product->name }} <span class="text-ink-500">× {{ $line['quantity'] }}</span></span>
                             </span>
-                            <span class="shrink-0 font-medium"><x-price :amount="$line['line_total']" /></span>
+                            <span class="shrink-0 text-right font-medium">
+                                @if ($product->isOnSale())
+                                    <span class="block text-xs text-ink-500 line-through decoration-2 decoration-ink-500">
+                                        <x-price :amount="$product->original_price * $line['quantity']" />
+                                    </span>
+                                    <span class="text-red-600">
+                                        <x-price :amount="$line['line_total']" />
+                                    </span>
+                                    <span class="ml-1 text-xs font-bold text-red-600">{{ __('-:percent%', ['percent' => $product->discount_percent]) }}</span>
+                                @else
+                                    <x-price :amount="$line['line_total']" />
+                                @endif
+                            </span>
                         </li>
                     @endforeach
                 </ul>
